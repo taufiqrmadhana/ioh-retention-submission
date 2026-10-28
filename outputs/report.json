@@ -1,0 +1,297 @@
+{
+  "snapshot": "2025-11-01",
+  "horizon_end_exclusive": "2025-12-01",
+  "seed": 42,
+  "cohort": {
+    "n": 208,
+    "churn": 41,
+    "prevalence": 0.1971153846153846,
+    "train": 156,
+    "test": 52
+  },
+  "evaluation": {
+    "logistic_regression": {
+      "n": 52,
+      "positives": 10,
+      "prevalence": 0.19230769230769232,
+      "pr_auc": 0.9666666666666666,
+      "roc_auc": 0.988095238095238,
+      "brier": 0.03458215914962986,
+      "top_k": 11,
+      "precision_at_20pct": 0.8181818181818182,
+      "recall_at_20pct": 0.9,
+      "lift_at_20pct": 4.254545454545455,
+      "pr_auc_bootstrap_95pct": [
+        0.8681197478991595,
+        1.0
+      ]
+    },
+    "shallow_tree": {
+      "n": 52,
+      "positives": 10,
+      "prevalence": 0.19230769230769232,
+      "pr_auc": 0.676923076923077,
+      "roc_auc": 0.7904761904761904,
+      "brier": 0.09401709401709403,
+      "top_k": 11,
+      "precision_at_20pct": 0.5702479338842975,
+      "recall_at_20pct": 0.6272727272727272,
+      "lift_at_20pct": 2.965289256198347
+    },
+    "constant_prevalence": {
+      "n": 52,
+      "positives": 10,
+      "prevalence": 0.19230769230769232,
+      "pr_auc": 0.19230769230769232,
+      "roc_auc": 0.5,
+      "brier": 0.15536653517422752,
+      "top_k": 11,
+      "precision_at_20pct": 0.19230769230769232,
+      "recall_at_20pct": 0.21153846153846154,
+      "lift_at_20pct": 1.0
+    },
+    "business_rule": {
+      "n": 52,
+      "positives": 10,
+      "prevalence": 0.19230769230769232,
+      "pr_auc": 0.5882352941176471,
+      "roc_auc": 0.9047619047619049,
+      "brier": null,
+      "top_k": 11,
+      "precision_at_20pct": 0.5681818181818182,
+      "recall_at_20pct": 0.625,
+      "lift_at_20pct": 2.9545454545454546
+    }
+  },
+  "sensitivity": {
+    "exact_feature_overlap_test_rows": 5,
+    "distinct_feature_vectors_in_cohort": 195,
+    "nonoverlap_holdout": {
+      "n": 47,
+      "positives": 7,
+      "prevalence": 0.14893617021276595,
+      "pr_auc": 0.9404761904761902,
+      "roc_auc": 0.9821428571428571,
+      "brier": 0.03633100060855953,
+      "top_k": 10,
+      "precision_at_20pct": 0.6,
+      "recall_at_20pct": 0.8571428571428571,
+      "lift_at_20pct": 4.0285714285714285
+    },
+    "note": "Post-evaluation diagnostic, not used for model selection. Exact feature matches are different customer IDs; similarity may inflate internal performance."
+  },
+  "oof": {
+    "n": 208,
+    "positives": 41,
+    "prevalence": 0.1971153846153846,
+    "pr_auc": 0.9856371569377052,
+    "roc_auc": 0.9960566671534978,
+    "brier": 0.027814622786350975,
+    "top_k": 42,
+    "precision_at_20pct": 0.9285714285714286,
+    "recall_at_20pct": 0.9512195121951219,
+    "lift_at_20pct": 4.710801393728223
+  },
+  "calibration": [
+    {
+      "n": 42,
+      "mean_score": 0.0018926220439460933,
+      "observed_rate": 0.0
+    },
+    {
+      "n": 42,
+      "mean_score": 0.01234338565230263,
+      "observed_rate": 0.0
+    },
+    {
+      "n": 42,
+      "mean_score": 0.04057562270445775,
+      "observed_rate": 0.0
+    },
+    {
+      "n": 41,
+      "mean_score": 0.15985088595195737,
+      "observed_rate": 0.04878048780487805
+    },
+    {
+      "n": 41,
+      "mean_score": 0.7856718478170008,
+      "observed_rate": 0.9512195121951219
+    }
+  ],
+  "subgroups": [
+    {
+      "dimension": "gender",
+      "group": "Female",
+      "n": 99,
+      "positive_count": 21,
+      "observed_rate": 0.21212121212121213,
+      "mean_score": 0.21576851017500182,
+      "recall_at_20pct": 0.9047619047619048,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    },
+    {
+      "dimension": "gender",
+      "group": "Male",
+      "n": 101,
+      "positive_count": 20,
+      "observed_rate": 0.19801980198019803,
+      "mean_score": 0.18982036897529986,
+      "recall_at_20pct": 0.95,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    },
+    {
+      "dimension": "gender",
+      "group": "Unknown",
+      "n": 8,
+      "positive_count": 0,
+      "observed_rate": 0.0,
+      "mean_score": 0.06694759844081151,
+      "recall_at_20pct": null,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    },
+    {
+      "dimension": "region",
+      "group": "Bandung",
+      "n": 60,
+      "positive_count": 25,
+      "observed_rate": 0.4166666666666667,
+      "mean_score": 0.41101894371342895,
+      "recall_at_20pct": 0.48,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    },
+    {
+      "dimension": "region",
+      "group": "Jakarta",
+      "n": 60,
+      "positive_count": 7,
+      "observed_rate": 0.11666666666666667,
+      "mean_score": 0.11913015971097743,
+      "recall_at_20pct": 1.0,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    },
+    {
+      "dimension": "region",
+      "group": "Medan",
+      "n": 24,
+      "positive_count": 0,
+      "observed_rate": 0.0,
+      "mean_score": 0.023692007917644902,
+      "recall_at_20pct": null,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    },
+    {
+      "dimension": "region",
+      "group": "Semarang",
+      "n": 23,
+      "positive_count": 0,
+      "observed_rate": 0.0,
+      "mean_score": 0.038482583515364106,
+      "recall_at_20pct": null,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    },
+    {
+      "dimension": "region",
+      "group": "Surabaya",
+      "n": 41,
+      "positive_count": 9,
+      "observed_rate": 0.21951219512195122,
+      "mean_score": 0.1903869937808712,
+      "recall_at_20pct": 0.8888888888888888,
+      "caution": "Descriptive only; small subgroup; no fairness certification."
+    }
+  ],
+  "audit": {
+    "customers": 720,
+    "churn_records": 145,
+    "usage_rows": 853,
+    "support_rows": 268,
+    "one_usage_row": 585,
+    "two_usage_rows": 134,
+    "missing_usage": 1,
+    "blank_total_charges": 34,
+    "usage_in_churn_month": 134,
+    "support_after_churn": 3,
+    "coverage": [
+      {
+        "snapshot": "2025-04-01",
+        "customers": 1,
+        "churn": 1,
+        "non_churn": 0,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-05-01",
+        "customers": 0,
+        "churn": 0,
+        "non_churn": 0,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-06-01",
+        "customers": 2,
+        "churn": 2,
+        "non_churn": 0,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-07-01",
+        "customers": 5,
+        "churn": 5,
+        "non_churn": 0,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-08-01",
+        "customers": 18,
+        "churn": 18,
+        "non_churn": 0,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-09-01",
+        "customers": 38,
+        "churn": 38,
+        "non_churn": 0,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-10-01",
+        "customers": 46,
+        "churn": 40,
+        "non_churn": 6,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-11-01",
+        "customers": 208,
+        "churn": 41,
+        "non_churn": 167,
+        "label_observed": true
+      },
+      {
+        "snapshot": "2025-12-01",
+        "customers": 401,
+        "churn": null,
+        "non_churn": null,
+        "label_observed": false
+      }
+    ],
+    "sources": {
+      "customer_base.csv": "b830844bae5ba610b60ff62dfcdc039241d2c4125983035ff75bdf08c95d7110",
+      "service_usage.csv": "edec410d761c6ba5a87d7bdedcfcb1fa5d8f96a27fab883cdf16fbd11346a045",
+      "support_interactions.csv": "fca0edd4eb90c10a422c78db8446f0a804128d4059032646b86b2355544a3b1d"
+    }
+  },
+  "limitations": [
+    "No out-of-time validation: early snapshots are heavily outcome-selected.",
+    "Churn registry completeness through 30 November is assumed, not documented.",
+    "Profiles lack effective timestamps; historical stability is assumed.",
+    "Support resolution status is excluded: no status-effective timestamp.",
+    "Random customer holdout is internal validation in one selected historical cohort.",
+    "5 holdout customers share exact model features with training customers; non-overlap sensitivity is reported separately.",
+    "OOF demo scores are retrospective estimates, not production-calibrated probabilities.",
+    "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
+    "Gender, age, partner and dependents are excluded from scoring; proxies may remain."
+  ]
+}

@@ -1,7 +1,12 @@
 .venv/
 __pycache__/
 .pytest_cache/
-outputs/
 .env
 .env.*
 !.env.example
+node_modules/
+.wrangler/
+wrangler.jsonc
+outputs/*
+!outputs/intelligence.json
+!outputs/report.json
