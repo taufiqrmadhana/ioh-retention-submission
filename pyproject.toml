@@ -1,0 +1,19 @@
+[project]
+name = "ioh-retention-submission"
+version = "1.0.0"
+description = "Customer churn analysis and retention agent"
+requires-python = ">=3.11"
+dependencies = [
+  "pandas>=2.2,<3",
+  "numpy>=2,<2.4",
+  "scikit-learn>=1.6,<2",
+  "matplotlib>=3.9,<4",
+  "httpx>=0.27,<1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

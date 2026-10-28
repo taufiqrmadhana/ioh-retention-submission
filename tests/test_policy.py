@@ -1,0 +1,103 @@
+from copy import deepcopy
+
+import pytest
+
+from retention.policy import build_plan, compare_actions, settings, validate_plan
+
+
+def customer(identifier="A", risk=0.8, technical=0, billing=0, **fields):
+    return {
+        "customer_id": identifier,
+        "risk_score": risk,
+        "consent": "unknown",
+        "features": {"technical_30d": technical, "billing_30d": billing},
+        **fields,
+    }
+
+
+CUSTOMERS = [customer(f"C{i:02}", risk=0.9 - i * 0.02) for i in range(12)] + [
+    customer("T1", technical=1),
+    customer("T2", technical=1),
+    customer("B1", billing=1),
+]
+
+
+def test_reference_economics_and_proposal_only():
+    actions = {a["action"]: a for a in compare_actions(customer(risk=0.4))}
+    assert actions["basic_offer"]["scenario_net_benefit"] == 330_000
+    assert actions["premium_offer"]["scenario_net_benefit"] == 750_000
+    assert not any(a["executable"] for a in actions.values())
+
+
+@pytest.mark.parametrize(
+    "budget", [0, 25_000, 50_000, 149_999, 150_000, 300_000, 3_000_000]
+)
+@pytest.mark.parametrize("capacity", [1, 3, 10, 20])
+def test_budget_capacity_and_unique_customers(budget, capacity):
+    plan = build_plan(CUSTOMERS, {"budget": budget, "max_customers": capacity})
+    assert plan["total_cost"] <= budget
+    assert len(plan["items"]) <= capacity
+    assert len({i["customer_id"] for i in plan["items"]}) == len(plan["items"])
+    assert validate_plan(plan, CUSTOMERS)
+
+
+def test_service_review_precedes_incentives_and_respects_reserve():
+    plan = build_plan(CUSTOMERS)
+    reviews = [i for i in plan["items"] if i["action"].endswith("_review")]
+    assert len(reviews) == 3
+    assert all(
+        not a["eligible_for_proposal"]
+        for a in compare_actions(customer(technical=1))
+        if a["action"].endswith("_offer")
+    )
+
+
+@pytest.mark.parametrize(
+    "fields", [{"consent": "denied"}, {"eligibility": "ineligible"}]
+)
+def test_explicit_ineligibility_blocks_actions(fields):
+    assert build_plan([customer(**fields)])["items"] == []
+
+
+def test_zero_prevention_does_not_allocate_unprofitable_offers():
+    plan = build_plan(CUSTOMERS, {"basic_success": 0, "premium_success": 0})
+    assert all(not i["action"].endswith("_offer") for i in plan["items"])
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"budget": -1},
+        {"budget": True},
+        {"budget": float("inf")},
+        {"max_customers": 1.5},
+        {"basic_success": 2},
+        {"prioritize_technical": "yes"},
+    ],
+)
+def test_invalid_settings(overrides):
+    with pytest.raises(ValueError):
+        settings(overrides)
+
+
+def test_forged_economics_flags_and_duplicates_rejected():
+    plan = build_plan(CUSTOMERS)
+    for field in (
+        "remaining_budget",
+        "scenario_net_benefit",
+        "scenario_prevented_churn",
+    ):
+        changed = deepcopy(plan)
+        changed[field] += 1
+        with pytest.raises(ValueError):
+            validate_plan(changed, CUSTOMERS)
+    for field, value in (("cost", 0), ("executable", True), ("review_required", False)):
+        changed = deepcopy(plan)
+        changed["items"][0][field] = value
+        with pytest.raises(ValueError):
+            validate_plan(changed, CUSTOMERS)
+    changed = deepcopy(plan)
+    changed["settings"]["max_customers"] = 20
+    changed["items"].append(changed["items"][0])
+    with pytest.raises(ValueError, match="Duplicate"):
+        validate_plan(changed, CUSTOMERS)
