@@ -1,7 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 import intelligence from "../outputs/intelligence.json";
 import report from "../outputs/report.json";
-import { buildPlan, compareActions, settings, validatePlan } from "./policy.js";
+import { buildPlan, compareActions, settings, validatePlan } from "../web/policy.js";
 import { runAgent } from "./agent.js";
 
 const json = (data, status = 200) =>
@@ -150,6 +150,178 @@ const sessionId = (request) =>
     ?.match(/(?:^|;\s*)retention_session=([a-f0-9-]{36})(?:;|$)/)?.[1] ??
   crypto.randomUUID();
 
+const sha256 = async (text) =>
+  Array.from(
+    new Uint8Array(
+      await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)),
+    ),
+  )
+    .map((v) => v.toString(16).padStart(2, "0"))
+    .join("");
+
+async function runAgentRequest(request, env, session, body) {
+  if (!env.DEEPSEEK_API_KEY)
+    return json(
+      {
+        error:
+          "Live agent is not configured. The deterministic planner remains available.",
+      },
+      503,
+    );
+  if (
+    typeof body.prompt !== "string" ||
+    body.prompt.trim().length < 5 ||
+    body.prompt.length > 1500
+  )
+    throw new Error("Use a prompt of 5–1500 characters");
+  const config = settings(body.settings);
+  const ip = await sha256(request.headers.get("CF-Connecting-IP") ?? "local");
+  if (
+    !(await consume(env, `agent-ip:${ip}`, Math.floor(Date.now() / 600000), 5)) ||
+    !(await consume(env, "agent-global", Math.floor(Date.now() / 86400000), 60))
+  )
+    return json(
+      {
+        error:
+          "Demo AI quota reached. Try later or use the deterministic planner.",
+      },
+      429,
+    );
+  const started = Date.now();
+  try {
+    const result = await runAgent({
+      prompt: body.prompt,
+      config,
+      customers: intelligence.customers,
+      apiKey: env.DEEPSEEK_API_KEY,
+      model: env.DEEPSEEK_MODEL ?? "deepseek-flash",
+      baseUrl: env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com",
+    });
+    if (result.plan) {
+      validatePlan(result.plan, intelligence.customers);
+      const saved = await store(env, session, {
+        op: "save",
+        plan: {
+          ...result.plan,
+          agent_trace: result.trace,
+          agent_model: result.model,
+          token_usage: result.token_usage,
+        },
+        source: "deepseek",
+      });
+      if (!saved.ok) return saved;
+      result.plan = await saved.json();
+    }
+    await store(env, session, {
+      op: "agent_event",
+      kind: "agent_completed",
+      detail: {
+        model: result.model,
+        latency_ms: Date.now() - started,
+        token_usage: result.token_usage,
+        tool_calls: result.trace.length,
+        rejected_calls: result.trace.filter((t) => t.status === "rejected")
+          .length,
+        plan_submitted: !!result.plan,
+      },
+    });
+    return json(result);
+  } catch (e) {
+    await store(env, session, {
+      op: "agent_event",
+      kind: "agent_failed",
+      detail: {
+        latency_ms: Date.now() - started,
+        token_usage: e.token_usage ?? 0,
+        error: e.message,
+        trace: e.trace ?? [],
+      },
+    });
+    return json(
+      {
+        error:
+          e.name === "TimeoutError"
+            ? "AI provider timed out. The deterministic planner is available."
+            : e.message,
+      },
+      502,
+    );
+  }
+}
+
+async function route(request, env, url, session) {
+  if (request.method === "GET") {
+    if (url.pathname === "/api/bootstrap")
+      return json({
+        intelligence,
+        report,
+        agent_available: !!env.DEEPSEEK_API_KEY,
+        model: env.DEEPSEEK_MODEL ?? "deepseek-flash",
+      });
+    if (url.pathname === "/api/history")
+      return store(env, session, { op: "list" });
+    if (url.pathname === "/api/customer") {
+      const c = intelligence.customers.find(
+        (c) => c.customer_id === url.searchParams.get("id"),
+      );
+      return c
+        ? json({ customer: c, actions: compareActions(c) })
+        : json({ error: "Unknown customer" }, 404);
+    }
+    return json({ error: "Not found" }, 404);
+  }
+  if (request.method !== "POST") return json({ error: "Not found" }, 404);
+
+  const origin = request.headers.get("Origin");
+  if (origin && origin !== url.origin)
+    return json({ error: "Cross-origin request rejected" }, 403);
+  if (!request.headers.get("Content-Type")?.includes("application/json"))
+    return json({ error: "Expected JSON" }, 415);
+  if (Number(request.headers.get("Content-Length") ?? 0) > 16384)
+    return json({ error: "Request too large" }, 413);
+  const raw = await request.text();
+  if (raw.length > 16384) return json({ error: "Request too large" }, 413);
+  const body = JSON.parse(raw);
+  if (!body || Array.isArray(body) || typeof body !== "object")
+    throw new Error("Expected a JSON object");
+  if (
+    !(await consume(
+      env,
+      `session-rate:${session}`,
+      Math.floor(Date.now() / 60000),
+      30,
+    ))
+  )
+    return json({ error: "Too many requests; retry in a minute." }, 429);
+
+  switch (url.pathname) {
+    case "/api/plan":
+      return store(env, session, {
+        op: "save",
+        plan: buildPlan(intelligence.customers, settings(body.settings)),
+        source: "deterministic",
+      });
+    case "/api/agent":
+      return runAgentRequest(request, env, session, body);
+    case "/api/review":
+      return store(env, session, {
+        op: "transition",
+        id: body.id,
+        action: body.action,
+        acknowledged: body.acknowledged,
+      });
+    case "/api/outcome":
+      return store(env, session, {
+        op: "outcome",
+        id: body.id,
+        customer_id: body.customer_id,
+        outcome: body.outcome,
+      });
+    default:
+      return json({ error: "Not found" }, 404);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -157,185 +329,14 @@ export default {
     const session = sessionId(request);
     let response;
     try {
-      if (request.method === "POST") {
-        const origin = request.headers.get("Origin");
-        if (origin && origin !== url.origin)
-          return json({ error: "Cross-origin request rejected" }, 403);
-        if (!request.headers.get("Content-Type")?.includes("application/json"))
-          return json({ error: "Expected JSON" }, 415);
-        if (Number(request.headers.get("Content-Length") ?? 0) > 16384)
-          return json({ error: "Request too large" }, 413);
-      }
-      if (url.pathname === "/api/bootstrap" && request.method === "GET") {
-        response = json({
-          intelligence,
-          report,
-          agent_available: !!env.DEEPSEEK_API_KEY,
-          model: env.DEEPSEEK_MODEL ?? "deepseek-flash",
-        });
-      } else if (url.pathname === "/api/history" && request.method === "GET") {
-        response = await store(env, session, { op: "list" });
-      } else if (url.pathname === "/api/customer" && request.method === "GET") {
-        const c = intelligence.customers.find(
-          (c) => c.customer_id === url.searchParams.get("id"),
-        );
-        response = c
-          ? json({ customer: c, actions: compareActions(c) })
-          : json({ error: "Unknown customer" }, 404);
-      } else if (request.method === "POST") {
-        const raw = await request.text();
-        if (raw.length > 16384)
-          return json({ error: "Request too large" }, 413);
-        const body = JSON.parse(raw);
-        if (!body || Array.isArray(body) || typeof body !== "object")
-          throw new Error("Expected a JSON object");
-        if (
-          !(await consume(
-            env,
-            `session-rate:${session}`,
-            Math.floor(Date.now() / 60000),
-            30,
-          ))
-        )
-          return json({ error: "Too many requests; retry in a minute." }, 429);
-        if (url.pathname === "/api/plan") {
-          const plan = buildPlan(
-            intelligence.customers,
-            settings(body.settings),
-          );
-          response = await store(env, session, {
-            op: "save",
-            plan,
-            source: "deterministic",
-          });
-        } else if (url.pathname === "/api/agent") {
-          if (!env.DEEPSEEK_API_KEY)
-            return json(
-              {
-                error:
-                  "Live agent is not configured. The deterministic planner remains available.",
-              },
-              503,
-            );
-          if (
-            typeof body.prompt !== "string" ||
-            body.prompt.trim().length < 5 ||
-            body.prompt.length > 1500
-          )
-            throw new Error("Use a prompt of 5–1500 characters");
-          const config = settings(body.settings);
-          const ip = request.headers.get("CF-Connecting-IP") ?? "local";
-          const digest = await crypto.subtle.digest(
-            "SHA-256",
-            new TextEncoder().encode(ip),
-          );
-          const hash = Array.from(new Uint8Array(digest))
-            .map((v) => v.toString(16).padStart(2, "0"))
-            .join("");
-          if (
-            !(await consume(
-              env,
-              `agent-ip:${hash}`,
-              Math.floor(Date.now() / 600000),
-              5,
-            )) ||
-            !(await consume(
-              env,
-              "agent-global",
-              Math.floor(Date.now() / 86400000),
-              60,
-            ))
-          )
-            return json(
-              {
-                error:
-                  "Demo AI quota reached. Try later or use the deterministic planner.",
-              },
-              429,
-            );
-          const started = Date.now();
-          try {
-            const result = await runAgent({
-              prompt: body.prompt,
-              config,
-              customers: intelligence.customers,
-              apiKey: env.DEEPSEEK_API_KEY,
-              model: env.DEEPSEEK_MODEL ?? "deepseek-flash",
-              baseUrl: env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com",
-            });
-            if (result.plan) {
-              validatePlan(result.plan, intelligence.customers);
-              const saved = await store(env, session, {
-                op: "save",
-                plan: {
-                  ...result.plan,
-                  agent_trace: result.trace,
-                  agent_model: result.model,
-                  token_usage: result.token_usage,
-                },
-                source: "deepseek",
-              });
-              if (!saved.ok) return saved;
-              result.plan = await saved.json();
-            }
-            await store(env, session, {
-              op: "agent_event",
-              kind: "agent_completed",
-              detail: {
-                model: result.model,
-                latency_ms: Date.now() - started,
-                token_usage: result.token_usage,
-                tool_calls: result.trace.length,
-                rejected_calls: result.trace.filter(
-                  (t) => t.status === "rejected",
-                ).length,
-                plan_submitted: !!result.plan,
-              },
-            });
-            response = json(result);
-          } catch (e) {
-            await store(env, session, {
-              op: "agent_event",
-              kind: "agent_failed",
-              detail: {
-                latency_ms: Date.now() - started,
-                token_usage: e.token_usage ?? 0,
-                error: e.message,
-                trace: e.trace ?? [],
-              },
-            });
-            response = json(
-              {
-                error:
-                  e.name === "TimeoutError"
-                    ? "AI provider timed out. The deterministic planner is available."
-                    : e.message,
-              },
-              502,
-            );
-          }
-        } else if (url.pathname === "/api/review") {
-          response = await store(env, session, {
-            op: "transition",
-            id: body.id,
-            action: body.action,
-            acknowledged: body.acknowledged,
-          });
-        } else if (url.pathname === "/api/outcome") {
-          response = await store(env, session, {
-            op: "outcome",
-            id: body.id,
-            customer_id: body.customer_id,
-            outcome: body.outcome,
-          });
-        } else response = json({ error: "Not found" }, 404);
-      } else response = json({ error: "Not found" }, 404);
+      response = await route(request, env, url, session);
     } catch (e) {
       response = json(
         { error: e instanceof SyntaxError ? "Invalid JSON" : e.message },
         400,
       );
     }
+    // Every API response, early rejections included, carries the session cookie.
     const headers = new Headers(response.headers);
     headers.set(
       "Set-Cookie",

@@ -1,4 +1,4 @@
-import { buildPlan, compareActions, settings } from "./policy.js";
+import { buildPlan, compareActions, settings } from "../web/policy.js";
 
 const schema = (properties, required = []) => ({
   type: "object",
@@ -60,6 +60,53 @@ export const TOOLS = [
   ),
 ];
 
+const SCHEMAS = Object.fromEntries(
+  TOOLS.map((t) => [t.function.name, t.function.parameters]),
+);
+
+// Same contract as the Python agent: exact keys, exact types, bounded values.
+function checkArguments(name, args) {
+  const schema = SCHEMAS[name];
+  if (!schema) throw new Error("Unknown tool; action denied");
+  if (!args || Array.isArray(args) || typeof args !== "object")
+    throw new Error("Tool arguments must be an object");
+  const keys = Object.keys(args);
+  if (
+    keys.length !== schema.required.length ||
+    !schema.required.every((k) => Object.hasOwn(args, k))
+  )
+    throw new Error("Provide exactly the required tool arguments");
+  for (const [key, spec] of Object.entries(schema.properties)) {
+    const value = args[key];
+    if (spec.type === "string") {
+      if (
+        typeof value !== "string" ||
+        !value.trim() ||
+        value.length > (spec.maxLength ?? 1500)
+      )
+        throw new Error(`Invalid ${key}`);
+      if (spec.enum && !spec.enum.includes(value))
+        throw new Error(`Invalid value for ${key}`);
+    } else if (spec.type === "integer") {
+      if (
+        !Number.isInteger(value) ||
+        value < spec.minimum ||
+        value > spec.maximum
+      )
+        throw new Error(`Invalid range for ${key}`);
+    } else if (
+      !Array.isArray(value) ||
+      value.length < spec.minItems ||
+      value.length > spec.maxItems ||
+      value.some((x) => typeof x !== "string")
+    )
+      throw new Error(`Invalid array for ${key}`);
+  }
+}
+
+const byRisk = (a, b) =>
+  b.risk_score - a.risk_score || a.customer_id.localeCompare(b.customer_id);
+
 export async function runAgent({
   prompt,
   config,
@@ -110,9 +157,13 @@ export async function runAgent({
           `Provider request failed (${res.status}). Try the deterministic planner.`,
         );
       const data = await res.json();
-      tokenUsage += data.usage?.total_tokens ?? 0;
+      const usage = data.usage?.total_tokens;
+      if (Number.isInteger(usage) && usage >= 0) tokenUsage += usage;
       const msg = data.choices?.[0]?.message;
-      if (!msg) throw new Error("Provider returned no response");
+      if (!msg || typeof msg !== "object")
+        throw new Error("Provider returned no response");
+      if (msg.tool_calls !== undefined && !Array.isArray(msg.tool_calls))
+        throw new Error("Provider returned an invalid response");
       messages.push({
         role: "assistant",
         content: msg.content ?? null,
@@ -141,27 +192,25 @@ export async function runAgent({
           throw new Error(
             "Agent tool-call budget exceeded. Use the deterministic planner.",
           );
+        if (
+          !call ||
+          typeof call.id !== "string" ||
+          typeof call.function?.name !== "string"
+        )
+          throw new Error("Provider returned an invalid tool call");
         let args, result;
         try {
-          args = JSON.parse(call.function.arguments);
-          if (!args || Array.isArray(args) || typeof args !== "object")
-            throw new Error("Tool arguments must be an object");
+          args = JSON.parse(call.function.arguments ?? "");
+          checkArguments(call.function.name, args);
           const c = customers.find((c) => c.customer_id === args.customer_id);
           switch (call.function.name) {
             case "get_priority_customers": {
-              if (
-                !["all", "technical", "billing"].includes(args.focus) ||
-                !Number.isInteger(args.limit) ||
-                args.limit < 1 ||
-                args.limit > 30
-              )
-                throw new Error("Invalid candidate filter or limit");
               const list = customers
                 .filter(
                   (c) =>
                     args.focus === "all" || c.features[`${args.focus}_30d`] > 0,
                 )
-                .sort((a, b) => b.risk_score - a.risk_score)
+                .sort(byRisk)
                 .slice(0, args.limit);
               list.forEach((c) => seen.add(c.customer_id));
               result = list.map((c) => ({
@@ -186,13 +235,10 @@ export async function runAgent({
               break;
             case "simulate_retention_plan": {
               if (
-                !Array.isArray(args.customer_ids) ||
-                args.customer_ids.length < 1 ||
-                args.customer_ids.length > 30 ||
                 new Set(args.customer_ids).size !== args.customer_ids.length ||
                 args.customer_ids.some((id) => !seen.has(id))
               )
-                throw new Error("Use 1–30 unique observed customer IDs");
+                throw new Error("Use unique, previously observed customer IDs");
               if (
                 !args.customer_ids.some(
                   (id) => contexts.has(id) && comparisons.has(id),
@@ -214,15 +260,8 @@ export async function runAgent({
               break;
             }
             case "submit_retention_plan":
-              if (
-                !simulation ||
-                args.simulation_id !== simulation.simulation_id ||
-                typeof args.rationale !== "string" ||
-                args.rationale.length > 1500
-              )
-                throw new Error(
-                  "A valid calculated simulation and concise rationale are required",
-                );
+              if (!simulation || args.simulation_id !== simulation.simulation_id)
+                throw new Error("A valid calculated simulation is required");
               submitted = { ...simulation, rationale: args.rationale };
               result = {
                 status: "pending_review",
@@ -231,8 +270,6 @@ export async function runAgent({
                 customers: simulation.items.length,
               };
               break;
-            default:
-              throw new Error("Unknown tool; action denied");
           }
         } catch (e) {
           result = { error: e.message };
