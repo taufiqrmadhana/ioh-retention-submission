@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Customer Retention · Decision workbench</title>
+    <title>Customer Retention · Interactive deck</title>
     <meta
       name="description"
-      content="Retrospective retention workbench: point-in-time churn scores, budget-aware actions and a bounded agent whose proposals a person approves."
+      content="From churn prediction to the right action, at the right cost: the take-home deck with a live plan builder, a bounded agent and a customer explorer."
     />
     <meta name="theme-color" content="#741633" />
     <link
@@ -19,43 +19,24 @@
     <script type="module" src="/app.js"></script>
   </head>
   <body>
-    <header class="masthead">
-      <div class="masthead-inner">
-        <a class="wordmark" href="#overview">
-          <span class="wordmark-title">Customer Retention</span>
-          <span class="wordmark-sub">Decision workbench</span>
-        </a>
-        <dl class="masthead-meta">
-          <div><dt>Decision date</dt><dd>1 Nov 2025</dd></div>
-          <div><dt>Model</dt><dd>Logistic · 5-fold OOF</dd></div>
-          <div><dt>Policy</dt><dd>retention-v1</dd></div>
-        </dl>
-      </div>
-      <nav class="tabs" aria-label="Sections">
-        <div class="tabs-inner">
-          <button data-tab="overview" class="tab active">Overview</button>
-          <button data-tab="customers" class="tab">Customers</button>
-          <button data-tab="agent" class="tab">Agent workspace</button>
-          <button data-tab="evidence" class="tab">Evidence</button>
-          <span class="page-no" id="page-no" aria-hidden="true">1</span>
-        </div>
+    <header class="bar">
+      <a class="bar-title" href="#s1">Customer Retention <span>Interactive deck</span></a>
+      <nav class="bar-sections" aria-label="Sections">
+        <button data-goto="s2" data-section="background">Background</button>
+        <button data-goto="s4" data-section="analysis">Analysis</button>
+        <button data-goto="s6" data-section="solution">Solution</button>
+        <button data-goto="s9" data-section="implementation">Implementation</button>
+        <button data-goto="a1" data-section="appendix">Appendix</button>
       </nav>
+      <div class="bar-pager">
+        <button id="prev-slide" aria-label="Previous slide">‹</button>
+        <span id="slide-count" aria-live="polite">1 / 18</span>
+        <button id="next-slide" aria-label="Next slide">›</button>
+      </div>
     </header>
-    <div class="notice" role="note">
-      <div class="notice-inner">
-        <strong>Retrospective simulation.</strong>
-        <span>Scores are out-of-fold estimates and offer benefits are assumptions. No customer is contacted and no incentive is issued.</span>
-      </div>
-    </div>
-    <main id="main" tabindex="-1">
-      <div class="loading">Loading the workbench…</div>
+    <main id="deck" tabindex="-1">
+      <div class="loading">Loading the deck…</div>
     </main>
-    <footer class="page-footer">
-      <div class="page-footer-inner">
-        <span>Source: supplied datasets (720 customers; 208 active on 1 Nov 2025). Offer costs, success rates and the Rp6M customer value come from the brief.</span>
-        <span>Data Scientist take-home · Taufiq R Ahmad</span>
-      </div>
-    </footer>
     <dialog id="customer-dialog" aria-labelledby="customer-title">
       <button class="dialog-close" aria-label="Close customer detail">×</button>
       <div id="customer-detail"></div>

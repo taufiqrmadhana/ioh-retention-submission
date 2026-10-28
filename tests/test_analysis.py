@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from retention.analysis import load_data, build_cohort, FEATURES, CUTOFF, metrics
+from retention.analysis import load_data, build_cohort, FEATURES, CUTOFF, metrics, segment_table
 
 
 def test_future_records_and_resolution_status_cannot_change_features():
@@ -41,3 +41,10 @@ def test_uninformative_scores_have_expected_lift_one_with_ties():
     result = metrics(y, np.repeat(0.2, 10))
     assert result["lift_at_20pct"] == 1
     assert result["precision_at_20pct"] == 0.2
+
+
+def test_every_churner_sits_in_the_four_way_segment():
+    table = segment_table(build_cohort(*load_data()))
+    rows = {r["segment"]: r for r in table["rows"]}
+    assert rows["Month-to-month"]["n_in"] == 91 and rows["Month-to-month"]["rate_out"] == 0
+    assert table["overlap"] == {**table["overlap"], "n": 53, "churned": 41, "all_churned": 41}
