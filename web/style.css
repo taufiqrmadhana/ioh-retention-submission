@@ -1118,3 +1118,71 @@ dialog p {
     transition: none !important;
   }
 }
+
+.chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 8px 0 4px;
+  overflow: visible;
+}
+
+.chart .grid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.chart .zero {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chart .guide {
+  stroke: var(--orange);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.chart .tick {
+  font-size: 10px;
+  fill: var(--muted);
+}
+
+.chart .series {
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.chart .s0 { stroke: var(--forest); fill: var(--forest); }
+.chart .s1 { stroke: var(--green); fill: var(--green); }
+.chart .s2 { stroke: var(--orange); fill: var(--orange); }
+.chart .s3 { stroke: var(--red); fill: var(--red); }
+
+.chart .series.s2 {
+  stroke-dasharray: 4 3;
+}
+
+.chart .dot {
+  stroke: none;
+}
+
+.chart .key {
+  stroke: none;
+}
+
+.chart .bar {
+  fill: var(--muted);
+  opacity: 0.55;
+}
+
+.chart .bar.hi {
+  fill: var(--forest);
+  opacity: 0.9;
+}
+
+.chart .ci {
+  stroke: var(--orange);
+  stroke-width: 1.5;
+}

@@ -18,6 +18,8 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
+
+from retention import decisions
 from sklearn.metrics import average_precision_score, roc_auc_score, brier_score_loss
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
@@ -382,6 +384,13 @@ def main():
                 "fold": int(folds[i]),
             }
         )
+    policy_base = {"budget": 3_000_000, "max_customers": 10}
+    report["economics"] = {
+        "sensitivity": decisions.sensitivity_curve(customers, policy_base),
+        "optimisation": decisions.optimisation_gap(customers, policy_base),
+        "decision_curve": decisions.decision_curve(y.iloc[test].to_numpy(), predictions),
+    }
+    report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
     intelligence = {
         "snapshot": report["snapshot"],
         "model_version": "lr-oof-v1-seed42",

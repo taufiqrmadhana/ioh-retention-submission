@@ -293,5 +293,590 @@
     "OOF demo scores are retrospective estimates, not production-calibrated probabilities.",
     "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
     "Gender, age, partner and dependents are excluded from scoring; proxies may remain."
-  ]
+  ],
+  "economics": {
+    "sensitivity": {
+      "multipliers": [
+        0.02,
+        0.05,
+        0.1,
+        0.2,
+        0.35,
+        0.5,
+        0.75,
+        1.0,
+        1.25,
+        1.5,
+        1.75
+      ],
+      "retained_values": [
+        3000000,
+        6000000,
+        9000000,
+        12000000
+      ],
+      "rows": [
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 0.02,
+          "basic_success": 0.004,
+          "premium_success": 0.01,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 0.05,
+          "basic_success": 0.01,
+          "premium_success": 0.025,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 0.1,
+          "basic_success": 0.02,
+          "premium_success": 0.05,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 0.2,
+          "basic_success": 0.04,
+          "premium_success": 0.1,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 0.35,
+          "basic_success": 0.07,
+          "premium_success": 0.175,
+          "net_benefit": 309721,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 0.5,
+          "basic_success": 0.1,
+          "premium_success": 0.25,
+          "net_benefit": 1728173,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 0.75,
+          "basic_success": 0.15,
+          "premium_success": 0.375,
+          "net_benefit": 4092259,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 1.0,
+          "basic_success": 0.2,
+          "premium_success": 0.5,
+          "net_benefit": 6456345,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 1.25,
+          "basic_success": 0.25,
+          "premium_success": 0.625,
+          "net_benefit": 8820430,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 1.5,
+          "basic_success": 0.3,
+          "premium_success": 0.75,
+          "net_benefit": 11184518,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 3000000,
+          "success_multiplier": 1.75,
+          "basic_success": 0.35,
+          "premium_success": 0.875,
+          "net_benefit": 13548602,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 0.02,
+          "basic_success": 0.004,
+          "premium_success": 0.01,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 0.05,
+          "basic_success": 0.01,
+          "premium_success": 0.025,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 0.1,
+          "basic_success": 0.02,
+          "premium_success": 0.05,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 0.2,
+          "basic_success": 0.04,
+          "premium_success": 0.1,
+          "net_benefit": 782538,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 0.35,
+          "basic_success": 0.07,
+          "premium_success": 0.175,
+          "net_benefit": 3619442,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 0.5,
+          "basic_success": 0.1,
+          "premium_success": 0.25,
+          "net_benefit": 6456345,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 0.75,
+          "basic_success": 0.15,
+          "premium_success": 0.375,
+          "net_benefit": 11184518,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 1.0,
+          "basic_success": 0.2,
+          "premium_success": 0.5,
+          "net_benefit": 15912689,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 1.25,
+          "basic_success": 0.25,
+          "premium_success": 0.625,
+          "net_benefit": 20640862,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 1.5,
+          "basic_success": 0.3,
+          "premium_success": 0.75,
+          "net_benefit": 25369034,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 6000000,
+          "success_multiplier": 1.75,
+          "basic_success": 0.35,
+          "premium_success": 0.875,
+          "net_benefit": 30097207,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 0.02,
+          "basic_success": 0.004,
+          "premium_success": 0.01,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 0.05,
+          "basic_success": 0.01,
+          "premium_success": 0.025,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 0.1,
+          "basic_success": 0.02,
+          "premium_success": 0.05,
+          "net_benefit": 40791,
+          "cost": 1200000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 0.2,
+          "basic_success": 0.04,
+          "premium_success": 0.1,
+          "net_benefit": 2673807,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 0.35,
+          "basic_success": 0.07,
+          "premium_success": 0.175,
+          "net_benefit": 6929162,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 0.5,
+          "basic_success": 0.1,
+          "premium_success": 0.25,
+          "net_benefit": 11184518,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 0.75,
+          "basic_success": 0.15,
+          "premium_success": 0.375,
+          "net_benefit": 18276776,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 1.0,
+          "basic_success": 0.2,
+          "premium_success": 0.5,
+          "net_benefit": 25369034,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 1.25,
+          "basic_success": 0.25,
+          "premium_success": 0.625,
+          "net_benefit": 32461291,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 1.5,
+          "basic_success": 0.3,
+          "premium_success": 0.75,
+          "net_benefit": 39553550,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 9000000,
+          "success_multiplier": 1.75,
+          "basic_success": 0.35,
+          "premium_success": 0.875,
+          "net_benefit": 46645808,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 0.02,
+          "basic_success": 0.004,
+          "premium_success": 0.01,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 0.05,
+          "basic_success": 0.01,
+          "premium_success": 0.025,
+          "net_benefit": -150000,
+          "cost": 150000,
+          "customers": 3
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 0.1,
+          "basic_success": 0.02,
+          "premium_success": 0.05,
+          "net_benefit": 782538,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 0.2,
+          "basic_success": 0.04,
+          "premium_success": 0.1,
+          "net_benefit": 4565076,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 0.35,
+          "basic_success": 0.07,
+          "premium_success": 0.175,
+          "net_benefit": 10238882,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 0.5,
+          "basic_success": 0.1,
+          "premium_success": 0.25,
+          "net_benefit": 15912689,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 0.75,
+          "basic_success": 0.15,
+          "premium_success": 0.375,
+          "net_benefit": 25369034,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 1.0,
+          "basic_success": 0.2,
+          "premium_success": 0.5,
+          "net_benefit": 34825378,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 1.25,
+          "basic_success": 0.25,
+          "premium_success": 0.625,
+          "net_benefit": 44281721,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 1.5,
+          "basic_success": 0.3,
+          "premium_success": 0.75,
+          "net_benefit": 53738066,
+          "cost": 3000000,
+          "customers": 10
+        },
+        {
+          "retained_value": 12000000,
+          "success_multiplier": 1.75,
+          "basic_success": 0.35,
+          "premium_success": 0.875,
+          "net_benefit": 63194412,
+          "cost": 3000000,
+          "customers": 10
+        }
+      ],
+      "baseline": {
+        "retained_value": 6000000,
+        "success_multiplier": 1.0,
+        "basic_success": 0.2,
+        "premium_success": 0.5,
+        "net_benefit": 15912689,
+        "cost": 3000000,
+        "customers": 10
+      },
+      "breakeven_multiplier": 0.116,
+      "note": "Each point re-plans under identical constraints. Break-even is where total scenario net benefit reaches zero; below it the same spend destroys assumed value."
+    },
+    "optimisation": {
+      "greedy_net_benefit": 15912689.0,
+      "exact_net_benefit": 17655338.0,
+      "gap_absolute": 1742649.0,
+      "gap_pct": 10.95,
+      "exact_customers": 10,
+      "note": "Exact mixed-integer optimum over the same eligible actions, budget and capacity, without the 30% service-review reservation. The shipped plan stays greedy and explainable; this bounds how much value that simplicity costs."
+    },
+    "decision_curve": [
+      {
+        "threshold": 0.1,
+        "model": 0.1795,
+        "treat_all": 0.1026,
+        "treat_none": 0.0,
+        "treated": 16
+      },
+      {
+        "threshold": 0.15,
+        "model": 0.1753,
+        "treat_all": 0.0498,
+        "treat_none": 0.0,
+        "treated": 15
+      },
+      {
+        "threshold": 0.2,
+        "model": 0.1635,
+        "treat_all": -0.0096,
+        "treat_none": 0.0,
+        "treated": 11
+      },
+      {
+        "threshold": 0.25,
+        "model": 0.1667,
+        "treat_all": -0.0769,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.3,
+        "model": 0.1648,
+        "treat_all": -0.1538,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.35,
+        "model": 0.1627,
+        "treat_all": -0.2426,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.4,
+        "model": 0.1603,
+        "treat_all": -0.3462,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.45,
+        "model": 0.1573,
+        "treat_all": -0.4685,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.5,
+        "model": 0.1538,
+        "treat_all": -0.6154,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.55,
+        "model": 0.1496,
+        "treat_all": -0.7949,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.6,
+        "model": 0.1442,
+        "treat_all": -1.0192,
+        "treat_none": 0.0,
+        "treated": 10
+      },
+      {
+        "threshold": 0.65,
+        "model": 0.1154,
+        "treat_all": -1.3077,
+        "treat_none": 0.0,
+        "treated": 6
+      },
+      {
+        "threshold": 0.7,
+        "model": 0.1154,
+        "treat_all": -1.6923,
+        "treat_none": 0.0,
+        "treated": 6
+      },
+      {
+        "threshold": 0.75,
+        "model": 0.0962,
+        "treat_all": -2.2308,
+        "treat_none": 0.0,
+        "treated": 5
+      },
+      {
+        "threshold": 0.8,
+        "model": 0.0962,
+        "treat_all": -3.0385,
+        "treat_none": 0.0,
+        "treated": 5
+      },
+      {
+        "threshold": 0.85,
+        "model": 0.0577,
+        "treat_all": -4.3846,
+        "treat_none": 0.0,
+        "treated": 3
+      },
+      {
+        "threshold": 0.9,
+        "model": 0.0577,
+        "treat_all": -7.0769,
+        "treat_none": 0.0,
+        "treated": 3
+      },
+      {
+        "threshold": 0.95,
+        "model": 0.0577,
+        "treat_all": -15.1538,
+        "treat_none": 0.0,
+        "treated": 3
+      }
+    ]
+  },
+  "targeting": {
+    "top_capacity": {
+      "n": 10,
+      "mean_risk": 0.9819,
+      "expected_saves": 4.91,
+      "cost_per_expected_save": 916561,
+      "share_with_open_service_issue": 0.0
+    },
+    "cohort": {
+      "n": 208,
+      "mean_risk": 0.1974,
+      "expected_saves": 20.53,
+      "cost_per_expected_save": 4558236,
+      "share_with_open_service_issue": 0.135
+    },
+    "note": "Risk x assumed success is a targeting proxy, not measured uplift. The share with an open service issue marks where a cheaper service fix may dominate a discount; only a randomised holdout can confirm responsiveness."
+  }
 }

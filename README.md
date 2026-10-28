@@ -36,6 +36,15 @@ uv run python -m retention agent "Prioritise technical reviews and compare reten
 
 Decision date 01 Nov 2025, outcome window [01 Nov, 01 Dec). Features are computed strictly before the snapshot; resolution status is excluded because it has no historical timestamp. Customers are split 75/25 inside one cohort, preprocessing is fit on train only, and demo scores come from five-fold out-of-fold logistic regression. The policy reserves up to 30% of capacity for service reviews, then fills offers by greedy marginal net benefit per rupiah within budget. Net benefit = risk × assumed prevention × retained value − cost; rates and retained value are assumptions, not measured uplift. Agent proposals require approval and record a simulation only.
 
+## Decision diagnostics
+
+`outputs/report.json` carries three checks next to the plan: *sensitivity* (the same
+policy re-planned across assumed success rates and retained values, with the
+break-even point where net benefit hits zero), *optimisation* (an exact mixed-integer
+allocation under the same budget and capacity, bounding what the greedy plan leaves
+on the table), and a *decision curve* against treating everyone and treating no one.
+The validation set-up for a real test is in `docs/pilot.md`.
+
 ## Known limits
 
 No out-of-time validation — earlier snapshots are outcome-selected, and the December snapshot has no observed future labels. Churn-registry completeness through 30 November is assumed. Benefits are scenario economics; consent, contact limits and offer eligibility are unknown in the supplied data. The workbench surfaces the same evidence — cohort, out-of-fold scores, plan and approval trail — so the audit path is inspectable in the UI.
