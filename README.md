@@ -38,4 +38,4 @@ Decision date 01 Nov 2025, outcome window [01 Nov, 01 Dec). Features are compute
 
 ## Known limits
 
-No out-of-time validation — earlier snapshots are outcome-selected, and the December snapshot has no observed future labels. Churn-registry completeness through 30 November is assumed. Benefits are scenario economics; consent, contact limits and offer eligibility are unknown in the supplied data. See the methodology notes in the workbench for the audit and monitoring plan.
+No out-of-time validation — earlier snapshots are outcome-selected, and the December snapshot has no observed future labels. Churn-registry completeness through 30 November is assumed. Benefits are scenario economics; consent, contact limits and offer eligibility are unknown in the supplied data. The workbench surfaces the same evidence — cohort, out-of-fold scores, plan and approval trail — so the audit path is inspectable in the UI.
