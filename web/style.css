@@ -1119,70 +1119,67 @@ dialog p {
   }
 }
 
-.chart {
+.plot {
   width: 100%;
   height: auto;
   display: block;
-  margin: 8px 0 4px;
-  overflow: visible;
+  margin: 6px 0 0;
 }
 
-.chart .grid {
-  stroke: var(--line);
-  stroke-width: 1;
+.plot text {
+  font-size: 11px;
+  fill: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
-.chart .zero {
-  stroke: var(--muted);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
+.plot-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 6px 0 2px;
+  font-size: 11.5px;
+  color: var(--muted);
 }
 
-.chart .guide {
-  stroke: var(--orange);
-  stroke-width: 1;
-  stroke-dasharray: 4 4;
+.plot-legend .key {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
 }
 
-.chart .tick {
+.plot-legend i {
+  width: 15px;
+  height: 2px;
+  border-radius: 1px;
+  display: inline-block;
+}
+
+.plot-legend i.dash {
+  height: 0;
+  background: none !important;
+  border-top: 2px dashed #aab6c0;
+}
+
+.panel figure {
+  margin: 0;
+}
+
+.plot .axis-title {
+  font-size: 10.5px;
+  fill: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.plot .direct {
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.plot .value {
+  font-size: 10.5px;
+  fill: var(--ink);
+}
+
+.plot .guide {
   font-size: 10px;
-  fill: var(--muted);
-}
-
-.chart .series {
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-
-.chart .s0 { stroke: var(--forest); fill: var(--forest); }
-.chart .s1 { stroke: var(--green); fill: var(--green); }
-.chart .s2 { stroke: var(--orange); fill: var(--orange); }
-.chart .s3 { stroke: var(--red); fill: var(--red); }
-
-.chart .series.s2 {
-  stroke-dasharray: 4 3;
-}
-
-.chart .dot {
-  stroke: none;
-}
-
-.chart .key {
-  stroke: none;
-}
-
-.chart .bar {
-  fill: var(--muted);
-  opacity: 0.55;
-}
-
-.chart .bar.hi {
-  fill: var(--forest);
-  opacity: 0.9;
-}
-
-.chart .ci {
-  stroke: var(--orange);
-  stroke-width: 1.5;
 }

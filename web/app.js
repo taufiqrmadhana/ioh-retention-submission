@@ -1,4 +1,5 @@
 import { buildPlan, DEFAULTS, ACTIONS, compareActions } from "./policy.js";
+import { modelComparisonChart, calibrationChart, sensitivityChart, decisionChart } from "./charts.js";
 const $ = (s) => document.querySelector(s);
 const esc = (v) =>
   String(v ?? "").replace(
@@ -165,153 +166,6 @@ function planHTML(plan, trace = []) {
   const pending = plan.status === "pending_review";
   return `<section class="panel"><div class="panel-heading"><div><h2>${plan.agent_model ? "Agent proposal" : "Policy proposal"}</h2><p>Version ${esc(plan.policy_version)} · ${esc(plan.id?.slice(0, 8) || "preview")}<br>Saved budget: ${money(plan.settings.budget)} · Capacity: ${plan.settings.maxCustomers}</p></div><span class="badge ${pending ? "pending" : ""}">${esc(plan.status.replaceAll("_", " "))}</span></div>${plan.rationale ? `<p class="rationale">${esc(plan.rationale)}</p>` : ""}<div class="plan-summary"><div><small>Proposed spend</small><strong>${compact(plan.total_cost)}</strong></div><div><small>Scenario net benefit</small><strong>${compact(plan.scenario_net_benefit)}</strong></div><div><small>Customers</small><strong>${plan.items.length} / ${plan.settings.maxCustomers}</strong></div></div><div class="table-wrap"><table><thead><tr><th>Customer</th><th>Action</th><th>Cost</th><th>Assumed net benefit</th></tr></thead><tbody>${plan.items.map((i) => `<tr><td><button class="customer-button" data-customer="${esc(i.customer_id)}">${esc(i.customer_id)}</button></td><td>${esc(i.label)}</td><td>${money(i.cost)}</td><td>${i.scenario_net_benefit === null ? "Unmeasured" : money(i.scenario_net_benefit)}</td></tr>`).join("")}</tbody></table></div>${!plan.items.length ? '<p class="empty-state">No feasible positive-benefit offers or affordable service reviews under these constraints.</p>' : ""}<div class="callout">${esc(plan.economic_note)} Remaining budget: ${money(plan.remaining_budget)}.<br>${esc(plan.methodology)}</div><details class="trace"><summary>${plan.skipped.length} candidates not selected</summary><div style="max-height:200px;overflow:auto">${plan.skipped.map((c) => `<div class="signal"><span>${esc(c.customer_id)}</span><span>${esc(c.reason)}</span></div>`).join("")}</div></details>${trace.length ? `<details class="trace" open><summary>Agent tool trace · ${trace.length} calls</summary>${trace.map((t) => `<div class="trace-step"><span class="badge">${t.step.toString().padStart(2, "0")}</span> <code>${esc(t.tool)}</code> <span class="muted">${esc(t.status)}</span><details><summary>Inspect inputs and result</summary><pre>${esc(JSON.stringify({ input: t.input, result: t.result }, null, 2))}</pre></details></div>`).join("")}</details>` : ""}${pending ? `<div class="review-box"><strong>Review before simulated execution</strong><p>Verify active status, consent, contact limits, issue resolution and offer eligibility in a real workflow. These fields are unknown in the supplied data.</p><label class="check-label"><input type="checkbox" id="review-ack">I understand these checks remain unverified. Approval records a simulation only.</label><div class="review-buttons"><button class="primary" id="approve-plan">Approve simulation</button><button class="secondary" id="reject-plan">Reject proposal</button></div></div>` : `<div class="callout">${plan.status === "simulated_approved" ? "Approved in the sandbox. No customers were contacted and no incentives were issued." : "Proposal rejected. No actions were executed."}</div>`}${plan.status === "simulated_approved" && plan.items.length ? `<div class="review-box"><strong>Record a simulated outcome</strong><p>Demonstrates the feedback contract. These records are marked synthetic and excluded from model training.</p><div class="toolbar"><select id="outcome-customer" aria-label="Outcome customer">${plan.items.map((i) => `<option>${esc(i.customer_id)}</option>`).join("")}</select><select id="outcome-value" aria-label="Simulated outcome"><option value="retained">Retained</option><option value="churned">Churned</option><option value="no_response">No response</option></select><button class="secondary" id="record-outcome">Record</button></div></div>` : ""}<div style="margin-top:18px"><button class="quiet" id="export-plan">Download proposal JSON</button></div></section>`;
 }
-const SERIES_LABELS = ["s0", "s1", "s2", "s3"];
-
-function chartTicks(min, max, count) {
-  const span = max - min || 1;
-  return Array.from({ length: count + 1 }, (_, i) => min + (span * i) / count);
-}
-
-function plot(series, opts = {}) {
-  const w = 560;
-  const h = 250;
-  const pad = { l: 54, r: 16, t: 44, b: 36 };
-  const xs = series.flatMap((s) => s.points.map((p) => p[0]));
-  const ys = series.flatMap((s) => s.points.map((p) => p[1]));
-  const xMin = opts.xMin ?? Math.min(...xs);
-  const xMax = opts.xMax ?? Math.max(...xs);
-  const yMin = opts.yMin ?? Math.min(0, ...ys);
-  const yMax = opts.yMax ?? Math.max(...ys);
-  const sx = (x) => pad.l + ((x - xMin) / (xMax - xMin || 1)) * (w - pad.l - pad.r);
-  const sy = (y) => h - pad.b - ((y - yMin) / (yMax - yMin || 1)) * (h - pad.t - pad.b);
-  const fmtX = opts.xFmt ?? ((v) => v.toFixed(2));
-  const fmtY = opts.yFmt ?? ((v) => v.toFixed(2));
-  const grid = chartTicks(yMin, yMax, 4)
-    .map(
-      (v, index) =>
-        `<line class="grid" x1="${sx(xMin)}" x2="${sx(xMax)}" y1="${sy(v)}" y2="${sy(v)}"></line>` +
-        (index === 0
-          ? ""
-          : `<text class="tick" x="${sx(xMin) - 8}" y="${sy(v) + 3}" text-anchor="end">${fmtY(v)}</text>`)
-    )
-    .join("");
-  const xLabels = (opts.xTicks ?? chartTicks(xMin, xMax, 4))
-    .map(
-      (v) =>
-        `<text class="tick" x="${sx(v)}" y="${sy(yMin) + 16}" text-anchor="middle">${fmtX(v)}</text>`
-    )
-    .join("");
-  const zero = opts.zero
-    ? `<line class="zero" x1="${sx(xMin)}" x2="${sx(xMax)}" y1="${sy(0)}" y2="${sy(0)}"></line>`
-    : "";
-  const guide = opts.guide == null
-    ? ""
-    : `<line class="guide" x1="${sx(opts.guide)}" x2="${sx(opts.guide)}" y1="${sy(yMin)}" y2="${sy(yMax)}"></line>`;
-  const paths = series
-    .map((s, i) =>
-      `<polyline class="series s${i}" points="${s.points.map(([x, y]) => `${sx(x)},${sy(y)}`).join(" ")}"></polyline>` +
-      (opts.dots ? s.points.map(([x, y]) => `<circle class="dot s${i}" cx="${sx(x)}" cy="${sy(y)}" r="2.5"></circle>`).join("") : "")
-    )
-    .join("");
-  const legend = series
-    .map(
-      (s, i) =>
-        `<rect class="key s${i}" x="${pad.l + i * 118}" y="${pad.t - 14}" width="9" height="9" rx="2"></rect>` +
-        `<text class="tick" x="${pad.l + 14 + i * 118}" y="${pad.t - 6}">${esc(s.name)}</text>`
-    )
-    .join("");
-  return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(opts.title || "chart")}">${grid}${zero}${guide}${paths}${xLabels}${legend}<text class="tick" x="${pad.l}" y="${h - 4}">${esc(opts.xLabel || "")}</text><text class="tick" x="6" y="12">${esc(opts.yLabel || "")}</text></svg>`;
-}
-
-function bars(items, opts = {}) {
-  const w = 560;
-  const rowH = 30;
-  const left = 150;
-  const right = 76;
-  const top = 6;
-  const h = items.length * rowH + top + 8;
-  const peak = Math.max(...items.map((i) => i.value)) * 1.18;
-  const max = opts.max ?? (peak || 1);
-  const span = w - left - right;
-  const rows = items
-    .map((item, index) => {
-      const y = top + index * rowH;
-      const length = Math.max((item.value / max) * span, 2);
-      const interval =
-        item.lo == null
-          ? ""
-          : `<line class="ci" x1="${left + (item.lo / max) * span}" x2="${left + (item.hi / max) * span}" y1="${y + 11}" y2="${y + 11}"></line>`;
-      return (
-        `<text class="tick" x="${left - 10}" y="${y + 14}" text-anchor="end">${esc(item.label)}</text>` +
-        `<rect class="bar${item.highlight ? " hi" : ""}" x="${left}" y="${y + 3}" width="${length}" height="16" rx="3"></rect>` +
-        interval +
-        (left + length + 30 > w - right
-          ? `<text class="tick" style="fill:#fff" x="${left + length - 6}" y="${y + 15}" text-anchor="end">${item.value.toFixed(3)}</text>`
-          : `<text class="tick" x="${left + length + 6}" y="${y + 15}">${item.value.toFixed(3)}</text>`)
-      );
-    })
-    .join("");
-  return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(opts.title || "comparison")}">${rows}</svg>`;
-}
-
-function comparisonBars(r) {
-  return Object.entries(r.evaluation)
-    .filter(([, value]) => value && typeof value.pr_auc === "number")
-    .map(([name, value]) => {
-      const ci = value.pr_auc_bootstrap_95pct;
-      return {
-        label: name.replace(/_/g, " "),
-        value: value.pr_auc,
-        lo: ci ? ci[0] : null,
-        hi: ci ? ci[1] : null,
-        highlight: name === "logistic_regression",
-      };
-    });
-}
-
-function calibrationChart(r) {
-  return plot(
-    [
-      { name: "observed", points: r.calibration.map((b) => [b.mean_score, b.observed_rate]) },
-      { name: "perfect", points: [[0, 0], [1, 1]] },
-    ],
-    { xMin: 0, xMax: 1, yMin: 0, yMax: 1, dots: true, xLabel: "mean predicted risk", yLabel: "observed churn", title: "calibration" }
-  );
-}
-
-function decisionChart(r) {
-  const curve = r.economics.decision_curve.filter((row) => row.threshold <= 0.6);
-  return plot(
-    [
-      { name: "model", points: curve.map((d) => [d.threshold, d.model]) },
-      { name: "treat all", points: curve.map((d) => [d.threshold, d.treat_all]) },
-      { name: "treat none", points: curve.map((d) => [d.threshold, d.treat_none]) },
-    ],
-    { zero: true, xLabel: "threshold probability", yLabel: "net benefit per customer", title: "decision curve" }
-  );
-}
-
-function sensitivityChart(r) {
-  const block = r.economics.sensitivity;
-  const values = block.retained_values;
-  const series = values.map((value) => ({
-    name: `${value / 1e6}M retained`,
-    points: block.rows
-      .filter((row) => row.retained_value === value)
-      .sort((a, b) => a.success_multiplier - b.success_multiplier)
-      .map((row) => [row.success_multiplier, row.net_benefit / 1e6]),
-  }));
-  return plot(series, {
-    zero: true,
-    guide: block.breakeven_multiplier,
-    xLabel: "success-rate multiplier × assumptions",
-    yLabel: "net benefit (IDR M)",
-    yFmt: (v) => v.toFixed(1),
-    xFmt: (v) => `${v.toFixed(2)}×`,
-    title: "sensitivity",
-  });
-}
-
 function evidence() {
   const r = data.report,
     m = r.evaluation.logistic_regression,
@@ -337,7 +191,7 @@ function evidence() {
       )
       .join(
         "",
-      )}<div class="callout">Early snapshots are almost all positive. A standard chronological split would confound time with extract selection. December snapshots have no observed future labels.</div></section><section class="panel"><h2>Holdout model comparison</h2>${bars(comparisonBars(r), { title: "holdout average precision" })}<p>Logistic regression was pre-selected for interpretability. The tree is a fixed comparator. Ties in top-k metrics use expected random selection within the tied group.</p><div class="callout">${r.sensitivity.exact_feature_overlap_test_rows} holdout rows share exact feature values with training rows. Excluding these leaves ${r.sensitivity.nonoverlap_holdout.n} test customers and ${r.sensitivity.nonoverlap_holdout.positives} events; average precision ${r.sensitivity.nonoverlap_holdout.pr_auc.toFixed(3)}. This is a post-evaluation diagnostic.</div></section><section class="panel"><h2>Calibration and probability error</h2>${calibrationChart(r)}<p>Holdout Brier score: ${m.brier.toFixed(3)}. Calibration is descriptive on a small selected cohort. A probability estimate is not a treatment-effect estimate.</p></section></div><div class="evidence-grid"><section class="panel"><h2>Break-even sensitivity</h2>${sensitivityChart(r)}<p>Same policy, re-planned across assumed prevention rates and retained values. The dashed line marks break-even at ${r.economics.sensitivity.breakeven_multiplier ?? "n/a"}× the stated assumptions, where the recommended spend stops creating value.</p></section><section class="panel"><h2>Net benefit versus threshold</h2>${decisionChart(r)}<p>Net benefit of acting on the model compared with treating every customer and treating nobody, at equal cost-to-benefit weighting. Where the model line sits below <em>treat none</em>, acting on the score destroys value.</p></section></div><section class="panel"><h2>Observation coverage is not uniform</h2><div class="table-wrap"><table><thead><tr><th>Available at</th><th>Active customers</th><th>Next-month churn</th><th>Non-churn</th><th>Outcome window</th></tr></thead><tbody>${a.coverage.map((c) => `<tr><td>${c.snapshot}</td><td>${c.customers}</td><td>${c.churn ?? "—"}</td><td>${c.non_churn ?? "—"}</td><td>${c.label_observed ? "Assumed complete" : "Unobserved / censored"}</td></tr>`).join("")}</tbody></table></div></section><div class="evidence-grid plan-space"><section class="panel"><h2>Economic decision contract</h2><p><strong>Net benefit = risk × assumed prevention × retained value − cost.</strong></p><p>“Success” is interpreted as preventing churn among customers who would otherwise churn. The supplied 20% and 50% rates do not prove incremental uplift. Retained value is assumed to be contribution-equivalent; if it is revenue, replace it with margin-adjusted value.</p><p>Up to 30% of customer capacity is reserved for service reviews (rounded down, minimum one). Their benefits are unmeasured, and their assumed costs are subtracted from the plan’s scenario net total. The offer allocation is greedy and budget-feasible, not guaranteed globally optimal: an exact allocation under the same constraints is worth ${money(r.economics.optimisation.exact_net_benefit)} against ${money(r.economics.optimisation.greedy_net_benefit)}, a ${r.economics.optimisation.gap_pct.toFixed(1)}% gap left on the table for explainability.</p><p>Targeting check: ${(r.targeting.top_capacity.share_with_open_service_issue * 100).toFixed(0)}% of the capacity-sized shortlist has an open service issue, so service reviews mostly cannot help there. Expected cost per prevented churn is ${money(r.targeting.top_capacity.cost_per_expected_save)} on that shortlist against ${money(r.targeting.cohort.cost_per_expected_save)} across the cohort.</p></section><section class="panel"><h2>Limitations</h2><ul>${r.limitations.map((l) => `<li>${esc(l)}</li>`).join("")}</ul></section><section class="panel"><h2>What the agent can do</h2><p>Read a bounded shortlist, inspect evidence, compare allowed actions, calculate a feasible plan and submit it for review. Tool calls and decisions are recorded.</p><p>The backend owns arithmetic, constraints and approval transitions. Unknown consent blocks real execution. The demo has no messaging or incentive-issuance tool.</p></section><section class="panel"><h2>Experiment and monitoring plan</h2><p><strong>Experiment:</strong> randomized no-contact control versus eligible actions, stratified by risk. Measure incremental retained margin, complaints and opt-outs with a predeclared outcome window.</p><p><strong>Monitor:</strong> coverage and missingness; delayed PR-AUC and calibration; subgroup treatment/error rates; budget violations, rejected tool calls, API errors, latency, and human overrides.</p><p>Retrain only with observed, mature production outcomes. Sandbox feedback is explicitly excluded.</p></section></div><section class="panel"><h2>Subgroup audit · exploratory</h2><p class="muted">Gender and age do not enter the model. Removing them does not eliminate proxy discrimination. Small groups do not support fairness certification.</p><div class="table-wrap"><table><thead><tr><th>Dimension</th><th>Group</th><th>Customers</th><th>Churn events</th><th>Observed rate</th><th>Mean OOF score</th></tr></thead><tbody>${r.subgroups.map((g) => `<tr><td>${esc(g.dimension)}</td><td>${esc(g.group)}</td><td>${g.n}</td><td>${g.positive_count}</td><td>${pct(g.observed_rate)}</td><td>${pct(g.mean_score)}</td></tr>`).join("")}</tbody></table></div></section>`
+      )}<div class="callout">Early snapshots are almost all positive. A standard chronological split would confound time with extract selection. December snapshots have no observed future labels.</div></section><section class="panel"><h2>Holdout model comparison</h2>${modelComparisonChart(r)}<p>Logistic regression was pre-selected for interpretability. The tree is a fixed comparator. Ties in top-k metrics use expected random selection within the tied group.</p><div class="callout">${r.sensitivity.exact_feature_overlap_test_rows} holdout rows share exact feature values with training rows. Excluding these leaves ${r.sensitivity.nonoverlap_holdout.n} test customers and ${r.sensitivity.nonoverlap_holdout.positives} events; average precision ${r.sensitivity.nonoverlap_holdout.pr_auc.toFixed(3)}. This is a post-evaluation diagnostic.</div></section><section class="panel"><h2>Calibration and probability error</h2>${calibrationChart(r)}<p>Holdout Brier score: ${m.brier.toFixed(3)}. Calibration is descriptive on a small selected cohort. A probability estimate is not a treatment-effect estimate.</p></section></div><div class="evidence-grid"><section class="panel"><h2>Break-even sensitivity</h2>${sensitivityChart(r)}<p>Same policy, re-planned across assumed prevention rates and retained values. The dashed line marks break-even at ${r.economics.sensitivity.breakeven_multiplier ?? "n/a"}× the stated assumptions, where the recommended spend stops creating value.</p></section><section class="panel"><h2>Net benefit versus threshold</h2>${decisionChart(r)}<p>Net benefit of acting on the model compared with treating every customer and treating nobody, at equal cost-to-benefit weighting. Where the model line sits below <em>treat none</em>, acting on the score destroys value.</p></section></div><section class="panel"><h2>Observation coverage is not uniform</h2><div class="table-wrap"><table><thead><tr><th>Available at</th><th>Active customers</th><th>Next-month churn</th><th>Non-churn</th><th>Outcome window</th></tr></thead><tbody>${a.coverage.map((c) => `<tr><td>${c.snapshot}</td><td>${c.customers}</td><td>${c.churn ?? "—"}</td><td>${c.non_churn ?? "—"}</td><td>${c.label_observed ? "Assumed complete" : "Unobserved / censored"}</td></tr>`).join("")}</tbody></table></div></section><div class="evidence-grid plan-space"><section class="panel"><h2>Economic decision contract</h2><p><strong>Net benefit = risk × assumed prevention × retained value − cost.</strong></p><p>“Success” is interpreted as preventing churn among customers who would otherwise churn. The supplied 20% and 50% rates do not prove incremental uplift. Retained value is assumed to be contribution-equivalent; if it is revenue, replace it with margin-adjusted value.</p><p>Up to 30% of customer capacity is reserved for service reviews (rounded down, minimum one). Their benefits are unmeasured, and their assumed costs are subtracted from the plan’s scenario net total. The offer allocation is greedy and budget-feasible, not guaranteed globally optimal: an exact allocation under the same constraints is worth ${money(r.economics.optimisation.exact_net_benefit)} against ${money(r.economics.optimisation.greedy_net_benefit)}, a ${r.economics.optimisation.gap_pct.toFixed(1)}% gap left on the table for explainability.</p><p>Targeting check: ${(r.targeting.top_capacity.share_with_open_service_issue * 100).toFixed(0)}% of the capacity-sized shortlist has an open service issue, so service reviews mostly cannot help there. Expected cost per prevented churn is ${money(r.targeting.top_capacity.cost_per_expected_save)} on that shortlist against ${money(r.targeting.cohort.cost_per_expected_save)} across the cohort.</p></section><section class="panel"><h2>Limitations</h2><ul>${r.limitations.map((l) => `<li>${esc(l)}</li>`).join("")}</ul></section><section class="panel"><h2>What the agent can do</h2><p>Read a bounded shortlist, inspect evidence, compare allowed actions, calculate a feasible plan and submit it for review. Tool calls and decisions are recorded.</p><p>The backend owns arithmetic, constraints and approval transitions. Unknown consent blocks real execution. The demo has no messaging or incentive-issuance tool.</p></section><section class="panel"><h2>Experiment and monitoring plan</h2><p><strong>Experiment:</strong> randomized no-contact control versus eligible actions, stratified by risk. Measure incremental retained margin, complaints and opt-outs with a predeclared outcome window.</p><p><strong>Monitor:</strong> coverage and missingness; delayed PR-AUC and calibration; subgroup treatment/error rates; budget violations, rejected tool calls, API errors, latency, and human overrides.</p><p>Retrain only with observed, mature production outcomes. Sandbox feedback is explicitly excluded.</p></section></div><section class="panel"><h2>Subgroup audit · exploratory</h2><p class="muted">Gender and age do not enter the model. Removing them does not eliminate proxy discrimination. Small groups do not support fairness certification.</p><div class="table-wrap"><table><thead><tr><th>Dimension</th><th>Group</th><th>Customers</th><th>Churn events</th><th>Observed rate</th><th>Mean OOF score</th></tr></thead><tbody>${r.subgroups.map((g) => `<tr><td>${esc(g.dimension)}</td><td>${esc(g.group)}</td><td>${g.n}</td><td>${g.positive_count}</td><td>${pct(g.observed_rate)}</td><td>${pct(g.mean_score)}</td></tr>`).join("")}</tbody></table></div></section>`
   );
 }
 
