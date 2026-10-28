@@ -1,14 +1,14 @@
 :root {
-  --bg: #f4f6f8;
+  --bg: #f5f5f5;
   --paper: #fff;
-  --ink: #26313d;
-  --muted: #65717e;
-  --line: #dce2e7;
-  --forest: #2c506d;
-  --green: #346957;
-  --soft: #f1f4f6;
-  --orange: #965d33;
-  --red: #a5483d;
+  --ink: #1f1f1f;
+  --muted: #5f5f5f;
+  --line: #e0e0e0;
+  --forest: #741633;
+  --green: #4f0e22;
+  --soft: #f6e9ed;
+  --orange: #9e4462;
+  --red: #741633;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--ink);
   background: var(--bg);
@@ -41,7 +41,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible {
-  outline: 2px solid #4c7f9f;
+  outline: 2px solid #9e4462;
   outline-offset: 3px;
 }
 a {
@@ -121,17 +121,17 @@ small,
   border: 0;
   border-left: 2px solid transparent;
   border-radius: 0;
-  color: #4c5863;
+  color: #4a4a4a;
   font-size: 12px;
 }
 .nav-button.active {
-  background: #edf2f6;
+  background: #f6e9ed;
   border-left-color: var(--forest);
-  color: #234965;
+  color: #741633;
   font-weight: 600;
 }
 .nav-button:not(.active):hover {
-  background: #f5f6f7;
+  background: #f5f5f5;
 }
 .sidebar-note {
   margin: 32px 14px 0;
@@ -155,7 +155,7 @@ small,
   padding: 35px 14px 0;
   font-size: 11px;
   line-height: 1.7;
-  color: #52616e;
+  color: #5f5f5f;
 }
 .sidebar-footer small {
   font-size: 10px;
@@ -180,10 +180,10 @@ small,
 }
 .slash {
   margin: 0 10px;
-  color: #a0a8af;
+  color: #bfbfbf;
 }
 .snapshot-pill {
-  color: #546371;
+  color: #5f5f5f;
   font-size: 11px;
 }
 main {
@@ -230,15 +230,15 @@ main {
   color: #fff;
 }
 .primary:hover {
-  background: #213e57;
+  background: #4f0e22;
 }
 .secondary {
   background: white;
-  border-color: #cbd3da;
-  color: #354655;
+  border-color: #d9b8c3;
+  color: #741633;
 }
 .secondary:hover {
-  background: #f4f6f8;
+  background: #f6e9ed;
 }
 .quiet {
   background: transparent;
@@ -253,16 +253,16 @@ main {
   display: flex;
   align-items: baseline;
   gap: 12px;
-  border-left: 3px solid #8a9dab;
-  background: #edf1f4;
+  border-left: 3px solid #741633;
+  background: #f6e9ed;
   padding: 11px 14px;
   margin-bottom: 20px;
-  color: #53616c;
+  color: #5f5f5f;
   font-size: 11px;
   line-height: 1.6;
 }
 .banner strong {
-  color: #394b58;
+  color: #741633;
   white-space: nowrap;
   font-weight: 600;
 }
@@ -273,31 +273,31 @@ main {
   font-size: 10px;
   line-height: 1.2;
   padding: 4px 6px;
-  border: 1px solid #dce4e8;
+  border: 1px solid #e0e0e0;
   border-radius: 3px;
-  color: #516570;
-  background: #f4f7f9;
+  color: #5f5f5f;
+  background: #f5f5f5;
   font-weight: 500;
 }
 .badge.high {
-  background: #fbf2e9;
-  color: #875432;
-  border-color: #eedccc;
+  background: #741633;
+  color: #ffffff;
+  border-color: #741633;
 }
 .badge.medium {
-  background: #faf7e9;
-  color: #816d31;
-  border-color: #e9e0bd;
+  background: #f6e9ed;
+  color: #741633;
+  border-color: #e9ccd5;
 }
 .badge.low {
-  background: #eff5ef;
-  color: #536f55;
-  border-color: #dbe6da;
+  background: #f5f5f5;
+  color: #5f5f5f;
+  border-color: #e0e0e0;
 }
 .badge.pending {
-  background: #faf5e7;
-  color: #826927;
-  border-color: #eadfbf;
+  background: #ffffff;
+  color: #741633;
+  border-color: #741633;
 }
 .metric-grid {
   display: grid;
@@ -400,7 +400,7 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px solid #e8ecef;
+  border-bottom: 1px solid #ececec;
   padding: 10px 0;
   font-size: 11px;
 }
@@ -408,11 +408,11 @@ main {
   font-weight: 600;
 }
 .callout {
-  border-left: 2px solid #c7d2dc;
-  background: #f5f7f8;
+  border-left: 2px solid #e9ccd5;
+  background: #fbf6f8;
   padding: 10px 12px;
   font-size: 11px;
-  color: #5d6c77;
+  color: #5f5f5f;
   line-height: 1.6;
   margin-top: 15px;
 }
@@ -433,12 +433,12 @@ main {
 }
 .distribution-track {
   height: 6px;
-  background: #eef1f3;
+  background: #ededed;
 }
 .distribution-track i {
   height: 100%;
   display: block;
-  background: #758fa2;
+  background: #741633;
 }
 .table-wrap {
   overflow-x: auto;
@@ -452,21 +452,21 @@ table {
 th {
   font-size: 10px;
   font-weight: 600;
-  color: #586774;
+  color: #5f5f5f;
   padding: 11px 10px;
-  background: #f6f8f9;
+  background: #f7f7f7;
   border-block: 1px solid var(--line);
 }
 td {
   padding: 12px 10px;
-  border-bottom: 1px solid #e8ecef;
+  border-bottom: 1px solid #ececec;
   font-size: 11px;
 }
 tr:last-child td {
   border-bottom: 0;
 }
 tbody tr:hover {
-  background: #f8fafb;
+  background: #fbf6f8;
 }
 .customer-button {
   border: 0;
@@ -483,7 +483,7 @@ tbody tr:hover {
   display: inline-block;
   width: 30px;
   height: 4px;
-  background: #e9edf0;
+  background: #ededed;
   margin-right: 6px;
   vertical-align: middle;
   overflow: hidden;
@@ -491,7 +491,7 @@ tbody tr:hover {
 .risk-meter i {
   display: block;
   height: 100%;
-  background: #788fa0;
+  background: #741633;
 }
 .table-note {
   font-size: 10px;
@@ -508,7 +508,7 @@ tbody tr:hover {
   padding: 17px 0;
   border-top: 1px solid var(--line);
   font-size: 9px;
-  color: #7c8790;
+  color: #7a7a7a;
 }
 .toolbar {
   display: flex;
@@ -524,7 +524,7 @@ tbody tr:hover {
 input[type="search"],
 select,
 textarea {
-  border: 1px solid #cbd4dc;
+  border: 1px solid #cfcfcf;
   background: #fff;
   border-radius: 3px;
   padding: 9px 11px;
@@ -552,7 +552,7 @@ textarea {
   display: block;
   font-size: 11px;
   margin-bottom: 8px;
-  color: #596874;
+  color: #5f5f5f;
 }
 .control-block {
   margin-bottom: 20px;
@@ -571,7 +571,7 @@ input[type="range"] {
   display: flex;
   justify-content: space-between;
   font-size: 10px;
-  color: #73808b;
+  color: #7a7a7a;
   margin-top: 5px;
 }
 .check-label {
@@ -630,11 +630,11 @@ input[type="checkbox"] {
   line-height: 1.6;
 }
 .suggestion {
-  border: 1px solid #d7dfe5;
-  background: #f7f9fa;
+  border: 1px solid #e9ccd5;
+  background: #fbf6f8;
   padding: 6px 9px;
   border-radius: 3px;
-  color: #526b7e;
+  color: #741633;
   font-size: 11px;
   margin: 0 5px 6px 0;
 }
@@ -668,25 +668,25 @@ input[type="checkbox"] {
 }
 .rationale {
   font-size: 12px;
-  color: #4e5d68;
+  color: #4a4a4a;
   white-space: pre-wrap;
   line-height: 1.8;
   padding: 12px 14px;
-  border-left: 2px solid #a7b9c8;
-  background: #f6f8fa;
+  border-left: 2px solid #c98a9e;
+  background: #fbf6f8;
   margin: 15px 0;
 }
 .review-box {
   padding: 16px;
-  background: #fcfaf4;
-  border: 1px solid #e7e0cb;
+  background: #fbf6f8;
+  border: 1px solid #e9ccd5;
   border-radius: 3px;
   margin-top: 18px;
   font-size: 12px;
 }
 .review-box p {
   margin: 8px 0 12px;
-  color: #6c685b;
+  color: #5f5f5f;
   font-size: 11px;
 }
 .review-box .check-label {
@@ -706,7 +706,7 @@ input[type="checkbox"] {
   font-weight: 500;
 }
 .trace-step {
-  border-left: 2px solid #d9e1e7;
+  border-left: 2px solid #e9ccd5;
   padding: 10px 0 10px 13px;
   margin-left: 5px;
   font-size: 11px;
@@ -720,7 +720,7 @@ input[type="checkbox"] {
 .trace-step pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  background: #f4f6f8;
+  background: #f5f5f5;
   padding: 12px;
   font-size: 10px;
   max-height: 240px;
@@ -734,10 +734,10 @@ input[type="checkbox"] {
   line-height: 1.8;
 }
 .error {
-  background: #fdf3ee;
-  border: 1px solid #ebcdbd;
+  background: #f6e9ed;
+  border: 1px solid #e9ccd5;
   border-radius: 3px;
-  color: #8d5035;
+  color: #741633;
   padding: 13px;
   font-size: 12px;
   margin-top: 14px;
@@ -768,7 +768,7 @@ input[type="checkbox"] {
 .evidence-grid p,
 .evidence-grid li {
   font-size: 12px;
-  color: #596874;
+  color: #5f5f5f;
   line-height: 1.8;
 }
 .evidence-grid ul {
@@ -820,7 +820,7 @@ input[type="checkbox"] {
   margin: 23px 0 9px;
 }
 dialog {
-  border: 1px solid #ccd5dc;
+  border: 1px solid #d6d6d6;
   border-radius: 5px;
   width: min(800px, 94vw);
   max-height: 88vh;
@@ -828,7 +828,7 @@ dialog {
   color: var(--ink);
 }
 dialog::backdrop {
-  background: #26384770;
+  background: #1f1f1f70;
 }
 .dialog-close {
   position: absolute;
@@ -862,7 +862,7 @@ dialog p {
   left: 50%;
   transform: translateX(-50%);
   max-width: 90vw;
-  background: #334a5c;
+  background: #4f0e22;
   color: #fff;
   border-radius: 4px;
   padding: 12px 18px;
@@ -886,7 +886,7 @@ dialog p {
 .spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid #d5e0e7;
+  border: 2px solid #e9ccd5;
   border-top-color: var(--forest);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -1157,7 +1157,7 @@ dialog p {
 .plot-legend i.dash {
   height: 0;
   background: none !important;
-  border-top: 2px dashed #aab6c0;
+  border-top: 2px dashed #bfbfbf;
 }
 
 .panel figure {
