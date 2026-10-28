@@ -9,22 +9,18 @@ import hashlib
 import json
 import math
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-
-from retention import decisions
-from sklearn.metrics import average_precision_score, roc_auc_score, brier_score_loss
+from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
+
+from retention import decisions
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
@@ -144,15 +140,15 @@ def metrics(y, scores):
     }
 
 
-def interval(y, p):
+def interval(y, p, draws=1000):
+    """Bootstrap 95% interval for PR-AUC; resamples with a single class are skipped."""
+    y, p = np.asarray(y), np.asarray(p)
     rng = np.random.default_rng(SEED)
     values = []
-    for _ in range(1000):
+    for _ in range(draws):
         idx = rng.integers(0, len(y), len(y))
-        if len(set(np.asarray(y)[idx])) == 2:
-            values.append(
-                average_precision_score(np.asarray(y)[idx], np.asarray(p)[idx])
-            )
+        if len(np.unique(y[idx])) == 2:
+            values.append(average_precision_score(y[idx], p[idx]))
     return [float(v) for v in np.quantile(values, [0.025, 0.975])]
 
 
@@ -202,30 +198,14 @@ def audit(base, usage, support):
     }
 
 
-def main():
-    out = ROOT / "outputs"
-    out.mkdir(exist_ok=True)
-    base, usage, support = load_data()
-    frame = build_cohort(base, usage, support)
-    X, y = frame[FEATURES], frame.label
-    train, test = train_test_split(
-        np.arange(len(frame)), test_size=0.25, stratify=y, random_state=SEED
-    )
-    fixed_model = model().fit(X.iloc[train], y.iloc[train])
-    predictions = fixed_model.predict_proba(X.iloc[test])[:, 1]
+def evaluate_holdout(frame, X, y, train, test):
+    """Compare the pre-specified models on the 25% holdout; nothing is tuned on it."""
+    fitted = model().fit(X.iloc[train], y.iloc[train])
+    predictions = fitted.predict_proba(X.iloc[test])[:, 1]
     comparison = {"logistic_regression": metrics(y.iloc[test], predictions)}
     comparison["logistic_regression"]["pr_auc_bootstrap_95pct"] = interval(
         y.iloc[test], predictions
     )
-    fingerprints = X.fillna("__missing__").astype(str).agg("|".join, axis=1)
-    overlap = fingerprints.iloc[test].isin(set(fingerprints.iloc[train])).to_numpy()
-    sensitivity = {
-        "exact_feature_overlap_test_rows": int(overlap.sum()),
-        "distinct_feature_vectors_in_cohort": int(fingerprints.nunique()),
-        "nonoverlap_holdout": metrics(y.iloc[test][~overlap], predictions[~overlap]),
-        "note": "Post-evaluation diagnostic, not used for model selection. Exact feature matches are different customer IDs; similarity may inflate internal performance.",
-    }
-    # Pre-specified comparator, never selected or tuned on the test set.
     tree = model(
         DecisionTreeClassifier(max_depth=3, min_samples_leaf=15, random_state=SEED)
     ).fit(X.iloc[train], y.iloc[train])
@@ -240,55 +220,81 @@ def main():
         + (frame.tenureMonths < 6).astype(float) * 0.3
         + (frame.technical_30d > 0).astype(float) * 0.2
     )
-    comparison["business_rule"] = metrics(y.iloc[test], rule.iloc[test])
-    comparison["business_rule"]["brier"] = (
-        None  # Ranking rule is not a probability model.
-    )
-    # Cohort-wide demo scores are genuinely out of fold; not fitted-row scores.
-    oof = np.zeros(len(frame))
+    # A ranking rule is not a probability model, so it has no Brier score.
+    comparison["business_rule"] = {
+        **metrics(y.iloc[test], rule.iloc[test]),
+        "brier": None,
+    }
+    return comparison, predictions
+
+
+def overlap_sensitivity(X, y, train, test, predictions):
+    """Re-score the holdout without customers whose features match a training row."""
+    fingerprints = X.fillna("__missing__").astype(str).agg("|".join, axis=1)
+    overlap = fingerprints.iloc[test].isin(set(fingerprints.iloc[train])).to_numpy()
+    return {
+        "exact_feature_overlap_test_rows": int(overlap.sum()),
+        "distinct_feature_vectors_in_cohort": int(fingerprints.nunique()),
+        "nonoverlap_holdout": metrics(y.iloc[test][~overlap], predictions[~overlap]),
+        "note": "Post-evaluation diagnostic, not used for model selection. Exact feature matches are different customer IDs; similarity may inflate internal performance.",
+    }
+
+
+def top_signals(fitted, X, rows, top=4):
+    """Largest per-customer log-odds contributions of a fitted logistic pipeline."""
+    transformed = fitted.named_steps["prep"].transform(X)
+    if hasattr(transformed, "toarray"):
+        transformed = transformed.toarray()
+    contributions = transformed * fitted.named_steps["model"].coef_[0]
+    names = fitted.named_steps["prep"].get_feature_names_out()
     signals = {}
-    folds = np.zeros(len(frame), dtype=int)
+    for row, contrib in zip(rows, contributions):
+        signals[int(row)] = [
+            {
+                "feature": names[j].split("__", 1)[1],
+                "contribution_log_odds": round(float(contrib[j]), 3),
+                "direction": "increases risk" if contrib[j] > 0 else "decreases risk",
+            }
+            for j in np.argsort(-np.abs(contrib))[:top]
+        ]
+    return signals
+
+
+def out_of_fold(X, y):
+    """Five-fold scores, so no customer is scored by a model that saw them."""
+    scores = np.zeros(len(X))
+    folds = np.zeros(len(X), dtype=int)
+    signals = {}
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
     for fold, (fit, val) in enumerate(cv.split(X, y), 1):
-        m = model().fit(X.iloc[fit], y.iloc[fit])
-        oof[val] = m.predict_proba(X.iloc[val])[:, 1]
+        fitted = model().fit(X.iloc[fit], y.iloc[fit])
+        scores[val] = fitted.predict_proba(X.iloc[val])[:, 1]
         folds[val] = fold
-        transformed = m.named_steps["prep"].transform(X.iloc[val])
-        if hasattr(transformed, "toarray"):
-            transformed = transformed.toarray()
-        contributions = transformed * m.named_steps["model"].coef_[0]
-        names = m.named_steps["prep"].get_feature_names_out()
-        for row_index, contrib in zip(val, contributions):
-            ix = np.argsort(-np.abs(contrib))[:4]
-            signals[int(row_index)] = [
-                {
-                    "feature": names[j].split("__", 1)[1],
-                    "contribution_log_odds": round(float(contrib[j]), 3),
-                    "direction": "increases risk"
-                    if contrib[j] > 0
-                    else "decreases risk",
-                }
-                for j in ix
-            ]
-    calibration = []
-    for bucket in np.array_split(np.argsort(oof), 5):
-        calibration.append(
-            {
-                "n": len(bucket),
-                "mean_score": float(oof[bucket].mean()),
-                "observed_rate": float(y.iloc[bucket].mean()),
-            }
-        )
-    fairness = []
-    for col in ["gender", "region"]:
-        for group, indexes in frame.groupby(
-            frame[col].fillna("Unknown")
-        ).groups.items():
+        signals.update(top_signals(fitted, X.iloc[val], val))
+    return scores, folds, signals
+
+
+def calibration_table(y, scores, bins=5):
+    return [
+        {
+            "n": len(bucket),
+            "mean_score": float(scores[bucket].mean()),
+            "observed_rate": float(y.iloc[bucket].mean()),
+        }
+        for bucket in np.array_split(np.argsort(scores), bins)
+    ]
+
+
+def subgroup_table(frame, y, scores, columns=("gender", "region")):
+    """Descriptive churn, score and recall by group; not a fairness certification."""
+    rows = []
+    for col in columns:
+        groups = frame.groupby(frame[col].fillna("Unknown")).groups
+        for group, indexes in groups.items():
             idx = np.array(list(indexes))
-            yy = y.iloc[idx].to_numpy()
-            pp = oof[idx]
+            yy, pp = y.iloc[idx].to_numpy(), scores[idx]
             k = max(1, math.ceil(len(idx) * 0.2))
-            fairness.append(
+            rows.append(
                 {
                     "dimension": col,
                     "group": str(group),
@@ -302,6 +308,88 @@ def main():
                     "caution": "Descriptive only; small subgroup; no fairness certification.",
                 }
             )
+    return rows
+
+
+def risk_band(score):
+    return "High" if score >= 0.5 else "Medium" if score >= 0.2 else "Low"
+
+
+def evidence(row):
+    """Plain-language reasons a reviewer can check against the source systems."""
+    reasons = []
+    if row.technical_30d:
+        reasons.append("Recent technical contact; current resolution must be verified.")
+    if row.billing_30d:
+        reasons.append("Recent billing contact; issue details must be verified.")
+    if row.tenureMonths < 6:
+        reasons.append("Short tenure: under six months.")
+    if row.contractType == "Month-to-month":
+        reasons.append("Month-to-month contract.")
+    return reasons or ["No recent support signal in the supplied extract."]
+
+
+def customer_records(frame, usage, scores, folds, signals):
+    """Decision records without outcome columns; consent and eligibility stay unknown."""
+    history = usage[usage.available_at <= CUTOFF].groupby("customerId").size()
+    records = []
+    for i, row in frame.iterrows():
+        features = {
+            c: str(row[c])
+            if c in CATEGORICAL
+            else float(row[c])
+            if pd.notna(row[c])
+            else None
+            for c in FEATURES
+        }
+        records.append(
+            {
+                "customer_id": row.customerId,
+                "region": row.region,
+                "risk_score": round(float(scores[i]), 6),
+                "risk_band": risk_band(scores[i]),
+                "features": features,
+                "evidence": evidence(row),
+                "model_signals": signals[i],
+                "data_quality": "Partial history",
+                "history_months_at_snapshot": int(history.get(row.customerId, 0)),
+                "consent": "unknown",
+                "eligibility": "review_required",
+                "resolution_status": "unknown_at_snapshot",
+                "last_contact_at": None,
+                "score_method": "out_of_fold_logistic",
+                "fold": int(folds[i]),
+            }
+        )
+    return records
+
+
+def limitations(overlap_rows):
+    return [
+        "No out-of-time validation: early snapshots are heavily outcome-selected.",
+        "Churn registry completeness through 30 November is assumed, not documented.",
+        "Profiles lack effective timestamps; historical stability is assumed.",
+        "Support resolution status is excluded: no status-effective timestamp.",
+        "Random customer holdout is internal validation in one selected historical cohort.",
+        f"{overlap_rows} holdout customers share exact model features with training customers; non-overlap sensitivity is reported separately.",
+        "OOF demo scores are retrospective estimates, not production-calibrated probabilities.",
+        "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
+        "Gender, age, partner and dependents are excluded from scoring; proxies may remain.",
+    ]
+
+
+def main():
+    out = ROOT / "outputs"
+    out.mkdir(exist_ok=True)
+    base, usage, support = load_data()
+    frame = build_cohort(base, usage, support)
+    X, y = frame[FEATURES], frame.label
+    train, test = train_test_split(
+        np.arange(len(frame)), test_size=0.25, stratify=y, random_state=SEED
+    )
+    comparison, predictions = evaluate_holdout(frame, X, y, train, test)
+    sensitivity = overlap_sensitivity(X, y, train, test, predictions)
+    oof, folds, signals = out_of_fold(X, y)
     report = {
         "snapshot": "2025-11-01",
         "horizon_end_exclusive": "2025-12-01",
@@ -316,74 +404,12 @@ def main():
         "evaluation": comparison,
         "sensitivity": sensitivity,
         "oof": metrics(y, oof),
-        "calibration": calibration,
-        "subgroups": fairness,
+        "calibration": calibration_table(y, oof),
+        "subgroups": subgroup_table(frame, y, oof),
         "audit": audit(base, usage, support),
-        "limitations": [
-            "No out-of-time validation: early snapshots are heavily outcome-selected.",
-            "Churn registry completeness through 30 November is assumed, not documented.",
-            "Profiles lack effective timestamps; historical stability is assumed.",
-            "Support resolution status is excluded: no status-effective timestamp.",
-            "Random customer holdout is internal validation in one selected historical cohort.",
-            f"{int(overlap.sum())} holdout customers share exact model features with training customers; non-overlap sensitivity is reported separately.",
-            "OOF demo scores are retrospective estimates, not production-calibrated probabilities.",
-            "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
-            "Gender, age, partner and dependents are excluded from scoring; proxies may remain.",
-        ],
+        "limitations": limitations(sensitivity["exact_feature_overlap_test_rows"]),
     }
-    customers = []
-    for i, row in frame.iterrows():
-        features = {
-            c: (
-                str(row[c])
-                if c in CATEGORICAL
-                else float(row[c])
-                if pd.notna(row[c])
-                else None
-            )
-            for c in FEATURES
-        }
-        evidence = []
-        if row.technical_30d:
-            evidence.append(
-                "Recent technical contact; current resolution must be verified."
-            )
-        if row.billing_30d:
-            evidence.append("Recent billing contact; issue details must be verified.")
-        if row.tenureMonths < 6:
-            evidence.append("Short tenure: under six months.")
-        if row.contractType == "Month-to-month":
-            evidence.append("Month-to-month contract.")
-        if not evidence:
-            evidence.append("No recent support signal in the supplied extract.")
-        customers.append(
-            {
-                "customer_id": row.customerId,
-                "region": row.region,
-                "risk_score": round(float(oof[i]), 6),
-                "risk_band": "High"
-                if oof[i] >= 0.5
-                else "Medium"
-                if oof[i] >= 0.2
-                else "Low",
-                "features": features,
-                "evidence": evidence,
-                "model_signals": signals[i],
-                "data_quality": "Partial history",
-                "history_months_at_snapshot": int(
-                    (
-                        (usage.customerId == row.customerId)
-                        & (usage.available_at <= CUTOFF)
-                    ).sum()
-                ),
-                "consent": "unknown",
-                "eligibility": "review_required",
-                "resolution_status": "unknown_at_snapshot",
-                "last_contact_at": None,
-                "score_method": "out_of_fold_logistic",
-                "fold": int(folds[i]),
-            }
-        )
+    customers = customer_records(frame, usage, oof, folds, signals)
     policy_base = {"budget": 3_000_000, "max_customers": 10}
     report["economics"] = {
         "sensitivity": decisions.sensitivity_curve(customers, policy_base),
@@ -403,52 +429,6 @@ def main():
         json.dumps(intelligence, indent=2, allow_nan=False)
     )
     frame.assign(oof_score=oof, fold=folds).to_csv(out / "cohort.csv", index=False)
-    # Only anonymous aggregate results are published in the report.
-    plt.rcParams.update(
-        {
-            "font.family": "DejaVu Sans",
-            "axes.spines.top": False,
-            "axes.spines.right": False,
-        }
-    )
-    fig, ax = plt.subplots(figsize=(8, 4.3), layout="constrained")
-    labels = ["Logistic", "Shallow tree", "Business rule", "Prevalence"]
-    vals = [
-        comparison[k]["pr_auc"]
-        for k in [
-            "logistic_regression",
-            "shallow_tree",
-            "business_rule",
-            "constant_prevalence",
-        ]
-    ]
-    bars = ax.barh(
-        labels[::-1], vals[::-1], color=["#BCC7CF", "#8BA3B0", "#597D8C", "#087F73"]
-    )
-    ax.set_xlim(0, 1.08)
-    ax.set_xlabel("Average precision (PR-AUC) · 52-customer holdout")
-    for b, v in zip(bars, vals[::-1]):
-        ax.text(v + 0.015, b.get_y() + b.get_height() / 2, f"{v:.3f}", va="center")
-    fig.savefig(out / "model_comparison.png", dpi=180)
-    plt.close(fig)
-    fig, ax = plt.subplots(figsize=(8, 4.3), layout="constrained")
-    ax.plot([0, 1], [0, 1], ls="--", c="#BCC7CF", label="Perfect calibration")
-    ax.plot(
-        [c["mean_score"] for c in calibration],
-        [c["observed_rate"] for c in calibration],
-        marker="o",
-        c="#087F73",
-        label="OOF quintiles",
-    )
-    ax.set(
-        xlabel="Mean out-of-fold score",
-        ylabel="Observed churn fraction",
-        xlim=(0, 1),
-        ylim=(0, 1),
-    )
-    ax.legend()
-    fig.savefig(out / "calibration.png", dpi=180)
-    plt.close(fig)
     print(
         f"Cohort: {len(frame)} customers | Holdout: {len(test)} | Average precision: {comparison['logistic_regression']['pr_auc']:.3f}\nResults saved to {out}"
     )

@@ -6,6 +6,8 @@ These are reported next to the shipped policy, never used to change it silently.
 from __future__ import annotations
 
 import numpy as np
+import scipy.sparse as sparse
+from scipy.optimize import Bounds, LinearConstraint, milp
 
 from retention import policy
 
@@ -108,9 +110,6 @@ def _breakeven(rows, retained):
 
 def optimisation_gap(customers, base=None):
     """Exact optimum over the same action set and constraints, against the greedy plan."""
-    import scipy.sparse as sparse
-    from scipy.optimize import Bounds, LinearConstraint, milp
-
     config = policy.settings(base)
     greedy = policy.build_plan(customers, config)
     options = []
