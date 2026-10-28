@@ -3,66 +3,60 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Retention workbench · IOH technical assessment</title>
+    <title>Customer Retention · Decision workbench</title>
     <meta
       name="description"
-      content="A retrospective telco retention workbench connecting point-in-time churn analysis, budget-aware decisions, and a bounded AI agent."
+      content="Retrospective retention workbench: point-in-time churn scores, budget-aware actions and a bounded agent whose proposals a person approves."
     />
+    <meta name="theme-color" content="#741633" />
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%231c453d'/%3E%3Cpath d='M11 28V12h9a5 5 0 0 1 0 10h-9m10 0 7 6' stroke='%23d8ed83' fill='none' stroke-width='3'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23741633'/%3E%3Cpath d='M10 28V12h10a5 5 0 0 1 0 10H10m10 0 8 6' stroke='%23fff' fill='none' stroke-width='3.2'/%3E%3C/svg%3E"
     />
+    <link rel="preload" href="/fonts/montserrat-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/montserrat-700.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/app.js"></script>
   </head>
   <body>
-    <aside class="sidebar">
-      <a class="brand" href="#overview"
-        >Retention<br /><span>workbench</span></a
-      >
-      <div class="nav-label">Analysis & decisions</div>
-      <nav aria-label="Main navigation">
-        <button data-tab="overview" class="nav-button active">Overview</button>
-        <button data-tab="customers" class="nav-button">
-          Customer explorer
-        </button>
-        <button data-tab="agent" class="nav-button">Agent workspace</button>
-        <button data-tab="evidence" class="nav-button">Evidence & model</button>
-      </nav>
-      <div class="sidebar-note">
-        <span class="tiny-label">Model & policy</span>
-        <dl>
-          <dt>Model</dt>
-          <dd>Logistic · 5-fold OOF</dd>
-          <dt>Policy</dt>
-          <dd>retention-v1</dd>
-          <dt>Execution</dt>
-          <dd>Simulation only</dd>
+    <header class="masthead">
+      <div class="masthead-inner">
+        <a class="wordmark" href="#overview">
+          <span class="wordmark-title">Customer Retention</span>
+          <span class="wordmark-sub">Decision workbench</span>
+        </a>
+        <dl class="masthead-meta">
+          <div><dt>Decision date</dt><dd>1 Nov 2025</dd></div>
+          <div><dt>Model</dt><dd>Logistic · 5-fold OOF</dd></div>
+          <div><dt>Policy</dt><dd>retention-v1</dd></div>
         </dl>
       </div>
-      <div class="sidebar-footer">
-        Retrospective assessment<br /><small
-          >IOH · Data Scientist assignment</small
-        >
+      <nav class="tabs" aria-label="Sections">
+        <div class="tabs-inner">
+          <button data-tab="overview" class="tab active">Overview</button>
+          <button data-tab="customers" class="tab">Customers</button>
+          <button data-tab="agent" class="tab">Agent workspace</button>
+          <button data-tab="evidence" class="tab">Evidence</button>
+          <span class="page-no" id="page-no" aria-hidden="true">1</span>
+        </div>
+      </nav>
+    </header>
+    <div class="notice" role="note">
+      <div class="notice-inner">
+        <strong>Retrospective simulation.</strong>
+        <span>Scores are out-of-fold estimates and offer benefits are assumptions. No customer is contacted and no incentive is issued.</span>
       </div>
-    </aside>
-    <div class="shell">
-      <header class="topbar">
-        <span
-          >Customer intelligence <span class="slash">/</span>
-          <strong id="breadcrumb">Overview</strong></span
-        >
-        <div class="snapshot-pill">Decision date: 01 Nov 2025</div>
-      </header>
-      <main id="main" tabindex="-1">
-        <div class="loading">Loading the retention workbench…</div>
-      </main>
-      <footer class="page-footer">
-        <span>IOH / DATA SCIENTIST ASSESSMENT</span
-        ><span>Historical data. Scenario economics. Simulated actions.</span>
-      </footer>
     </div>
-    <dialog id="customer-dialog">
+    <main id="main" tabindex="-1">
+      <div class="loading">Loading the workbench…</div>
+    </main>
+    <footer class="page-footer">
+      <div class="page-footer-inner">
+        <span>Source: supplied datasets (720 customers; 208 active on 1 Nov 2025). Offer costs, success rates and the Rp6M customer value come from the brief.</span>
+        <span>Data Scientist take-home · Taufiq R Ahmad</span>
+      </div>
+    </footer>
+    <dialog id="customer-dialog" aria-labelledby="customer-title">
       <button class="dialog-close" aria-label="Close customer detail">×</button>
       <div id="customer-detail"></div>
     </dialog>
