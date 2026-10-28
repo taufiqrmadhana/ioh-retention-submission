@@ -72,7 +72,7 @@
       "prevalence": 0.14893617021276595,
       "pr_auc": 0.9404761904761902,
       "roc_auc": 0.9821428571428571,
-      "brier": 0.03633100060855952,
+      "brier": 0.03633100060855953,
       "top_k": 10,
       "precision_at_20pct": 0.6,
       "recall_at_20pct": 0.8571428571428571,
@@ -86,7 +86,7 @@
     "prevalence": 0.1971153846153846,
     "pr_auc": 0.9856371569377052,
     "roc_auc": 0.9960566671534978,
-    "brier": 0.02781462278635097,
+    "brier": 0.027814622786350975,
     "top_k": 42,
     "precision_at_20pct": 0.9285714285714286,
     "recall_at_20pct": 0.9512195121951219,
@@ -95,22 +95,22 @@
   "calibration": [
     {
       "n": 42,
-      "mean_score": 0.0018926220439460916,
+      "mean_score": 0.0018926220439460933,
       "observed_rate": 0.0
     },
     {
       "n": 42,
-      "mean_score": 0.012343385652302625,
+      "mean_score": 0.01234338565230263,
       "observed_rate": 0.0
     },
     {
       "n": 42,
-      "mean_score": 0.040575622704457734,
+      "mean_score": 0.04057562270445775,
       "observed_rate": 0.0
     },
     {
       "n": 41,
-      "mean_score": 0.15985088595195734,
+      "mean_score": 0.15985088595195737,
       "observed_rate": 0.04878048780487805
     },
     {
@@ -136,7 +136,7 @@
       "n": 101,
       "positive_count": 20,
       "observed_rate": 0.19801980198019803,
-      "mean_score": 0.1898203689752998,
+      "mean_score": 0.18982036897529986,
       "recall_at_20pct": 0.95,
       "caution": "Descriptive only; small subgroup; no fairness certification."
     },
@@ -146,7 +146,7 @@
       "n": 8,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.06694759844081144,
+      "mean_score": 0.06694759844081151,
       "recall_at_20pct": null,
       "caution": "Descriptive only; small subgroup; no fairness certification."
     },
@@ -156,7 +156,7 @@
       "n": 60,
       "positive_count": 25,
       "observed_rate": 0.4166666666666667,
-      "mean_score": 0.4110189437134289,
+      "mean_score": 0.41101894371342895,
       "recall_at_20pct": 0.48,
       "caution": "Descriptive only; small subgroup; no fairness certification."
     },
@@ -176,7 +176,7 @@
       "n": 24,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.02369200791764488,
+      "mean_score": 0.023692007917644902,
       "recall_at_20pct": null,
       "caution": "Descriptive only; small subgroup; no fairness certification."
     },
@@ -186,7 +186,7 @@
       "n": 23,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.038482583515364086,
+      "mean_score": 0.038482583515364106,
       "recall_at_20pct": null,
       "caution": "Descriptive only; small subgroup; no fairness certification."
     },
@@ -196,7 +196,7 @@
       "n": 41,
       "positive_count": 9,
       "observed_rate": 0.21951219512195122,
-      "mean_score": 0.19038699378087118,
+      "mean_score": 0.1903869937808712,
       "recall_at_20pct": 0.8888888888888888,
       "caution": "Descriptive only; small subgroup; no fairness certification."
     }
@@ -212,11 +212,6 @@
     "blank_total_charges": 34,
     "usage_in_churn_month": 134,
     "support_after_churn": 3,
-    "support_topics": {
-      "technical_issue": 130,
-      "billing_inquiry": 94,
-      "contract_question": 44
-    },
     "coverage": [
       {
         "snapshot": "2025-04-01",
@@ -883,82 +878,5 @@
       "share_with_open_service_issue": 0.135
     },
     "note": "Risk x assumed success is a targeting proxy, not measured uplift. The share with an open service issue marks where a cheaper service fix may dominate a discount; only a randomised holdout can confirm responsiveness."
-  },
-  "segments": {
-    "rows": [
-      {
-        "segment": "Month-to-month",
-        "n_in": 91,
-        "n_out": 117,
-        "rate_in": 0.45054945054945056,
-        "rate_out": 0.0
-      },
-      {
-        "segment": "Tenure < 6 months",
-        "n_in": 70,
-        "n_out": 138,
-        "rate_in": 0.5857142857142857,
-        "rate_out": 0.0
-      },
-      {
-        "segment": "Electronic check",
-        "n_in": 102,
-        "n_out": 106,
-        "rate_in": 0.4019607843137255,
-        "rate_out": 0.0
-      },
-      {
-        "segment": "Fiber optic",
-        "n_in": 84,
-        "n_out": 124,
-        "rate_in": 0.4880952380952381,
-        "rate_out": 0.0
-      },
-      {
-        "segment": "Support contact",
-        "n_in": 38,
-        "n_out": 170,
-        "rate_in": 0.07894736842105263,
-        "rate_out": 0.2235294117647059
-      }
-    ],
-    "overlap": {
-      "definition": "Month-to-month, tenure under 6 months, electronic check and fiber optic",
-      "n": 53,
-      "churned": 41,
-      "all_churned": 41
-    }
-  },
-  "strategies": {
-    "basic_from": 0.125,
-    "premium_from": 0.1667,
-    "rows": [
-      {
-        "strategy": "Basic to all",
-        "contacted": 208,
-        "cost": 31200000.0,
-        "expected_saved": 8.2,
-        "net_benefit": 18000000.0
-      },
-      {
-        "strategy": "Premium to all",
-        "contacted": 208,
-        "cost": 93600000.0,
-        "expected_saved": 20.5,
-        "net_benefit": 29400000.0
-      },
-      {
-        "strategy": "Targeted rule",
-        "contacted": 69,
-        "cost": 28350000.0,
-        "expected_saved": 20.5,
-        "net_benefit": 94650000.0
-      }
-    ],
-    "unflagged": {
-      "n": 139,
-      "churned": 0
-    },
-    "note": "Targeted rule uses out-of-fold scores only. Expected saves apply the assumed success rates to customers who actually churned among those contacted."
   }
 }

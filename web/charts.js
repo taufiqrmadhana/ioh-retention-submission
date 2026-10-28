@@ -1,13 +1,11 @@
 // Inline SVG charts rendered from report.json. No dependencies, no raster assets.
 
-// Deck palette: maroon for the series that carries the message, greys for context.
-const MUTED = "#5f5f5f";
-const GRID = "#ededed";
-const RULE = "#bfbfbf";
-const NAVY = "#741633";
-const QUIET = "#bfbfbf";
-const INK = "#1f1f1f";
-const RAMP = ["#e9ccd5", "#c98a9e", "#9e4462", "#741633"];
+const MUTED = "#6b7885";
+const GRID = "#e8ecef";
+const RULE = "#c9d3da";
+const NAVY = "#2c506d";
+const QUIET = "#8fa3b1";
+const RAMP = ["#a9c4d4", "#7ba3bc", "#4d7c9b", "#2c506d"];
 let serial = 0;
 
 const esc = (value) =>
@@ -81,7 +79,7 @@ function lines(cfg) {
         .map(([x, y]) => `${px(x).toFixed(1)},${py(Math.max(y0 - 0.02, Math.min(y1 + 0.02, y))).toFixed(1)}`)
         .join(" ");
       const line = `<polyline points="${pts}" fill="none" stroke="${s.color || NAVY}" stroke-width="${
-        s.width || 2.2
+        s.width || 2
       }" stroke-linejoin="round" stroke-linecap="round"${s.dash ? ` stroke-dasharray="${s.dash}"` : ""}/>`;
       const dots = (s.dots || [])
         .map(
@@ -110,7 +108,9 @@ function lines(cfg) {
   const guide =
     cfg.guide == null
       ? ""
-      : `<line x1="${px(cfg.guide).toFixed(1)}" x2="${px(cfg.guide).toFixed(1)}" y1="${pad.t}" y2="${bottom}" stroke="${INK}" stroke-width="1" stroke-dasharray="3 3"/><text x="${(px(cfg.guide) + 6).toFixed(1)}" y="${pad.t + 10}" text-anchor="start" class="guide">${esc(
+      : `<line x1="${px(cfg.guide).toFixed(1)}" x2="${px(cfg.guide).toFixed(1)}" y1="${pad.t}" y2="${bottom}" stroke="#965d33" stroke-width="1" stroke-dasharray="3 3"/><text x="${Math.min(Math.max(px(cfg.guide), left + 40), right - 40).toFixed(
+          1
+        )}" y="${pad.t + 10}" text-anchor="middle" fill="#965d33" class="guide">${esc(
           cfg.guideLabel || ""
         )}</text>`;
 
@@ -132,7 +132,7 @@ function lines(cfg) {
 function bars(items, cfg = {}) {
   const w = 460;
   const rowH = 32;
-  const left = 150;
+  const left = 116;
   const right = w - 44;
   const top = 12;
   const height = items.length * rowH + top + 40;
@@ -168,9 +168,9 @@ function bars(items, cfg = {}) {
             }" x2="${(left + item.hi * span).toFixed(1)}" y1="${y + 3}" y2="${
               y + 11
             }" stroke="${MUTED}" stroke-width="1" stroke-opacity="0.6"/>`;
-      return `<text x="${left - 10}" y="${y + 11}" text-anchor="end"${item.strong ? ' class="label-strong"' : ""}>${esc(item.label)}</text>${band}<rect x="${left}" y="${y}" width="${len.toFixed(
+      return `<text x="${left - 10}" y="${y + 11}" text-anchor="end">${esc(item.label)}</text>${band}<rect x="${left}" y="${y}" width="${len.toFixed(
         1
-      )}" height="14" fill="${item.color || NAVY}"${item.muted ? ' fill-opacity="0.5"' : ""}/><text x="${
+      )}" height="14" rx="2" fill="${item.color || NAVY}"${item.muted ? ' fill-opacity="0.5"' : ""}/><text x="${
         right + 4
       }" y="${y + 11}" class="value">${item.value.toFixed(3)}</text>`;
     })
@@ -185,13 +185,12 @@ export function modelComparisonChart(report) {
   const rows = Object.entries(report.evaluation)
     .filter(([, value]) => value && typeof value.pr_auc === "number")
     .map(([name, value]) => ({
-      label: name.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()),
-      strong: name === "logistic_regression",
+      label: name.replace(/_/g, " "),
       value: value.pr_auc,
       lo: Array.isArray(value.pr_auc_bootstrap_95pct) ? value.pr_auc_bootstrap_95pct[0] : null,
       hi: Array.isArray(value.pr_auc_bootstrap_95pct) ? value.pr_auc_bootstrap_95pct[1] : null,
       color: name === "logistic_regression" ? NAVY : QUIET,
-      muted: false,
+      muted: name !== "logistic_regression" && name !== "prevalence",
     }))
     .sort((a, b) => b.value - a.value);
   return bars(rows, { title: "holdout average precision" });
@@ -211,10 +210,10 @@ export function calibrationChart(report) {
     xLabel: "mean predicted risk",
     legendHtml: legend([
       { label: "observed", color: NAVY },
-      { label: "perfect calibration", color: QUIET, dash: true },
+      { label: "perfect calibration", color: "#aab6c0", dash: true },
     ]),
     series: [
-      { name: "perfect", color: QUIET, width: 1.2, dash: "5 5", points: [[0, 0], [1, 1]] },
+      { name: "perfect", color: "#b6c0c8", width: 1.2, dash: "5 5", points: [[0, 0], [1, 1]] },
       {
         name: "observed",
         color: NAVY,
@@ -267,7 +266,7 @@ export function decisionChart(report) {
     legendHtml: legend([
       { label: "model", color: NAVY },
       { label: "treat all", color: QUIET, dash: true },
-      { label: "treat none", color: RULE },
+      { label: "treat none", color: "#c9d3da", dash: true },
     ]),
     series: [
       { name: "model", color: NAVY, points: curve.map((row) => [row.threshold, row.model]) },

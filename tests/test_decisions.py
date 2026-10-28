@@ -64,19 +64,3 @@ def test_targeting_diagnostic_segments_the_highest_risk():
     assert diagnostic["top_capacity"]["n"] == BASE["max_customers"]
     assert diagnostic["top_capacity"]["mean_risk"] >= diagnostic["cohort"]["mean_risk"]
     assert 0 <= diagnostic["cohort"]["share_with_open_service_issue"] <= 1
-
-
-def test_strategy_comparison_matches_hand_calculation():
-    scores = [0.05, 0.14, 0.9, 0.9]
-    labels = [0, 0, 1, 1]
-    result = decisions.strategy_comparison(scores, labels, BASE)
-    assert result["basic_from"] == pytest.approx(0.125)
-    assert result["premium_from"] == pytest.approx(1 / 6, abs=1e-4)
-    rows = {r["strategy"]: r for r in result["rows"]}
-    assert rows["Basic to all"]["cost"] == 600_000
-    assert rows["Premium to all"]["expected_saved"] == pytest.approx(1.0)
-    targeted = rows["Targeted rule"]
-    assert targeted["contacted"] == 3
-    assert targeted["cost"] == 150_000 + 2 * 450_000
-    assert targeted["net_benefit"] == pytest.approx(1.0 * 6_000_000 - 1_050_000)
-    assert result["unflagged"] == {"n": 1, "churned": 0}

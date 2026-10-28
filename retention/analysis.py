@@ -186,7 +186,6 @@ def audit(base, usage, support):
             (linked.month == linked.churnDate.dt.to_period("M").dt.to_timestamp()).sum()
         ),
         "support_after_churn": int((contacts.date > contacts.churnDate).sum()),
-        "support_topics": {k: int(v) for k, v in support.topic.value_counts().items()},
         "coverage": coverage,
         "sources": {
             name: hashlib.sha256((DATA / name).read_bytes()).hexdigest()
@@ -365,43 +364,6 @@ def customer_records(frame, usage, scores, folds, signals):
     return records
 
 
-SEGMENTS = {
-    "Month-to-month": lambda f: f.contractType == "Month-to-month",
-    "Tenure < 6 months": lambda f: f.tenureMonths < 6,
-    "Electronic check": lambda f: f.paymentMethod == "Electronic check",
-    "Fiber optic": lambda f: f.hasInternetService == "Fiber optic",
-    "Support contact": lambda f: f.support_30d > 0,
-}
-
-
-def segment_table(frame):
-    """Churn inside and outside each descriptive segment, plus the four-way overlap."""
-    rows = []
-    for name, rule in SEGMENTS.items():
-        inside = rule(frame).to_numpy()
-        rows.append(
-            {
-                "segment": name,
-                "n_in": int(inside.sum()),
-                "n_out": int((~inside).sum()),
-                "rate_in": float(frame.label[inside].mean()),
-                "rate_out": float(frame.label[~inside].mean()),
-            }
-        )
-    overlap = np.logical_and.reduce(
-        [SEGMENTS[k](frame).to_numpy() for k in list(SEGMENTS)[:4]]
-    )
-    return {
-        "rows": rows,
-        "overlap": {
-            "definition": "Month-to-month, tenure under 6 months, electronic check and fiber optic",
-            "n": int(overlap.sum()),
-            "churned": int(frame.label[overlap].sum()),
-            "all_churned": int(frame.label.sum()),
-        },
-    }
-
-
 def limitations(overlap_rows):
     return [
         "No out-of-time validation: early snapshots are heavily outcome-selected.",
@@ -455,8 +417,6 @@ def main():
         "decision_curve": decisions.decision_curve(y.iloc[test].to_numpy(), predictions),
     }
     report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
-    report["segments"] = segment_table(frame)
-    report["strategies"] = decisions.strategy_comparison(oof, y.to_numpy())
     intelligence = {
         "snapshot": report["snapshot"],
         "model_version": "lr-oof-v1-seed42",

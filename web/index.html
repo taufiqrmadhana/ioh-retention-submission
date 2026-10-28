@@ -3,41 +3,66 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Customer Retention · Interactive deck</title>
+    <title>Retention workbench · IOH technical assessment</title>
     <meta
       name="description"
-      content="From churn prediction to the right action, at the right cost: the take-home deck with a live plan builder, a bounded agent and a customer explorer."
+      content="A retrospective telco retention workbench connecting point-in-time churn analysis, budget-aware decisions, and a bounded AI agent."
     />
-    <meta name="theme-color" content="#741633" />
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23741633'/%3E%3Cpath d='M10 28V12h10a5 5 0 0 1 0 10H10m10 0 8 6' stroke='%23fff' fill='none' stroke-width='3.2'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%231c453d'/%3E%3Cpath d='M11 28V12h9a5 5 0 0 1 0 10h-9m10 0 7 6' stroke='%23d8ed83' fill='none' stroke-width='3'/%3E%3C/svg%3E"
     />
-    <link rel="preload" href="/fonts/montserrat-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/montserrat-700.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/app.js"></script>
   </head>
   <body>
-    <header class="bar">
-      <a class="bar-title" href="#s1">Customer Retention <span>Interactive deck</span></a>
-      <nav class="bar-sections" aria-label="Sections">
-        <button data-goto="s2" data-section="background">Background</button>
-        <button data-goto="s4" data-section="analysis">Analysis</button>
-        <button data-goto="s6" data-section="solution">Solution</button>
-        <button data-goto="s9" data-section="implementation">Implementation</button>
-        <button data-goto="a1" data-section="appendix">Appendix</button>
+    <aside class="sidebar">
+      <a class="brand" href="#overview"
+        >Retention<br /><span>workbench</span></a
+      >
+      <div class="nav-label">Analysis & decisions</div>
+      <nav aria-label="Main navigation">
+        <button data-tab="overview" class="nav-button active">Overview</button>
+        <button data-tab="customers" class="nav-button">
+          Customer explorer
+        </button>
+        <button data-tab="agent" class="nav-button">Agent workspace</button>
+        <button data-tab="evidence" class="nav-button">Evidence & model</button>
       </nav>
-      <div class="bar-pager">
-        <button id="prev-slide" aria-label="Previous slide">‹</button>
-        <span id="slide-count" aria-live="polite">1 / 18</span>
-        <button id="next-slide" aria-label="Next slide">›</button>
+      <div class="sidebar-note">
+        <span class="tiny-label">Model & policy</span>
+        <dl>
+          <dt>Model</dt>
+          <dd>Logistic · 5-fold OOF</dd>
+          <dt>Policy</dt>
+          <dd>retention-v1</dd>
+          <dt>Execution</dt>
+          <dd>Simulation only</dd>
+        </dl>
       </div>
-    </header>
-    <main id="deck" tabindex="-1">
-      <div class="loading">Loading the deck…</div>
-    </main>
-    <dialog id="customer-dialog" aria-labelledby="customer-title">
+      <div class="sidebar-footer">
+        Retrospective assessment<br /><small
+          >IOH · Data Scientist assignment</small
+        >
+      </div>
+    </aside>
+    <div class="shell">
+      <header class="topbar">
+        <span
+          >Customer intelligence <span class="slash">/</span>
+          <strong id="breadcrumb">Overview</strong></span
+        >
+        <div class="snapshot-pill">Decision date: 01 Nov 2025</div>
+      </header>
+      <main id="main" tabindex="-1">
+        <div class="loading">Loading the retention workbench…</div>
+      </main>
+      <footer class="page-footer">
+        <span>IOH / DATA SCIENTIST ASSESSMENT</span
+        ><span>Historical data. Scenario economics. Simulated actions.</span>
+      </footer>
+    </div>
+    <dialog id="customer-dialog">
       <button class="dialog-close" aria-label="Close customer detail">×</button>
       <div id="customer-detail"></div>
     </dialog>

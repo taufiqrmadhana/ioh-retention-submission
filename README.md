@@ -10,7 +10,7 @@ Churn analysis and budget-aware retention planning for the supplied telco extrac
 - `retention/analysis.py` — cohort construction, features, model evaluation, out-of-fold scores.
 - `retention/policy.py` — action eligibility, costs, budget and capacity allocation.
 - `retention/agent.py` — tool-calling agent over the analysis and policy.
-- `web/` — the submission deck as an interactive site (vanilla JS, no build step): the story slides, a live plan builder, the agent with review and approval, and a customer explorer. `web/policy.js` is the JS port of the policy, shared by the browser and the worker.
+- `web/` — the workbench frontend (vanilla JS, no build step). `web/policy.js` is the JS port of the policy, shared by the browser and the worker.
 - `worker/` — API layer: serves `web/`, exposes `/api/*`, owns validation, approval state and the agent call.
 - `outputs/` — generated artefacts; `intelligence.json` (scores, no labels) and `report.json` (evaluation) are committed because the API serves them.
 - `tests/` — analysis, policy and agent checks.
@@ -38,7 +38,7 @@ Decision date 01 Nov 2025, outcome window [01 Nov, 01 Dec). Features are compute
 
 ## Decision diagnostics
 
-`outputs/report.json` also carries the aggregates the deck quotes (churn by segment, and blanket offers against the risk-threshold rule), plus three checks next to the plan: *sensitivity* (the same
+`outputs/report.json` carries three checks next to the plan: *sensitivity* (the same
 policy re-planned across assumed success rates and retained values, with the
 break-even point where net benefit hits zero), *optimisation* (an exact mixed-integer
 allocation under the same budget and capacity, bounding what the greedy plan leaves
