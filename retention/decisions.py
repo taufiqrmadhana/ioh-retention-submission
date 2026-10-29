@@ -318,8 +318,14 @@ def _offer_breakeven(config):
     return policy.ACTIONS["basic_offer"]["cost"] / scale if scale else None
 
 
-def plan_impact(customers, base=None, labels=None):
-    """The same policy priced with raw scores versus calibrated risks."""
+def plan_impact(customers, base=None, labels=None, alternatives=None):
+    """The same policy priced with raw scores, calibrated risks and alternative calibrations.
+
+    `alternatives` maps a name to one probability per customer (for example a
+    Platt map); each is planned under the same settings. `score_order` checks
+    whether the shipped plan's picks are simply the highest raw scores in their
+    route, and `offer_risk_levels` shows how many distinct risks the offers sit at.
+    """
     config = policy.settings(base)
     raw_only = [{k: v for k, v in c.items() if k != "calibrated_risk"} for c in customers]
     raw, cal = policy.build_plan(raw_only, config), policy.build_plan(customers, config)
@@ -328,16 +334,60 @@ def plan_impact(customers, base=None, labels=None):
     def picked(plan):
         return {(i["customer_id"], i["action"]) for i in plan["items"]}
 
-    return {
+    def above(group):
+        return None if threshold is None else sum(policy.decision_risk(c) >= threshold for c in group)
+
+    result = {
         "raw": _summary(raw["items"], labels),
         "calibrated": _summary(cal["items"], labels),
         "same_customers": len({i["customer_id"] for i in raw["items"]} & {i["customer_id"] for i in cal["items"]}),
         "same_customer_actions": len(picked(raw) & picked(cal)),
         "offer_breakeven_risk": threshold,
-        "above_breakeven_raw": None if threshold is None else sum(c["risk_score"] >= threshold for c in customers),
-        "above_breakeven_calibrated": None if threshold is None else sum(policy.decision_risk(c) >= threshold for c in customers),
-        "note": "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, not only the totals.",
+        "above_breakeven_raw": above(raw_only),
+        "above_breakeven_calibrated": above(customers),
     }
+    for name, risks in (alternatives or {}).items():
+        repriced = [{**c, "calibrated_risk": float(r)} for c, r in zip(customers, risks)]
+        plan = policy.build_plan(repriced, config)
+        result[name] = {
+            **_summary(plan["items"], labels),
+            "same_customer_actions_as_calibrated": len(picked(plan) & picked(cal)),
+            "above_breakeven": above(repriced),
+        }
+    result["score_order"] = _score_order(customers, cal["items"], config)
+    result["note"] = (
+        "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, "
+        "not only the totals. When the offers sit at one risk level, net benefit per rupiah is the same for "
+        "each of them, so cost decides the mix: basic offers fill the slots, then upgrades to premium while "
+        "the budget allows, with the raw score breaking ties."
+    )
+    return result
+
+
+def _score_order(customers, items, config):
+    """Whether each route's picks are its highest raw scores, and the risks the offers sit at."""
+    by_id = {c["customer_id"]: c for c in customers}
+    routes = {"offers": lambda a: a.endswith("_offer"), "reviews": lambda a: a.endswith("_review")}
+    out = {}
+    for route, member in routes.items():
+        chosen = {i["customer_id"] for i in items if member(i["action"])}
+        pool = sorted(
+            (
+                c
+                for c in customers
+                if any(a["eligible_for_proposal"] and member(a["action"]) for a in policy.compare_actions(c, config))
+            ),
+            key=lambda c: (-c["risk_score"], c["customer_id"]),
+        )
+        out[route] = {
+            "picked": len(chosen),
+            "eligible": len(pool),
+            "top_by_score": chosen == {c["customer_id"] for c in pool[: len(chosen)]},
+        }
+    out["offer_risk_levels"] = sorted(
+        {round(policy.decision_risk(by_id[i["customer_id"]]), 4) for i in items if i["action"].endswith("_offer")}
+    )
+    return out
 
 
 PREMIUM_GRID = tuple(round(0.2 + 0.025 * i, 3) for i in range(17))

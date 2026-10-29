@@ -56,9 +56,11 @@ control group the result cannot be attributed to the offer.
 | 50% | Premium break-even, 7.5 pts | **693 (1,386)** | 383 / 3,442 (3,825) |
 | 50% | Brief's assumption, 25 pts | 58 (116) | 30 / 267 (297) |
 
-Plan the pilot on about 1,400 offer-eligible customers, 700 per arm. At the
-cohort's 21% eligible share that means roughly 6,800 scored customers; pool
-consecutive monthly scoring runs if one month is not enough. Running the pilot
+Plan the pilot on about 1,400 offer-eligible customers, 700 per arm, drawn
+from the full production base, not this 720-customer extract (which holds 43
+such customers). At the cohort's 21% eligible share that means roughly 6,800
+scored customers; pool consecutive monthly scoring runs if one month is not
+enough. Running the pilot
 90/10 instead would need about 2.8 times as many customers for the same power,
 which is why the 10% split is kept for after rollout.
 

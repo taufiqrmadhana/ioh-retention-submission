@@ -292,7 +292,37 @@
       "offer_breakeven_risk": 0.125,
       "above_breakeven_raw": 69,
       "above_breakeven_calibrated": 53,
-      "note": "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, not only the totals."
+      "platt": {
+        "customers": 10,
+        "actions": {
+          "billing_review": 3,
+          "premium_offer": 6,
+          "basic_offer": 1
+        },
+        "cost": 2925000,
+        "expected_saves": 3.2,
+        "scenario_net_benefit": 16274707,
+        "churners_reached": 8,
+        "blocked_by_policy": 0,
+        "same_customer_actions_as_calibrated": 10,
+        "above_breakeven": 45
+      },
+      "score_order": {
+        "offers": {
+          "picked": 7,
+          "eligible": 180,
+          "top_by_score": true
+        },
+        "reviews": {
+          "picked": 3,
+          "eligible": 10,
+          "top_by_score": true
+        },
+        "offer_risk_levels": [
+          0.9706
+        ]
+      },
+      "note": "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, not only the totals. When the offers sit at one risk level, net benefit per rupiah is the same for each of them, so cost decides the mix: basic offers fill the slots, then upgrades to premium while the budget allows, with the raw score breaking ties."
     }
   },
   "subgroups": [

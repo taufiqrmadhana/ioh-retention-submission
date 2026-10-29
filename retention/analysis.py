@@ -452,6 +452,20 @@ def smoothed_isotonic(scores, labels):
     return _step_calibrator(scores, labels, smooth=True)
 
 
+def platt(scores, labels):
+    """Platt scaling as one sigmoid on the logit of the score.
+
+    Monotone like the isotonic map, so it keeps the raw ranking. Used only to
+    check that the plan does not depend on which calibrator prices it.
+    """
+    def logit(values):
+        p = np.clip(np.asarray(values, float), 1e-6, 1 - 1e-6)
+        return np.log(p / (1 - p)).reshape(-1, 1)
+
+    fitted = LogisticRegression(C=1e6).fit(logit(scores), np.asarray(labels, int))
+    return lambda new: fitted.predict_proba(logit(new))[:, 1]
+
+
 def _step_calibrator(scores, labels, smooth):
     scores, labels = np.asarray(scores, float), np.asarray(labels, float)
     order = np.argsort(scores, kind="stable")
@@ -696,7 +710,7 @@ def main():
         "decision_curve": decisions.decision_curve(y.iloc[test].to_numpy(), predictions),
     }
     report["calibration_check"]["plan_impact"] = decisions.plan_impact(
-        customers, policy_base, labels
+        customers, policy_base, labels, alternatives={"platt": platt(oof, y)(oof)}
     )
     report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
     report["pilot"] = decisions.pilot_design(customers, labels, policy_base)

@@ -105,6 +105,25 @@ def test_plan_impact_prices_with_calibrated_risk():
     assert impact["calibrated"]["customers"] == 0  # nobody is worth an offer or a review
 
 
+def test_plan_impact_reprices_with_alternative_calibrations():
+    same = decisions.plan_impact(COHORT, BASE, alternatives={"same": [c["risk_score"] for c in COHORT]})
+    assert same["same"]["same_customer_actions_as_calibrated"] == same["calibrated"]["customers"]
+    low = decisions.plan_impact(COHORT, BASE, alternatives={"low": [0.05] * len(COHORT)})
+    assert low["low"]["customers"] == 0 and low["low"]["above_breakeven"] == 0
+
+
+def test_score_order_shows_when_cost_decides_the_mix():
+    order = decisions.plan_impact(COHORT, BASE)["score_order"]
+    assert order["offers"]["top_by_score"] and order["reviews"]["top_by_score"]
+    flat = [{**c, "calibrated_risk": 0.9} for c in COHORT]
+    impact = decisions.plan_impact(flat, BASE)
+    assert impact["score_order"]["offer_risk_levels"] == [0.9]
+    # Same risk everywhere: basic offers fill the 8 offer slots, then upgrades while budget allows.
+    assert impact["calibrated"]["actions"] == {
+        "technical_review": 1, "billing_review": 1, "basic_offer": 3, "premium_offer": 5
+    }
+
+
 def test_premium_stress_crossings_are_real():
     stress = decisions.premium_stress(COHORT, BASE)
     cut = stress["policy_beats_basic_above"]
