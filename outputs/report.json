@@ -9,6 +9,24 @@
     "train": 156,
     "test": 52
   },
+  "cohort_flow": {
+    "source_customers": 720,
+    "churned_before_snapshot": 104,
+    "not_churned_before_snapshot": 616,
+    "excluded_no_october_usage": 408,
+    "excluded_reasons": {
+      "first_usage_in_november_or_later": 401,
+      "of_which_tenure_2_plus_months": 378,
+      "last_usage_before_october": 6,
+      "no_usage_rows": 1
+    },
+    "cohort": 208,
+    "november_churners_in_files": 41,
+    "november_churners_in_cohort": 41,
+    "cohort_churn_rate": 0.1971153846153846,
+    "churn_rate_if_all_not_churned_were_active": 0.06655844155844155,
+    "note": "Cohort = customers with an October usage row and no churn before 1 Nov. All November churners have that row; most non-churners do not, so inclusion depends on the outcome. The cohort rate is the churn rate among observable customers, not the churn rate of the active base, and model metrics inherit this selection."
+  },
   "evaluation": {
     "logistic_regression": {
       "n": 52,
@@ -72,7 +90,7 @@
       "prevalence": 0.14893617021276595,
       "pr_auc": 0.9404761904761902,
       "roc_auc": 0.9821428571428571,
-      "brier": 0.03633100060855953,
+      "brier": 0.03633100060855952,
       "top_k": 10,
       "precision_at_20pct": 0.6,
       "recall_at_20pct": 0.8571428571428571,
@@ -86,7 +104,7 @@
     "prevalence": 0.1971153846153846,
     "pr_auc": 0.9856371569377052,
     "roc_auc": 0.9960566671534978,
-    "brier": 0.027814622786350975,
+    "brier": 0.02781462278635097,
     "top_k": 42,
     "precision_at_20pct": 0.9285714285714286,
     "recall_at_20pct": 0.9512195121951219,
@@ -95,22 +113,22 @@
   "calibration": [
     {
       "n": 42,
-      "mean_score": 0.0018926220439460933,
+      "mean_score": 0.0018926220439460916,
       "observed_rate": 0.0
     },
     {
       "n": 42,
-      "mean_score": 0.01234338565230263,
+      "mean_score": 0.012343385652302625,
       "observed_rate": 0.0
     },
     {
       "n": 42,
-      "mean_score": 0.04057562270445775,
+      "mean_score": 0.040575622704457734,
       "observed_rate": 0.0
     },
     {
       "n": 41,
-      "mean_score": 0.15985088595195737,
+      "mean_score": 0.15985088595195734,
       "observed_rate": 0.04878048780487805
     },
     {
@@ -119,6 +137,95 @@
       "observed_rate": 0.9512195121951219
     }
   ],
+  "calibration_check": {
+    "method": "Sigmoid (Platt) scaling via CalibratedClassifierCV, 5 internal folds, fitted on training rows only.",
+    "holdout": {
+      "raw": {
+        "brier": 0.03458215914962986,
+        "log_loss": 0.12696820510929094,
+        "pr_auc": 0.9666666666666666
+      },
+      "sigmoid": {
+        "brier": 0.03960163701743123,
+        "log_loss": 0.14981744678077114,
+        "pr_auc": 0.9666666666666666
+      }
+    },
+    "out_of_fold": {
+      "raw": {
+        "brier": 0.02781462278635097,
+        "log_loss": 0.11487744017609604,
+        "pr_auc": 0.9856371569377052
+      },
+      "sigmoid": {
+        "brier": 0.032841983446273246,
+        "log_loss": 0.13738839182286824,
+        "pr_auc": 0.9859039721153915
+      }
+    },
+    "calibration_sigmoid_oof": [
+      {
+        "n": 42,
+        "mean_score": 0.005367135172173391,
+        "observed_rate": 0.0
+      },
+      {
+        "n": 42,
+        "mean_score": 0.024322916074493457,
+        "observed_rate": 0.0
+      },
+      {
+        "n": 42,
+        "mean_score": 0.06480842617645899,
+        "observed_rate": 0.0
+      },
+      {
+        "n": 41,
+        "mean_score": 0.18728014052436645,
+        "observed_rate": 0.07317073170731707
+      },
+      {
+        "n": 41,
+        "mean_score": 0.7486650175542962,
+        "observed_rate": 0.926829268292683
+      }
+    ],
+    "shipped_scores": "raw out-of-fold logistic",
+    "plan_impact": {
+      "raw": {
+        "customers": 10,
+        "actions": {
+          "technical_review": 3,
+          "premium_offer": 6,
+          "basic_offer": 1
+        },
+        "cost": 3000000,
+        "expected_saves": 3.15,
+        "scenario_net_benefit": 15912689,
+        "churners_reached": 7,
+        "blocked_by_policy": 0
+      },
+      "alternative": {
+        "customers": 10,
+        "actions": {
+          "technical_review": 3,
+          "premium_offer": 6,
+          "basic_offer": 1
+        },
+        "cost": 3000000,
+        "expected_saves": 3.1,
+        "scenario_net_benefit": 15608889,
+        "churners_reached": 7,
+        "blocked_by_policy": 0
+      },
+      "same_customers": 10,
+      "same_customer_actions": 8,
+      "offer_breakeven_risk": 0.125,
+      "above_breakeven_raw": 69,
+      "above_breakeven_alternative": 69,
+      "note": "Each plan's net benefit is valued with its own scores; compare actions and churners reached, not only the totals."
+    }
+  },
   "subgroups": [
     {
       "dimension": "gender",
@@ -127,8 +234,12 @@
       "positive_count": 21,
       "observed_rate": 0.21212121212121213,
       "mean_score": 0.21576851017500182,
-      "recall_at_20pct": 0.9047619047619048,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "flagged_at_global_top20pct": 21.0,
+      "recall_at_global_top20pct": 0.9523809523809523,
+      "group_quota_top20pct": 20,
+      "recall_within_group_top20pct": 0.9047619047619048,
+      "recall_ceiling_within_group": 0.9523809523809523,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     },
     {
       "dimension": "gender",
@@ -136,9 +247,13 @@
       "n": 101,
       "positive_count": 20,
       "observed_rate": 0.19801980198019803,
-      "mean_score": 0.18982036897529986,
-      "recall_at_20pct": 0.95,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "mean_score": 0.1898203689752998,
+      "flagged_at_global_top20pct": 21.0,
+      "recall_at_global_top20pct": 0.95,
+      "group_quota_top20pct": 21,
+      "recall_within_group_top20pct": 0.95,
+      "recall_ceiling_within_group": 1.0,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     },
     {
       "dimension": "gender",
@@ -146,9 +261,13 @@
       "n": 8,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.06694759844081151,
-      "recall_at_20pct": null,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "mean_score": 0.06694759844081144,
+      "flagged_at_global_top20pct": 0.0,
+      "recall_at_global_top20pct": null,
+      "group_quota_top20pct": 2,
+      "recall_within_group_top20pct": null,
+      "recall_ceiling_within_group": null,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     },
     {
       "dimension": "region",
@@ -156,9 +275,13 @@
       "n": 60,
       "positive_count": 25,
       "observed_rate": 0.4166666666666667,
-      "mean_score": 0.41101894371342895,
-      "recall_at_20pct": 0.48,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "mean_score": 0.4110189437134289,
+      "flagged_at_global_top20pct": 25.0,
+      "recall_at_global_top20pct": 1.0,
+      "group_quota_top20pct": 12,
+      "recall_within_group_top20pct": 0.48,
+      "recall_ceiling_within_group": 0.48,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     },
     {
       "dimension": "region",
@@ -167,8 +290,12 @@
       "positive_count": 7,
       "observed_rate": 0.11666666666666667,
       "mean_score": 0.11913015971097743,
-      "recall_at_20pct": 1.0,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "flagged_at_global_top20pct": 7.0,
+      "recall_at_global_top20pct": 0.8571428571428571,
+      "group_quota_top20pct": 12,
+      "recall_within_group_top20pct": 1.0,
+      "recall_ceiling_within_group": 1.0,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     },
     {
       "dimension": "region",
@@ -176,9 +303,13 @@
       "n": 24,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.023692007917644902,
-      "recall_at_20pct": null,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "mean_score": 0.02369200791764488,
+      "flagged_at_global_top20pct": 0.0,
+      "recall_at_global_top20pct": null,
+      "group_quota_top20pct": 5,
+      "recall_within_group_top20pct": null,
+      "recall_ceiling_within_group": null,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     },
     {
       "dimension": "region",
@@ -186,9 +317,13 @@
       "n": 23,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.038482583515364106,
-      "recall_at_20pct": null,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "mean_score": 0.038482583515364086,
+      "flagged_at_global_top20pct": 0.0,
+      "recall_at_global_top20pct": null,
+      "group_quota_top20pct": 5,
+      "recall_within_group_top20pct": null,
+      "recall_ceiling_within_group": null,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     },
     {
       "dimension": "region",
@@ -196,9 +331,13 @@
       "n": 41,
       "positive_count": 9,
       "observed_rate": 0.21951219512195122,
-      "mean_score": 0.1903869937808712,
-      "recall_at_20pct": 0.8888888888888888,
-      "caution": "Descriptive only; small subgroup; no fairness certification."
+      "mean_score": 0.19038699378087118,
+      "flagged_at_global_top20pct": 10.0,
+      "recall_at_global_top20pct": 0.8888888888888888,
+      "group_quota_top20pct": 9,
+      "recall_within_group_top20pct": 0.8888888888888888,
+      "recall_ceiling_within_group": 1.0,
+      "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota."
     }
   ],
   "audit": {
@@ -284,6 +423,7 @@
     }
   },
   "limitations": [
+    "Cohort inclusion depends on the outcome: all 41 November churners have the October usage row that inclusion needs, while 408 customers not churned by 1 Nov lack it. The 19.7% rate and the model metrics describe this observable cohort, not the whole active base.",
     "No out-of-time validation: early snapshots are heavily outcome-selected.",
     "Churn registry completeness through 30 November is assumed, not documented.",
     "Profiles lack effective timestamps; historical stability is assumed.",
@@ -722,16 +862,101 @@
         "cost": 3000000,
         "customers": 10
       },
-      "breakeven_multiplier": 0.116,
-      "note": "Each point re-plans under identical constraints. Break-even is where total scenario net benefit reaches zero; below it the same spend destroys assumed value."
+      "breakeven_multiplier": 0.1451,
+      "breakeven_success": {
+        "basic": 0.029,
+        "premium": 0.0726
+      },
+      "note": "Each point re-plans under identical constraints. Break-even is the smallest multiplier at which the re-planned net benefit turns positive, found by bisection on the plan itself: plan composition changes between grid points, so a straight line between them would misplace it. Below it the same spend destroys assumed value."
     },
     "optimisation": {
       "greedy_net_benefit": 15912689.0,
-      "exact_net_benefit": 17655338.0,
-      "gap_absolute": 1742649.0,
-      "gap_pct": 10.95,
-      "exact_customers": 10,
-      "note": "Exact mixed-integer optimum over the same eligible actions, budget and capacity, without the 30% service-review reservation. The shipped plan stays greedy and explainable; this bounds how much value that simplicity costs."
+      "reviews_in_plan": 3,
+      "review_cost": 150000,
+      "exact_same_reviews_net_benefit": 15912689.0,
+      "algorithm_gap_absolute": 0.0,
+      "algorithm_gap_pct": 0.0,
+      "exact_offers_only_net_benefit": 17655338.0,
+      "exact_offers_only_customers": 10,
+      "review_reservation_cost": 1742649.0,
+      "note": "Algorithm gap compares the greedy offer allocation with the exact optimum under the same budget, capacity and the same service reviews. Reservation cost is the scenario value an offers-only optimum would add by dropping those reviews; reviews have unmeasured benefit, so this is the price of a business rule, not a weakness of the allocator."
+    },
+    "strategies": {
+      "settings": {
+        "budget": 3000000,
+        "max_customers": 10
+      },
+      "rows": [
+        {
+          "strategy": "policy_plan",
+          "label": "Policy plan: reviews first, then offers",
+          "customers": 10,
+          "actions": {
+            "technical_review": 3,
+            "premium_offer": 6,
+            "basic_offer": 1
+          },
+          "cost": 3000000,
+          "expected_saves": 3.15,
+          "scenario_net_benefit": 15912689,
+          "churners_reached": 7,
+          "blocked_by_policy": 0
+        },
+        {
+          "strategy": "premium_by_risk",
+          "label": "Premium offer to the highest risk",
+          "customers": 6,
+          "actions": {
+            "premium_offer": 6
+          },
+          "cost": 2700000,
+          "expected_saves": 2.96,
+          "scenario_net_benefit": 15034590,
+          "churners_reached": 6,
+          "blocked_by_policy": 0
+        },
+        {
+          "strategy": "basic_by_risk",
+          "label": "Basic offer to the highest risk",
+          "customers": 10,
+          "actions": {
+            "basic_offer": 10
+          },
+          "cost": 1500000,
+          "expected_saves": 1.96,
+          "scenario_net_benefit": 10283174,
+          "churners_reached": 10,
+          "blocked_by_policy": 0
+        }
+      ],
+      "uncapped_threshold_rule": {
+        "with_policy_checks": {
+          "customers": 57,
+          "actions": {
+            "basic_offer": 9,
+            "premium_offer": 48
+          },
+          "cost": 22950000,
+          "expected_saves": 17.02,
+          "scenario_net_benefit": 79161435,
+          "churners_reached": 38,
+          "blocked_by_policy": 0
+        },
+        "without_policy_checks": {
+          "customers": 69,
+          "actions": {
+            "basic_offer": 9,
+            "premium_offer": 60
+          },
+          "cost": 28350000,
+          "expected_saves": 18.51,
+          "scenario_net_benefit": 82718913,
+          "churners_reached": 41,
+          "blocked_by_policy": 12,
+          "blocked_churners": 3
+        }
+      },
+      "note": "Rows share the budget, capacity and eligibility rules of the shipped plan. The uncapped threshold rule gives every customer their best positive offer with no budget; without the policy checks it would send offers to customers whose recent service or billing contact must be reviewed first."
     },
     "decision_curve": [
       {
@@ -878,5 +1103,77 @@
       "share_with_open_service_issue": 0.135
     },
     "note": "Risk x assumed success is a targeting proxy, not measured uplift. The share with an open service issue marks where a cheaper service fix may dominate a discount; only a randomised holdout can confirm responsiveness."
+  },
+  "pilot": {
+    "population": "Offer-eligible customers (no recent service/billing contact, not blocked) with risk at or above the basic-offer break-even.",
+    "offer_breakeven_risk": 0.125,
+    "population_in_cohort": 57,
+    "population_share_of_cohort": 0.274,
+    "observed_30d_churn_in_population": 0.6666666666666666,
+    "horizon": "90-day",
+    "premium_breakeven_absolute_reduction": 0.075,
+    "rows": [
+      {
+        "baseline_90d_churn": 0.3,
+        "effect": "premium_breakeven",
+        "absolute_reduction": 0.075,
+        "split_50_50": {
+          "control": 540,
+          "treatment": 540,
+          "total": 1080
+        },
+        "split_90_10": {
+          "control": 290,
+          "treatment": 2605,
+          "total": 2895
+        }
+      },
+      {
+        "baseline_90d_churn": 0.3,
+        "effect": "brief_assumption",
+        "absolute_reduction": 0.15,
+        "split_50_50": {
+          "control": 121,
+          "treatment": 121,
+          "total": 242
+        },
+        "split_90_10": {
+          "control": 61,
+          "treatment": 544,
+          "total": 605
+        }
+      },
+      {
+        "baseline_90d_churn": 0.5,
+        "effect": "premium_breakeven",
+        "absolute_reduction": 0.075,
+        "split_50_50": {
+          "control": 693,
+          "treatment": 693,
+          "total": 1386
+        },
+        "split_90_10": {
+          "control": 383,
+          "treatment": 3442,
+          "total": 3825
+        }
+      },
+      {
+        "baseline_90d_churn": 0.5,
+        "effect": "brief_assumption",
+        "absolute_reduction": 0.25,
+        "split_50_50": {
+          "control": 58,
+          "treatment": 58,
+          "total": 116
+        },
+        "split_90_10": {
+          "control": 30,
+          "treatment": 267,
+          "total": 297
+        }
+      }
+    ],
+    "note": "The 30-day rate is retrospective, measured on out-of-fold scores in an outcome-selected cohort, so 90-day baselines are planning values to replace with the live population's rate. For a fixed absolute effect the required sample is largest near 50% churn, so sizing at 0.5 is conservative."
   }
 }

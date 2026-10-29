@@ -1771,3 +1771,9 @@ dialog p {
     display: none;
   }
 }
+
+/* Campaign settings with an out-of-range or empty value keep the last valid plan. */
+.controls.invalid .input:invalid {
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px var(--soft);
+}

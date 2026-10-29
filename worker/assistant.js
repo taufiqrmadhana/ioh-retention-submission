@@ -81,10 +81,14 @@ export function projectBrief(report) {
     rule = report.evaluation.business_rule,
     a = report.audit,
     oof = report.oof,
-    eco = report.economics;
+    eco = report.economics,
+    flow = report.cohort_flow,
+    cal = report.calibration_check,
+    strategies = eco.strategies,
+    pilot = report.pilot;
   const regions = report.subgroups
     .filter((g) => g.dimension === "region")
-    .map((g) => `${g.group} ${g.n} customers, ${g.positive_count} churned (${pct(g.observed_rate)}), recall@20% ${g.recall_at_20pct == null ? "n/a" : g.recall_at_20pct.toFixed(2)}`)
+    .map((g) => `${g.group} ${g.n} customers, ${g.positive_count} churned (${pct(g.observed_rate)}), ${g.flagged_at_global_top20pct} in the cohort-wide top 20%, recall there ${g.recall_at_global_top20pct == null ? "n/a" : g.recall_at_global_top20pct.toFixed(2)}`)
     .join("; ");
   const calibration = report.calibration
     .map((c, i) => `Q${i + 1} ${pct(c.mean_score)}→${pct(c.observed_rate)}`)
@@ -95,17 +99,31 @@ export function projectBrief(report) {
   return [
     `Decision date ${report.snapshot}; churn label = churn date from 1 to 30 Nov 2025.`,
     `Source files: ${a.customers} customers (${a.churn_records} with a churn date), ${a.usage_rows} monthly usage rows (${a.one_usage_row} customers have one row), ${a.support_rows} support contacts. Data issues: two date formats parsed, region typos mapped, ${a.blank_total_charges} blank totalCharges left missing, ${a.support_after_churn} contacts after churn ignored, resolution status excluded (no date).`,
-    `Decision cohort: ${report.cohort.n} customers active on 1 Nov 2025 with October usage; ${report.cohort.churn} churned in November (${pct(report.cohort.prevalence)}). Train/holdout split ${report.cohort.train}/${report.cohort.test}, seed ${report.seed}.`,
+    `Decision cohort: ${report.cohort.n} customers with an October usage row and no churn before 1 Nov 2025; ${report.cohort.churn} churned in November (${pct(report.cohort.prevalence)}). Train/holdout split ${report.cohort.train}/${report.cohort.test}, seed ${report.seed}.`,
+    flow
+      ? `Cohort selection: ${flow.not_churned_before_snapshot} customers had not churned by 1 Nov, but ${flow.excluded_no_october_usage} have no October usage row (${flow.excluded_reasons.first_usage_in_november_or_later} first appear in November, ${flow.excluded_reasons.of_which_tenure_2_plus_months} of them with 2+ months of tenure). All ${flow.november_churners_in_cohort} November churners have an October row, so ${pct(flow.cohort_churn_rate)} is the churn rate of the observable cohort, not of the active base (${pct(flow.churn_rate_if_all_not_churned_were_active)} if all were active). Model metrics inherit this selection.`
+      : "",
     "Model: logistic regression (C=0.3) on 9 inputs known before the snapshot: tenureMonths, monthlyCharges, dataUsageGB, support/technical/billing contacts in the prior 30 days, contractType, paymentMethod, hasInternetService. Gender, age, partner and dependents are excluded. Demo scores are five-fold out-of-fold.",
     `Holdout (n=${m.n}, ${m.positives} churners): PR-AUC ${m.pr_auc.toFixed(3)} (bootstrap 95% ${m.pr_auc_bootstrap_95pct.map((v) => v.toFixed(2)).join("–")}), ROC-AUC ${m.roc_auc.toFixed(3)}, Brier ${m.brier.toFixed(3)}, precision@20% ${m.precision_at_20pct.toFixed(3)}, recall@20% ${m.recall_at_20pct.toFixed(3)}, lift@20% ${m.lift_at_20pct.toFixed(2)}x. Comparators: shallow tree PR-AUC ${tree.pr_auc.toFixed(3)}, business rule (month-to-month, tenure<6, technical contact) ${rule.pr_auc.toFixed(3)}, prevalence ${report.evaluation.constant_prevalence.pr_auc.toFixed(3)}.`,
     `Out-of-fold on all ${oof.n}: PR-AUC ${oof.pr_auc.toFixed(3)}, recall in the top 20% of scores ${pct(oof.recall_at_20pct, 0)}. ${report.sensitivity.exact_feature_overlap_test_rows} holdout rows share exact features with training rows; without them PR-AUC ${report.sensitivity.nonoverlap_holdout.pr_auc.toFixed(3)}.`,
     `Calibration by out-of-fold quintile (mean score→observed churn): ${calibration}. Ranking is strong; probabilities are not calibrated.`,
-    `Regions: ${regions}.`,
+    `Regions (one cohort-wide top-20% cutoff; a per-group quota would cap groups with many churners): ${regions}.`,
+    cal
+      ? `Calibration test: sigmoid scaling fitted on training rows only changed holdout Brier ${cal.holdout.raw.brier.toFixed(3)}→${cal.holdout.sigmoid.brier.toFixed(3)} and log-loss ${cal.holdout.raw.log_loss.toFixed(3)}→${cal.holdout.sigmoid.log_loss.toFixed(3)}; the demo plan kept ${cal.plan_impact.same_customers} of ${cal.plan_impact.raw.customers} customers. Raw scores are kept.`
+      : "",
     `Policy retention-v1: costs ${costs}. Offers only for customers without a recent service or billing contact; technical review if a technical contact; billing review if billing without technical. Up to 30% of capacity (rounded down, minimum one) goes to service reviews first, then offers by greedy marginal net benefit per rupiah within budget. Net benefit = risk × success rate × retained value − cost. Defaults: budget ${rp(DEFAULTS.budget)}, ${DEFAULTS.maxCustomers} customers, retained value ${rp(DEFAULTS.retainedValue)}, basic success ${pct(DEFAULTS.basicSuccess, 0)}, premium success ${pct(DEFAULTS.premiumSuccess, 0)}. Success rates come from the brief, not from tests.`,
-    `Economics: break-even at ${eco.sensitivity.breakeven_multiplier ?? "n/a"}x the assumed success rates; an exact allocation reaches ${rp(eco.optimisation.exact_net_benefit)} against ${rp(eco.optimisation.greedy_net_benefit)} for the greedy plan (${eco.optimisation.gap_pct}% gap).`,
-    "Workflow: the LLM agent drafts a plan with five bounded tools; code recomputes costs and eligibility; a person approves; approval records a simulation only. Consent, contact limits and eligibility are unknown in the data.",
+    `Economics: break-even at ${eco.sensitivity.breakeven_multiplier ?? "n/a"}x the assumed success rates, found by re-planning (below it the plan loses money). Greedy versus an exact optimiser keeping the same ${eco.optimisation.reviews_in_plan} service reviews: ${rp(eco.optimisation.greedy_net_benefit)} vs ${rp(eco.optimisation.exact_same_reviews_net_benefit)} (algorithm gap ${eco.optimisation.algorithm_gap_pct}%). Dropping the review reservation would add ${rp(eco.optimisation.review_reservation_cost)} of scenario value; that is a policy choice, not an algorithm gap.`,
+    strategies
+      ? `Same budget (${rp(strategies.settings.budget)}), capacity and eligibility: ${strategies.rows.map((r) => `${r.label}: ${r.customers} customers, cost ${rp(r.cost)}, expected saves ${r.expected_saves}, scenario net ${rp(r.scenario_net_benefit)}`).join("; ")}. An uncapped threshold rule would reach ${strategies.uncapped_threshold_rule.with_policy_checks.customers} customers with the service/billing checks; without them it adds ${strategies.uncapped_threshold_rule.without_policy_checks.blocked_by_policy} offers the policy blocks.`
+      : "",
+    pilot
+      ? `Pilot: 50/50 randomisation of ${pilot.population.replace(/\.$/, "").toLowerCase()}; ${pilot.horizon} churn is the primary outcome; detect the ${(pilot.premium_breakeven_absolute_reduction * 100).toFixed(1)}-point reduction at which a premium offer breaks even (${pilot.rows.find((r) => r.baseline_90d_churn === 0.5 && r.effect === "premium_breakeven")?.split_50_50.control ?? "n/a"} per arm at a 50% baseline). After rollout a 10% no-offer holdout keeps measuring uplift.`
+      : "",
+    "Workflow: the LLM agent turns the request into a scope (contact type and region); the backend plans every customer in that scope with the policy; the agent explains and submits through five bounded tools; code recomputes costs and eligibility; a person approves; approval records a simulation only. Consent, contact limits and eligibility are unknown in the data.",
     `Limitations: ${report.limitations.join(" ")}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function systemPrompt(report, page) {

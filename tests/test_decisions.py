@@ -1,6 +1,6 @@
 import pytest
 
-from retention import decisions
+from retention import decisions, policy
 
 
 def customer(identifier="A", risk=0.8, technical=0, billing=0):
@@ -52,11 +52,67 @@ def test_sensitivity_reports_a_breakeven_below_baseline():
     assert 0 < breakeven < 1
 
 
-def test_exact_allocation_is_never_worse_than_greedy():
+def net_at(multiplier):
+    config = policy.settings(BASE)
+    return decisions._replan(COHORT, config, multiplier, config["retained_value"])[
+        "scenario_net_benefit"
+    ]
+
+
+def test_breakeven_is_where_the_replanned_plan_actually_turns_positive():
+    """Interpolating between grid points misplaces it when the plan's mix changes."""
+    breakeven = decisions.sensitivity_curve(COHORT, BASE)["breakeven_multiplier"]
+    assert net_at(breakeven) > 0
+    assert net_at(breakeven - 0.001) <= 0
+
+
+def test_algorithm_gap_holds_the_policy_reviews_fixed():
     gap = decisions.optimisation_gap(COHORT, BASE)
-    assert gap["exact_net_benefit"] >= gap["greedy_net_benefit"]
-    assert gap["gap_pct"] >= 0
-    assert gap["exact_customers"] <= BASE["max_customers"]
+    assert gap["reviews_in_plan"] == 2
+    assert gap["exact_same_reviews_net_benefit"] >= gap["greedy_net_benefit"]
+    assert gap["algorithm_gap_pct"] >= 0
+    # Dropping the reviews frees budget and slots, so offers-only is never worse.
+    assert gap["exact_offers_only_net_benefit"] >= gap["exact_same_reviews_net_benefit"]
+    assert gap["review_reservation_cost"] == pytest.approx(
+        gap["exact_offers_only_net_benefit"] - gap["exact_same_reviews_net_benefit"]
+    )
+    assert gap["exact_offers_only_customers"] <= BASE["max_customers"]
+
+
+def test_strategies_share_budget_capacity_and_eligibility():
+    labels = {c["customer_id"]: 1 for c in COHORT}
+    result = decisions.strategy_comparison(COHORT, BASE, labels)
+    for row in result["rows"]:
+        assert row["cost"] <= BASE["budget"]
+        assert row["customers"] <= BASE["max_customers"]
+        assert row["blocked_by_policy"] == 0
+    unchecked = result["uncapped_threshold_rule"]["without_policy_checks"]
+    checked = result["uncapped_threshold_rule"]["with_policy_checks"]
+    assert unchecked["blocked_by_policy"] == 2  # T1 and B1 have recent contacts
+    assert unchecked["customers"] - checked["customers"] == 2
+
+
+def test_plan_impact_with_identical_scores_changes_nothing():
+    scores = {c["customer_id"]: c["risk_score"] for c in COHORT}
+    impact = decisions.plan_impact(COHORT, scores, BASE)
+    assert impact["raw"] == impact["alternative"]
+    assert impact["same_customer_actions"] == impact["raw"]["customers"]
+
+
+def test_pilot_sample_size_matches_the_textbook_formula():
+    # 50% vs 40%, alpha 0.05 two-sided, 80% power: 388 per arm.
+    assert decisions.pilot_sample_size(0.5, 0.4) == {"control": 388, "treatment": 388, "total": 776}
+    unequal = decisions.pilot_sample_size(0.5, 0.4, control_share=0.1)
+    assert unequal["total"] > 776 and unequal["control"] < unequal["treatment"]
+    with pytest.raises(ValueError):
+        decisions.pilot_sample_size(0.5, 0.5)
+
+
+def test_pilot_effect_is_the_premium_breakeven():
+    labels = {c["customer_id"]: 0 for c in COHORT}
+    design = decisions.pilot_design(COHORT, labels, BASE)
+    assert design["premium_breakeven_absolute_reduction"] == pytest.approx(450_000 / 6_000_000)
+    assert design["population_in_cohort"] == 12  # T1 and B1 are not offer-eligible
 
 
 def test_targeting_diagnostic_segments_the_highest_risk():

@@ -11,10 +11,16 @@ import math
 
 import numpy as np
 import pandas as pd
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_score
+from sklearn.metrics import (
+    average_precision_score,
+    brier_score_loss,
+    log_loss,
+    roc_auc_score,
+)
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -152,6 +158,51 @@ def interval(y, p, draws=1000):
     return [float(v) for v in np.quantile(values, [0.025, 0.975])]
 
 
+def cohort_flow(base, usage, frame, cutoff=CUTOFF, horizon_end=END):
+    """Why customers in the files are, or are not, in the decision cohort.
+
+    Inclusion needs an October usage row. Every November churner has one, but
+    most other customers do not, so the cohort churn rate describes customers
+    with observable October usage, not every customer active on 1 November.
+    """
+    churned_before = base.churnDate < cutoff
+    alive = base[~churned_before]
+    first_seen = usage.groupby("customerId").month.min()
+    last_seen = usage.groupby("customerId").month.max()
+    excluded = alive[~alive.customerId.isin(frame.customerId)]
+    first = excluded.customerId.map(first_seen)
+    last = excluded.customerId.map(last_seen)
+    later = excluded[first >= cutoff]
+    later_tenure = later.customerId.map(
+        usage[usage.month >= cutoff].groupby("customerId").tenureMonths.min()
+    )
+    november_churn = base[(base.churnDate >= cutoff) & (base.churnDate < horizon_end)]
+    in_cohort_churn = int(frame.label.sum())
+    return {
+        "source_customers": len(base),
+        "churned_before_snapshot": int(churned_before.sum()),
+        "not_churned_before_snapshot": len(alive),
+        "excluded_no_october_usage": len(excluded),
+        "excluded_reasons": {
+            "first_usage_in_november_or_later": len(later),
+            "of_which_tenure_2_plus_months": int((later_tenure >= 2).sum()),
+            "last_usage_before_october": int((last < cutoff - pd.offsets.MonthBegin(1)).sum()),
+            "no_usage_rows": int(first.isna().sum()),
+        },
+        "cohort": len(frame),
+        "november_churners_in_files": len(november_churn),
+        "november_churners_in_cohort": in_cohort_churn,
+        "cohort_churn_rate": in_cohort_churn / len(frame),
+        "churn_rate_if_all_not_churned_were_active": len(november_churn) / len(alive),
+        "note": (
+            "Cohort = customers with an October usage row and no churn before 1 Nov. All November "
+            "churners have that row; most non-churners do not, so inclusion depends on the outcome. "
+            "The cohort rate is the churn rate among observable customers, not the churn rate of the "
+            "active base, and model metrics inherit this selection."
+        ),
+    }
+
+
 def audit(base, usage, support):
     linked = usage.merge(
         base[["customerId", "churnDate"]], on="customerId", validate="many_to_one"
@@ -285,27 +336,110 @@ def calibration_table(y, scores, bins=5):
     ]
 
 
+def global_flags(scores, share=0.2):
+    """Expected selection of each customer at one cohort-wide top-share cutoff.
+
+    Tied scores at the cutoff share the remaining slots, as in `metrics`.
+    """
+    scores = np.asarray(scores)
+    k = max(1, math.ceil(len(scores) * share))
+    threshold = np.sort(scores)[-k]
+    above, tied = scores > threshold, scores == threshold
+    flags = above.astype(float)
+    flags[tied] = (k - above.sum()) / tied.sum()
+    return flags
+
+
+def calibrated_model():
+    """Platt (sigmoid) scaling; the calibrator is fitted on internal folds of its training rows."""
+    return CalibratedClassifierCV(
+        model(),
+        method="sigmoid",
+        cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED),
+    )
+
+
+def probability_scores(y, scores):
+    y, scores = np.asarray(y), np.asarray(scores)
+    return {
+        "brier": float(brier_score_loss(y, scores)),
+        "log_loss": float(log_loss(y, np.clip(scores, 1e-6, 1 - 1e-6), labels=[0, 1])),
+        "pr_auc": float(average_precision_score(y, scores)),
+    }
+
+
+def calibration_check(X, y, train, test, holdout_raw, oof_raw, folds):
+    """Does sigmoid calibration improve probability error? Reported, never auto-applied.
+
+    Holdout: calibrated on the 75% training rows only. Out-of-fold: inside each of the
+    same five outer folds used for the shipped scores, so no customer's own label
+    calibrates its score.
+    """
+    holdout_cal = (
+        calibrated_model()
+        .fit(X.iloc[train], y.iloc[train])
+        .predict_proba(X.iloc[test])[:, 1]
+    )
+    oof_cal = np.zeros(len(X))
+    for fold in np.unique(folds):
+        fit, val = folds != fold, folds == fold
+        oof_cal[val] = (
+            calibrated_model().fit(X[fit], y[fit]).predict_proba(X[val])[:, 1]
+        )
+    y_test = y.iloc[test]
+    return {
+        "method": "Sigmoid (Platt) scaling via CalibratedClassifierCV, 5 internal folds, fitted on training rows only.",
+        "holdout": {
+            "raw": probability_scores(y_test, holdout_raw),
+            "sigmoid": probability_scores(y_test, holdout_cal),
+        },
+        "out_of_fold": {
+            "raw": probability_scores(y, oof_raw),
+            "sigmoid": probability_scores(y, oof_cal),
+        },
+        "calibration_sigmoid_oof": calibration_table(y, oof_cal),
+        "shipped_scores": "raw out-of-fold logistic",
+    }, oof_cal
+
+
 def subgroup_table(frame, y, scores, columns=("gender", "region")):
-    """Descriptive churn, score and recall by group; not a fairness certification."""
+    """Descriptive churn, score and recall by group; not a fairness certification.
+
+    Recall is measured at one cohort-wide top-20% cutoff, so groups are compared
+    under the same rule. A separate top-20% quota per group caps recall at
+    quota / churners whenever a group holds more churners than its quota.
+    """
+    flags = global_flags(scores)
     rows = []
     for col in columns:
         groups = frame.groupby(frame[col].fillna("Unknown")).groups
         for group, indexes in groups.items():
             idx = np.array(list(indexes))
-            yy, pp = y.iloc[idx].to_numpy(), scores[idx]
-            k = max(1, math.ceil(len(idx) * 0.2))
+            yy, pp, ff = y.iloc[idx].to_numpy(), scores[idx], flags[idx]
+            positives = int(yy.sum())
+            quota = max(1, math.ceil(len(idx) * 0.2))
             rows.append(
                 {
                     "dimension": col,
                     "group": str(group),
                     "n": len(idx),
-                    "positive_count": int(yy.sum()),
+                    "positive_count": positives,
                     "observed_rate": float(yy.mean()),
                     "mean_score": float(pp.mean()),
-                    "recall_at_20pct": float(yy[np.argsort(-pp)[:k]].sum() / yy.sum())
-                    if yy.sum()
+                    "flagged_at_global_top20pct": round(float(ff.sum()), 3),
+                    "recall_at_global_top20pct": float((ff * yy).sum() / positives)
+                    if positives
                     else None,
-                    "caution": "Descriptive only; small subgroup; no fairness certification.",
+                    "group_quota_top20pct": quota,
+                    "recall_within_group_top20pct": float(
+                        yy[np.argsort(-pp, kind="stable")[:quota]].sum() / positives
+                    )
+                    if positives
+                    else None,
+                    "recall_ceiling_within_group": min(1.0, quota / positives)
+                    if positives
+                    else None,
+                    "caution": "Descriptive only; small subgroup; no fairness certification. Compare groups at the global cutoff; the within-group figure is capped by its quota.",
                 }
             )
     return rows
@@ -364,8 +498,9 @@ def customer_records(frame, usage, scores, folds, signals):
     return records
 
 
-def limitations(overlap_rows):
+def limitations(overlap_rows, flow):
     return [
+        f"Cohort inclusion depends on the outcome: all {flow['november_churners_in_cohort']} November churners have the October usage row that inclusion needs, while {flow['excluded_no_october_usage']} customers not churned by 1 Nov lack it. The {flow['cohort_churn_rate']:.1%} rate and the model metrics describe this observable cohort, not the whole active base.",
         "No out-of-time validation: early snapshots are heavily outcome-selected.",
         "Churn registry completeness through 30 November is assumed, not documented.",
         "Profiles lack effective timestamps; historical stability is assumed.",
@@ -390,6 +525,8 @@ def main():
     comparison, predictions = evaluate_holdout(frame, X, y, train, test)
     sensitivity = overlap_sensitivity(X, y, train, test, predictions)
     oof, folds, signals = out_of_fold(X, y)
+    calibration, oof_sigmoid = calibration_check(X, y, train, test, predictions, oof, folds)
+    flow = cohort_flow(base, usage, frame)
     report = {
         "snapshot": "2025-11-01",
         "horizon_end_exclusive": "2025-12-01",
@@ -401,22 +538,31 @@ def main():
             "train": len(train),
             "test": len(test),
         },
+        "cohort_flow": flow,
         "evaluation": comparison,
         "sensitivity": sensitivity,
         "oof": metrics(y, oof),
         "calibration": calibration_table(y, oof),
+        "calibration_check": calibration,
         "subgroups": subgroup_table(frame, y, oof),
         "audit": audit(base, usage, support),
-        "limitations": limitations(sensitivity["exact_feature_overlap_test_rows"]),
+        "limitations": limitations(sensitivity["exact_feature_overlap_test_rows"], flow),
     }
     customers = customer_records(frame, usage, oof, folds, signals)
+    # Retrospective labels for reporting only; they never enter intelligence.json.
+    labels = dict(zip(frame.customerId, y.astype(int)))
     policy_base = {"budget": 3_000_000, "max_customers": 10}
     report["economics"] = {
         "sensitivity": decisions.sensitivity_curve(customers, policy_base),
         "optimisation": decisions.optimisation_gap(customers, policy_base),
+        "strategies": decisions.strategy_comparison(customers, policy_base, labels),
         "decision_curve": decisions.decision_curve(y.iloc[test].to_numpy(), predictions),
     }
+    report["calibration_check"]["plan_impact"] = decisions.plan_impact(
+        customers, dict(zip(frame.customerId, oof_sigmoid)), policy_base, labels
+    )
     report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
+    report["pilot"] = decisions.pilot_design(customers, labels, policy_base)
     intelligence = {
         "snapshot": report["snapshot"],
         "model_version": "lr-oof-v1-seed42",
