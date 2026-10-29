@@ -3,6 +3,7 @@ import intelligence from "../outputs/intelligence.json";
 import report from "../outputs/report.json";
 import { buildPlan, compareActions, settings, validatePlan } from "../web/policy.js";
 import { runAgent } from "./agent.js";
+import { cleanHistory, runAssistant } from "./assistant.js";
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -249,6 +250,40 @@ async function runAgentRequest(request, env, session, body) {
   }
 }
 
+async function runChatRequest(request, env, body) {
+  if (!env.DEEPSEEK_API_KEY)
+    return json({ error: "The assistant is not configured on this deployment." }, 503);
+  const messages = cleanHistory(body.messages);
+  const ip = await sha256(request.headers.get("CF-Connecting-IP") ?? "local");
+  if (
+    !(await consume(env, `chat-ip:${ip}`, Math.floor(Date.now() / 600000), 20)) ||
+    !(await consume(env, "chat-global", Math.floor(Date.now() / 86400000), 400))
+  )
+    return json({ error: "The assistant is busy. Try again in a few minutes." }, 429);
+  try {
+    return json(
+      await runAssistant({
+        messages,
+        customers: intelligence.customers,
+        report,
+        apiKey: env.DEEPSEEK_API_KEY,
+        model: env.DEEPSEEK_MODEL ?? "deepseek-flash",
+        baseUrl: env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com",
+      }),
+    );
+  } catch (e) {
+    return json(
+      {
+        error:
+          e.name === "TimeoutError"
+            ? "The AI provider timed out. Try again."
+            : e.message,
+      },
+      502,
+    );
+  }
+}
+
 async function route(request, env, url, session) {
   if (request.method === "GET") {
     if (url.pathname === "/api/bootstrap")
@@ -258,6 +293,8 @@ async function route(request, env, url, session) {
         agent_available: !!env.DEEPSEEK_API_KEY,
         model: env.DEEPSEEK_MODEL ?? "deepseek-flash",
       });
+    if (url.pathname === "/api/assistant")
+      return json({ available: !!env.DEEPSEEK_API_KEY });
     if (url.pathname === "/api/history")
       return store(env, session, { op: "list" });
     if (url.pathname === "/api/customer") {
@@ -303,6 +340,8 @@ async function route(request, env, url, session) {
       });
     case "/api/agent":
       return runAgentRequest(request, env, session, body);
+    case "/api/chat":
+      return runChatRequest(request, env, body);
     case "/api/review":
       return store(env, session, {
         op: "transition",

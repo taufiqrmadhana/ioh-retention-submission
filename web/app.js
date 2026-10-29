@@ -1,4 +1,4 @@
-import { buildPlan, DEFAULTS, ACTIONS, compareActions } from "./policy.js";
+import { buildPlan, DEFAULTS, ACTIONS, compareActions, settings } from "./policy.js";
 import { modelComparisonChart, calibrationChart, sensitivityChart, decisionChart } from "./charts.js";
 const $ = (s) => document.querySelector(s);
 const esc = (v) =>
@@ -321,8 +321,11 @@ async function createPlan(useAgent) {
   }
 }
 function showCustomer(id) {
-  const c = data.intelligence.customers.find((c) => c.customer_id === id);
-  if (!c) return;
+  const c = data?.intelligence.customers.find((c) => c.customer_id === id);
+  if (!c) {
+    if (data) toast(`${id} is not in the 1 Nov 2025 decision cohort.`);
+    return;
+  }
   const actions = compareActions(c, config);
   $("#customer-detail").innerHTML =
     `<span class="eyebrow">CUSTOMER INTELLIGENCE / 01 NOV 2025</span><h2>${esc(id)}</h2><p class="muted">${esc(c.region)} · ${esc(c.features.contractType)} · ${c.history_months_at_snapshot} observed usage month(s)</p><div class="plan-summary"><div><small>OOF risk estimate</small><strong>${pct(c.risk_score)}</strong></div><div><small>Tenure</small><strong>${c.features.tenureMonths} mo.</strong></div><div><small>Monthly charge</small><strong>${compact(c.features.monthlyCharges)}</strong></div></div><div class="detail-grid"><div><div class="mini-title">Observed evidence</div>${c.evidence.map((e) => `<p>${esc(e)}</p>`).join("")}<div class="mini-title">Unknown at decision time</div><p>Consent, live account status, contact frequency, offer eligibility, and current resolution status.</p><div class="callout">Partial history. Model v1 · OOF fold ${c.fold}. No actual outcome is available to the agent.</div></div><div><div class="mini-title">Model contributions</div>${c.model_signals.map((s) => `<div class="signal"><code>${esc(s.feature)}</code><span>${s.contribution_log_odds > 0 ? "+" : ""}${s.contribution_log_odds.toFixed(2)}</span></div>`).join("")}<p class="muted" style="font-size:10px;margin-top:12px">Signed contributions to model log-odds. These explain the prediction, not the cause of churn. Numeric features are standardized; contributions are relative to the model intercept.</p></div></div><div class="mini-title">Action comparison · current assumptions</div><div class="table-wrap"><table><thead><tr><th>Action</th><th>Cost</th><th>Scenario net</th><th>Proposal status</th></tr></thead><tbody>${actions.map((a) => `<tr><td>${esc(a.label)}</td><td>${money(a.cost)}</td><td>${a.scenario_net_benefit === null ? "Unmeasured" : money(a.scenario_net_benefit)}</td><td>${a.action === "no_action" ? "No outreach" : a.eligible_for_proposal ? "Review required" : "Not eligible"}</td></tr>`).join("")}</tbody></table></div>`;
@@ -433,6 +436,24 @@ document.addEventListener("change", (e) => {
     page = 0;
     updateCustomers();
   }
+});
+// The floating assistant hands over simulated settings for the agent workspace.
+window.addEventListener("retention:apply-settings", (e) => {
+  if (busy) {
+    toast("The agent is running. Wait for the current proposal.");
+    return;
+  }
+  try {
+    config = settings({ ...config, ...e.detail });
+  } catch {
+    toast("Those settings are outside the allowed ranges.");
+    return;
+  }
+  activePlan = null;
+  agentResult = null;
+  if (tab === "agent") render();
+  else navigate("agent");
+  toast("Settings loaded. Generate a policy plan to save it for review.");
 });
 window.addEventListener("hashchange", () => {
   const next = location.hash.slice(1);
