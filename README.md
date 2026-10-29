@@ -7,16 +7,18 @@ Churn analysis and budget-aware retention planning for the supplied telco extrac
 ## Layout
 
 - `data/` — the three supplied datasets.
-- `retention/analysis.py` — cohort construction, features, model evaluation, out-of-fold scores.
+- `retention/analysis.py` — cohort construction, features, model evaluation, calibration check, out-of-fold scores.
 - `retention/policy.py` — action eligibility, costs, budget and capacity allocation.
+- `retention/decisions.py` — decision diagnostics: break-even, exact-allocation gap, strategy comparison, pilot sizing.
 - `retention/agent.py` — tool-calling agent over the analysis and policy.
 - `web/` — the workbench frontend (vanilla JS, no build step). `web/policy.js` is the JS port of the policy, shared by the browser and the worker.
-- `worker/` — API layer: serves `web/`, exposes `/api/*`, owns validation, approval state and the agent call.
+- `worker/` — Cloudflare Worker: serves `web/`, exposes `/api/*`, owns validation, approval state and the agent call.
 - `web/assistant.js` + `worker/assistant.js` — the floating chat assistant (`/api/chat`). It answers questions about this project, guides users through each page (`worker/guide.js`, with links that jump to and highlight a panel), and runs read-only what-if simulations through the same policy; it cannot save, approve or execute plans. Uses the same `DEEPSEEK_API_KEY` as the agent.
 - `outputs/` — generated artefacts; `intelligence.json` (scores, no labels) and `report.json` (evaluation) are committed because the API serves them.
-- `tests/` — analysis, policy and agent checks.
+- `tests/` — Python checks; `tests/js/` — JavaScript checks for the policy port, the worker agent and the workbench in a browser; `tests/fixtures/policy_cases.json` — policy cases both languages must reproduce.
+- `docs/pilot.md` — how the recommendation would be tested for real.
 
-## Run
+## Run the analysis (Python)
 
 Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
@@ -33,19 +35,45 @@ Agent run needs `DEEPSEEK_API_KEY` in the environment or in an ignored `.env`:
 uv run python -m retention agent "Prioritise technical reviews and compare retention offers."
 ```
 
+## Run the workbench (Cloudflare Worker)
+
+Node 22+. The Worker runs locally under `wrangler dev`, with a local Durable Object for plan history; no Cloudflare account is needed.
+
+```bash
+npm ci
+npm run dev
+```
+
+Open http://localhost:8787. Everything except the live agent and chat works without a key. To enable them, copy `.dev.vars.example` to `.dev.vars` and set `DEEPSEEK_API_KEY`.
+
+```bash
+npm test
+npm run check
+```
+
+`npm test` runs the JavaScript tests. The browser test is skipped unless Playwright is installed (`npm i --no-save playwright && npx playwright install chromium`). `npm run check` bundles the Worker without deploying it.
+
+To deploy to your own account: `npx wrangler deploy`, then `npx wrangler secret put DEEPSEEK_API_KEY`. `wrangler.jsonc` has no account ID or routes; attach a custom domain in the Cloudflare dashboard.
+
+If the policy changes on purpose, regenerate the shared cases with `uv run python -m tests.policy_fixtures`; both test suites must then pass.
+
 ## Method in one paragraph
 
-Decision date 01 Nov 2025, outcome window [01 Nov, 01 Dec). Features are computed strictly before the snapshot; resolution status is excluded because it has no historical timestamp. Customers are split 75/25 inside one cohort, preprocessing is fit on train only, and demo scores come from five-fold out-of-fold logistic regression. The policy reserves up to 30% of capacity for service reviews, then fills offers by greedy marginal net benefit per rupiah within budget. Net benefit = risk × assumed prevention × retained value − cost; rates and retained value are assumptions, not measured uplift. Agent proposals require approval and record a simulation only.
+Decision date 01 Nov 2025, outcome window [01 Nov, 01 Dec). The cohort is the 208 customers with an October usage row who had not churned by 1 Nov; 408 other not-yet-churned customers have no October row and are excluded, while every November churner has one, so the 19.7% churn rate describes this observable cohort, not the whole active base. Features are computed strictly before the snapshot; resolution status is excluded because it has no historical timestamp. Customers are split 75/25 inside one cohort, preprocessing is fit on train only, and demo scores come from five-fold out-of-fold logistic regression. The policy reserves up to 30% of capacity for service reviews, then fills offers by greedy marginal net benefit per rupiah within budget. Net benefit = risk × assumed prevention × retained value − cost; rates and retained value are assumptions, not measured uplift. The agent turns a request into a scope (contact type, region); the backend evaluates every customer in that scope, and proposals require approval and record a simulation only.
 
 ## Decision diagnostics
 
-`outputs/report.json` carries three checks next to the plan: *sensitivity* (the same
-policy re-planned across assumed success rates and retained values, with the
-break-even point where net benefit hits zero), *optimisation* (an exact mixed-integer
-allocation under the same budget and capacity, bounding what the greedy plan leaves
-on the table), and a *decision curve* against treating everyone and treating no one.
-The validation set-up for a real test is in `docs/pilot.md`.
+`outputs/report.json` carries these checks next to the plan:
+
+- *cohort_flow* — who is excluded from the cohort and why.
+- *subgroups* — churn, score and recall by gender and region, with recall measured at one cohort-wide top-20% cutoff. A per-group quota would cap Bandung (12 slots for 25 churners), so groups are compared at the shared cutoff.
+- *calibration_check* — sigmoid calibration fitted on training rows only, with Brier, log-loss and the effect on the plan. It made probability error worse here, so the raw scores are kept.
+- *economics.sensitivity* — the same policy re-planned across assumed success rates and retained values. Break-even is found by bisection on the re-planned plan, because the plan's mix changes between grid points.
+- *economics.optimisation* — the algorithm gap (greedy against an exact optimiser that keeps the same service reviews) and, separately, the scenario value the review reservation gives up.
+- *economics.strategies* — the policy plan against premium-only and basic-only targeting at the same budget, capacity and eligibility, plus an uncapped threshold rule with and without the service/billing checks.
+- *economics.decision_curve* — net benefit against treating everyone and treating no one.
+- *pilot* — population, horizon, break-even effect and sample sizes for `docs/pilot.md`.
 
 ## Known limits
 
-No out-of-time validation — earlier snapshots are outcome-selected, and the December snapshot has no observed future labels. Churn-registry completeness through 30 November is assumed. Benefits are scenario economics; consent, contact limits and offer eligibility are unknown in the supplied data. The workbench surfaces the same evidence — cohort, out-of-fold scores, plan and approval trail — so the audit path is inspectable in the UI.
+Cohort inclusion depends on the outcome (see above), so the very high model metrics describe the observable cohort. No out-of-time validation — earlier snapshots are outcome-selected, and the December snapshot has no observed future labels. Churn-registry completeness through 30 November is assumed. Benefits are scenario economics; consent, contact limits and offer eligibility are unknown in the supplied data. The workbench surfaces the same evidence — cohort, out-of-fold scores, plan and approval trail — so the audit path is inspectable in the UI.
