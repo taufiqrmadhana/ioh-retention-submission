@@ -1,0 +1,23 @@
+// Portable Worker config: no account ID, routes or secrets.
+// Local:  npm run dev   (put DEEPSEEK_API_KEY in an ignored .dev.vars to enable the agent)
+// Deploy: npx wrangler deploy, then `npx wrangler secret put DEEPSEEK_API_KEY`.
+// Attach a custom domain in the Cloudflare dashboard or under "routes" in a local copy.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ioh-retention-workbench",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "web",
+    "binding": "ASSETS"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "STORE", "class_name": "RetentionStore" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["RetentionStore"] }],
+  "vars": {
+    "DEEPSEEK_MODEL": "deepseek-flash",
+    "DEEPSEEK_BASE_URL": "https://api.deepseek.com"
+  },
+  "observability": { "enabled": true }
+}

@@ -230,46 +230,54 @@ def build_plan(customers, overrides=None):
     return plan
 
 
+_MISSING = object()
+
+
 def validate_plan(plan, customers):
-    """Reject fabricated actions, costs, execution flags and aggregate economics."""
+    """Reject fabricated actions, costs, execution flags and aggregate economics.
+
+    Missing fields count as forged (ValueError), matching validatePlan in web/policy.js.
+    """
+    if not isinstance(plan, dict) or not isinstance(plan.get("settings"), dict):
+        raise ValueError("Plan settings are missing")
     config, seen = settings(plan["settings"]), set()
     cost, benefit, prevented = 0, 0, 0.0
-    if (
-        not isinstance(plan["items"], list)
-        or len(plan["items"]) > config["max_customers"]
-    ):
+    items = plan.get("items")
+    if not isinstance(items, list) or len(items) > config["max_customers"]:
         raise ValueError("Customer capacity exceeded")
     lookup = {c["customer_id"]: c for c in customers}
-    for item in plan["items"]:
-        customer_id = item["customer_id"]
+    for item in items:
+        if not isinstance(item, dict):
+            raise ValueError("Unknown customer")
+        customer_id = item.get("customer_id", _MISSING)
         if customer_id in seen:
             raise ValueError("Duplicate customer")
-        seen.add(customer_id)
         if customer_id not in lookup:
             raise ValueError("Unknown customer")
+        seen.add(customer_id)
         trusted = next(
             (
                 a
                 for a in compare_actions(lookup[customer_id], config)
-                if a["action"] == item["action"]
+                if a["action"] == item.get("action", _MISSING)
             ),
             None,
         )
         if (
             not trusted
             or not trusted["eligible_for_proposal"]
-            or item["action"] == "no_action"
+            or trusted["action"] == "no_action"
         ):
             raise ValueError("Action is not eligible")
         if (
-            item["cost"] != trusted["cost"]
-            or item["scenario_net_benefit"] != trusted["scenario_net_benefit"]
+            item.get("cost", _MISSING) != trusted["cost"]
+            or item.get("scenario_net_benefit", _MISSING) != trusted["scenario_net_benefit"]
         ):
             raise ValueError("Untrusted economic calculation")
         if (
-            item["executable"] is not False
-            or item["review_required"] is not True
-            or item["scenario_prevented_churn"] != trusted["scenario_prevented_churn"]
+            item.get("executable", _MISSING) is not False
+            or item.get("review_required", _MISSING) is not True
+            or item.get("scenario_prevented_churn", _MISSING) != trusted["scenario_prevented_churn"]
         ):
             raise ValueError("Untrusted execution flags or prevention estimate")
         cost += trusted["cost"]
@@ -279,12 +287,12 @@ def validate_plan(plan, customers):
             else -trusted["cost"]
         )
         prevented += trusted["scenario_prevented_churn"] or 0
-    if cost > config["budget"] or cost != plan["total_cost"]:
+    if cost > config["budget"] or cost != plan.get("total_cost", _MISSING):
         raise ValueError("Budget validation failed")
-    claimed = plan["scenario_prevented_churn"]
+    claimed = plan.get("scenario_prevented_churn")
     if (
-        plan["remaining_budget"] != config["budget"] - cost
-        or plan["scenario_net_benefit"] != benefit
+        plan.get("remaining_budget", _MISSING) != config["budget"] - cost
+        or plan.get("scenario_net_benefit", _MISSING) != benefit
         or type(claimed) not in (int, float)
         or not isfinite(claimed)
         or abs(claimed - prevented) > 1e-9

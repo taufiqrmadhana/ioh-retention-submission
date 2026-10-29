@@ -199,6 +199,8 @@ export function buildPlan(customers, input = {}) {
 }
 
 export function validatePlan(plan, customers) {
+  if (!plan?.settings || typeof plan.settings !== "object")
+    throw new Error("Plan settings are missing");
   const s = settings(plan.settings),
     ids = new Set();
   let cost = 0,
@@ -231,10 +233,15 @@ export function validatePlan(plan, customers) {
   }
   if (cost > s.budget || cost !== plan.total_cost)
     throw new Error("Budget validation failed");
+  // NaN fails every comparison, so a missing or NaN aggregate must be rejected
+  // explicitly rather than slipping past the tolerance check.
+  const claimed = plan.scenario_prevented_churn;
   if (
     plan.remaining_budget !== s.budget - cost ||
     plan.scenario_net_benefit !== benefit ||
-    Math.abs(plan.scenario_prevented_churn - prevented) > 1e-9
+    typeof claimed !== "number" ||
+    !Number.isFinite(claimed) ||
+    Math.abs(claimed - prevented) > 1e-9
   )
     throw new Error("Untrusted aggregate economics");
   return true;

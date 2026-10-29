@@ -1,0 +1,19 @@
+{
+  "name": "ioh-retention-workbench",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker that serves the retention workbench and its /api endpoints",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "test": "node --test \"tests/js/*.test.js\""
+  },
+  "devDependencies": {
+    "wrangler": "4.149.0"
+  }
+}

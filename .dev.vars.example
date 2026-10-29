@@ -1,0 +1,2 @@
+# Copy to .dev.vars for `npm run dev`. Leave the key empty to run without the live agent.
+DEEPSEEK_API_KEY=
