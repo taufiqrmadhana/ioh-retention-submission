@@ -7,6 +7,7 @@ from retention.agent import AgentError, run_agent
 
 CUSTOMER = {
     "customer_id": "TEST-1",
+    "region": "Jakarta",
     "risk_score": 0.7,
     "features": {"technical_30d": 0, "billing_30d": 0},
     "evidence": ["Fixture"],
@@ -40,7 +41,10 @@ def test_agent_executes_tools_and_submits_canonical_plan():
             return response(
                 {
                     "tool_calls": [
-                        call("get_priority_customers", {"focus": "all", "limit": 10})
+                        call(
+                            "get_priority_customers",
+                            {"focus": "all", "region": "any", "limit": 10},
+                        )
                     ]
                 }
             )
@@ -59,7 +63,9 @@ def test_agent_executes_tools_and_submits_canonical_plan():
             return response(
                 {
                     "tool_calls": [
-                        call("simulate_retention_plan", {"customer_ids": ["TEST-1"]})
+                        call(
+                            "simulate_retention_plan", {"focus": "all", "region": "any"}
+                        )
                     ]
                 }
             )
@@ -111,7 +117,7 @@ def test_unknown_tools_ids_and_policy_overrides_are_rejected():
                         ),
                         call(
                             "get_priority_customers",
-                            {"focus": "all", "limit": 1, "budget": 999999999},
+                            {"focus": "all", "region": "any", "limit": 1, "budget": 999999999},
                             "c",
                         ),
                     ]
@@ -137,7 +143,10 @@ def test_provider_failure_preserves_prior_trace_without_leaking_response():
             return response(
                 {
                     "tool_calls": [
-                        call("get_priority_customers", {"focus": "all", "limit": 1})
+                        call(
+                            "get_priority_customers",
+                            {"focus": "all", "region": "any", "limit": 1},
+                        )
                     ]
                 }
             )
@@ -159,7 +168,11 @@ def test_run_is_bounded_even_if_provider_keeps_calling_tools():
         return response(
             {
                 "tool_calls": [
-                    call("get_priority_customers", {"focus": "all", "limit": 1}, str(i))
+                    call(
+                        "get_priority_customers",
+                        {"focus": "all", "region": "any", "limit": 1},
+                        str(i),
+                    )
                     for i in range(3)
                 ]
             }
@@ -215,3 +228,92 @@ def test_extra_or_mistyped_arguments_are_rejected():
         result = run_agent("Show context", [CUSTOMER], api_key="test", client=client)
     assert result["plan"] is None
     assert all(event["status"] == "rejected" for event in result["trace"])
+
+
+TECHNICAL = {
+    **CUSTOMER,
+    "customer_id": "TEST-2",
+    "region": "Bandung",
+    "risk_score": 0.2,
+    "features": {"technical_30d": 1, "billing_30d": 0},
+}
+
+
+def scripted(*rounds):
+    """Provider that replays tool calls, filling in the last simulation_id on submit."""
+    state = {"round": 0}
+
+    def provider(request):
+        body = json.loads(request.content)
+        state["round"] += 1
+        if state["round"] > len(rounds):
+            return response({"content": "Done."})
+        calls = []
+        for index, (name, args) in enumerate(rounds[state["round"] - 1]):
+            if name == "submit_retention_plan":
+                results = [json.loads(m["content"]) for m in body["messages"] if m["role"] == "tool"]
+                simulation = next(r for r in reversed(results) if isinstance(r, dict) and "simulation_id" in r)
+                args = {"simulation_id": simulation["simulation_id"], "rationale": "ok"}
+            calls.append(call(name, args, f"{state['round']}-{index}"))
+        return response({"tool_calls": calls})
+
+    return provider
+
+
+def run(provider, customers, config=None):
+    with httpx.Client(transport=httpx.MockTransport(provider)) as client:
+        return run_agent("Prepare a plan", customers, config, api_key="test", client=client)
+
+
+def test_backend_plans_every_customer_in_scope_even_if_unread():
+    """The model never listed TEST-2, yet its technical review is still planned."""
+    result = run(
+        scripted(
+            [("simulate_retention_plan", {"focus": "all", "region": "any"})],
+            [("submit_retention_plan", {})],
+        ),
+        [CUSTOMER, TECHNICAL],
+    )
+    plan = result["plan"]
+    assert plan["candidates_evaluated"] == 2
+    actions = {i["customer_id"]: i["action"] for i in plan["items"]}
+    assert actions == {"TEST-1": "premium_offer", "TEST-2": "technical_review"}
+
+
+def test_scope_filters_by_region_and_contact():
+    result = run(
+        scripted(
+            [("simulate_retention_plan", {"focus": "no_contact", "region": "Jakarta"})],
+            [("submit_retention_plan", {})],
+        ),
+        [CUSTOMER, TECHNICAL],
+    )
+    assert result["plan"]["scope"] == {"focus": "no_contact", "region": "Jakarta"}
+    assert [i["customer_id"] for i in result["plan"]["items"]] == ["TEST-1"]
+
+
+def test_unknown_region_and_empty_scope_are_rejected():
+    result = run(
+        scripted(
+            [
+                ("simulate_retention_plan", {"focus": "all", "region": "Atlantis"}),
+                ("simulate_retention_plan", {"focus": "billing", "region": "any"}),
+                ("get_customer_context", {"customer_id": "TEST-2"}),
+            ]
+        ),
+        [CUSTOMER, TECHNICAL],
+    )
+    assert result["plan"] is None
+    assert [e["status"] for e in result["trace"]] == ["rejected"] * 3
+
+
+def test_plan_customers_can_be_inspected_after_simulation():
+    result = run(
+        scripted(
+            [("simulate_retention_plan", {"focus": "all", "region": "any"})],
+            [("compare_retention_actions", {"customer_id": "TEST-2"})],
+            [("submit_retention_plan", {})],
+        ),
+        [CUSTOMER, TECHNICAL],
+    )
+    assert [e["status"] for e in result["trace"]] == ["completed"] * 3
