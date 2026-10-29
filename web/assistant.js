@@ -3,17 +3,34 @@
 
 const STORE_KEY = "retention-assistant";
 const POS_KEY = "retention-assistant-pos";
-const SEEN_KEY = "retention-assistant-seen";
+const TIPS_KEY = "retention-assistant-tips";
 const MAX_SEND = 10;
 const MAX_CHARS = 2000;
+const PAGES = {
+  overview: "Overview",
+  customers: "Customer explorer",
+  agent: "Agent workspace",
+  evidence: "Evidence & model",
+};
+// One nudge per page per session, and the question it asks when clicked.
+const PAGE_HELP = {
+  overview: ["New here? I can give you a quick tour of this page.", "Give me a quick tour of the Overview page."],
+  customers: ["Want to know how to read a customer's risk?", "How do I read the Customer explorer and a customer's detail?"],
+  agent: ["I can walk you through making and approving a plan.", "Walk me through making, reviewing and approving a plan."],
+  evidence: ["Charts look dense? Ask me how to read them.", "How do I read the charts on Evidence & model?"],
+};
 const SUGGESTIONS = [
+  "How do I make and approve a plan?",
   "Why is IOH-430 high risk?",
   "Simulate Rp5M for 15 customers",
-  "How good is the churn model?",
-  "Kalau premium success cuma 30%, gimana hasilnya?",
+  "Cara baca grafik calibration gimana?",
 ];
 const GREETING =
-  "Hi! I can explain the churn model, look up customers like IOH-430 and run budget what-ifs with the retention-v1 policy. Simulations are never saved or sent to customers.";
+  "Hi! I'm your guide to this workbench. Ask me what a page or chart means, how to make a plan, why a customer like IOH-430 is high risk, or run a budget what-if. Simulations are never saved or sent to customers.";
+const currentPage = () => {
+  const hash = location.hash.slice(1);
+  return Object.hasOwn(PAGES, hash) ? hash : "overview";
+};
 
 const read = (store, key) => {
   try {
@@ -41,7 +58,7 @@ const money = (n) =>
     ? `Rp ${(n / 1e6).toFixed(n % 1e6 ? 2 : 0)}m`
     : `Rp ${Math.round(n / 1000)}k`;
 
-function inline(text) {
+function format(text) {
   return esc(text)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")
@@ -50,27 +67,41 @@ function inline(text) {
       (id) => `<button type="button" class="customer-button" data-customer="${id}">${id}</button>`,
     );
 }
+// [Label](#page) or [Label](#page/Panel title) become buttons that open the
+// page and highlight the panel.
+const LINK = /\[([^\]\n]{1,80})\]\(#(overview|customers|agent|evidence)(?:\/([^)\n]{1,80}))?\)/g;
+function inline(text) {
+  let html = "",
+    last = 0;
+  for (const m of text.matchAll(LINK)) {
+    html += format(text.slice(last, m.index));
+    html += `<button type="button" class="chat-link" data-goto="${m[2]}" data-section="${esc(m[3] ?? "")}">${esc(m[1].replace(/\*/g, ""))}</button>`;
+    last = m.index + m[0].length;
+  }
+  return html + format(text.slice(last));
+}
 function markdown(text) {
   const out = [];
   let list = null;
   for (const raw of text.split("\n")) {
     const line = raw.trim();
-    const bullet = line.match(/^(?:[-*•]|\d+[.)])\s+(.*)$/);
+    if (!line) continue;
+    const bullet = line.match(/^(?:[-*•]|(\d+)[.)])\s+(.*)$/);
     if (bullet) {
-      const tag = /^\d/.test(line) ? "ol" : "ul";
+      const tag = bullet[1] ? "ol" : "ul";
       if (list !== tag) {
         if (list) out.push(`</${list}>`);
-        out.push(`<${tag}>`);
+        out.push(tag === "ol" && bullet[1] !== "1" ? `<ol start="${Number(bullet[1])}">` : `<${tag}>`);
         list = tag;
       }
-      out.push(`<li>${inline(bullet[1])}</li>`);
+      out.push(`<li>${inline(bullet[2])}</li>`);
       continue;
     }
     if (list) {
       out.push(`</${list}>`);
       list = null;
     }
-    if (line) out.push(`<p>${inline(line.replace(/^#+\s*/, ""))}</p>`);
+    out.push(`<p>${inline(line.replace(/^#+\s*/, ""))}</p>`);
   }
   if (list) out.push(`</${list}>`);
   return out.join("");
@@ -103,10 +134,13 @@ function simulationCard(sim, index) {
 }
 
 const PET = (id) => `<svg viewBox="0 0 56 56" aria-hidden="true">
-  <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9e4462"/><stop offset="1" stop-color="#741633"/></linearGradient></defs>
+  <defs><radialGradient id="${id}" cx="34%" cy="28%" r="78%"><stop offset="0" stop-color="#b44c6e"/><stop offset="1" stop-color="#741633"/></radialGradient></defs>
   <circle cx="28" cy="28" r="28" fill="url(#${id})"/>
-  <g class="pet-eyes"><rect x="18" y="20" width="6" height="11" rx="3" fill="#fff"/><rect x="32" y="20" width="6" height="11" rx="3" fill="#fff"/></g>
-  <path class="pet-mouth" d="M23 37q5 4 10 0" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <ellipse cx="14.5" cy="33.5" rx="3.8" ry="2.3" fill="#f4b6c9" opacity=".6"/>
+  <ellipse cx="41.5" cy="33.5" rx="3.8" ry="2.3" fill="#f4b6c9" opacity=".6"/>
+  <g class="pet-eye"><ellipse cx="20.5" cy="25" rx="4.8" ry="5.8" fill="#fff"/><circle class="pet-pupil" cx="20.5" cy="25.8" r="2.6" fill="#2b0713"/></g>
+  <g class="pet-eye"><ellipse cx="35.5" cy="25" rx="4.8" ry="5.8" fill="#fff"/><circle class="pet-pupil" cx="35.5" cy="25.8" r="2.6" fill="#2b0713"/></g>
+  <path d="M23.5 36q4.5 3.8 9 0" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
 </svg>`;
 
 let messages = read(sessionStorage, STORE_KEY) ?? [];
@@ -117,18 +151,18 @@ let open = false;
 const root = document.createElement("div");
 root.className = "assistant";
 root.innerHTML = `
-  <div class="pet-tip" role="status" hidden><button type="button" class="pet-tip-close" aria-label="Dismiss">×</button>Ask me about churn, customers or budget what-ifs.</div>
-  <button type="button" class="pet" aria-label="Open retention assistant" aria-expanded="false" aria-controls="assistant-panel">${PET("pet-fill")}<span class="pet-badge" hidden></span></button>
+  <div class="pet-tip" role="status" hidden><button type="button" class="pet-tip-body"><span></span><strong>Show me →</strong></button><button type="button" class="pet-tip-close" aria-label="Dismiss tip">×</button></div>
+  <button type="button" class="pet" aria-label="Open retention assistant" aria-expanded="false" aria-controls="assistant-panel">${PET("pet-fill")}<span class="pet-label" aria-hidden="true">Ask AI</span><span class="pet-badge" hidden></span></button>
   <section class="chat-panel" id="assistant-panel" role="dialog" aria-label="Retention assistant" hidden>
     <header class="chat-head">
       <span class="chat-avatar">${PET("pet-fill-small")}</span>
-      <div><strong>Retention assistant</strong><small>Answers about this workbench only</small></div>
+      <div><strong>Retention assistant</strong><small>Your guide to this workbench</small></div>
       <button type="button" class="chat-icon" data-chat="reset" aria-label="Start a new chat" title="New chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="button" class="chat-icon" data-chat="close" aria-label="Close assistant" title="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     </header>
     <div class="chat-log" aria-live="polite"></div>
     <form class="chat-form">
-      <textarea rows="1" maxlength="${MAX_CHARS}" placeholder="Ask about the model, a customer or a budget…" aria-label="Message"></textarea>
+      <textarea rows="1" maxlength="${MAX_CHARS}" placeholder="Ask about a page, a customer or a budget…" aria-label="Message"></textarea>
       <button type="submit" class="chat-send" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </form>
     <p class="chat-note">AI answers can be wrong. Numbers come from the workbench tools.</p>
@@ -161,7 +195,7 @@ function render() {
   ];
   if (!messages.length && available !== false)
     items.push(
-      `<div class="chat-chips">${SUGGESTIONS.map((s) => `<button type="button" data-ask="${esc(s)}">${esc(s)}</button>`).join("")}</div>`,
+      `<div class="chat-chips"><button type="button" class="chip-main" data-ask="${esc(PAGE_HELP[currentPage()][1])}">Explain this page</button>${SUGGESTIONS.map((s) => `<button type="button" data-ask="${esc(s)}">${esc(s)}</button>`).join("")}</div>`,
     );
   if (available === false)
     items.push(
@@ -183,7 +217,7 @@ function payload() {
   let recent = turns.slice(-MAX_SEND);
   while (recent.length > 1 && (recent[0].role !== "user" || JSON.stringify(recent).length > 12000))
     recent = recent.slice(1);
-  return { messages: recent };
+  return { messages: recent, page: currentPage() };
 }
 
 async function send(text) {
@@ -305,8 +339,8 @@ window.addEventListener("pointermove", (e) => {
     const dx = e.clientX - (r.left + r.width / 2),
       dy = e.clientY - (r.top + r.height / 2),
       d = Math.hypot(dx, dy) || 1;
-    root.style.setProperty("--look-x", `${((dx / d) * Math.min(d / 60, 1) * 2.5).toFixed(2)}px`);
-    root.style.setProperty("--look-y", `${((dy / d) * Math.min(d / 60, 1) * 2).toFixed(2)}px`);
+    root.style.setProperty("--look-x", `${((dx / d) * Math.min(d / 80, 1) * 1.8).toFixed(2)}px`);
+    root.style.setProperty("--look-y", `${((dy / d) * Math.min(d / 80, 1) * 2).toFixed(2)}px`);
   });
 });
 
@@ -369,7 +403,51 @@ root.addEventListener("click", (e) => {
     if (sim) window.dispatchEvent(new CustomEvent("retention:apply-settings", { detail: sim.settings }));
   }
   if (b.classList.contains("pet-tip-close")) hideTip();
+  if (b.classList.contains("pet-tip-body")) {
+    hideTip();
+    setOpen(true);
+    send(PAGE_HELP[currentPage()][1]);
+  }
+  if (b.dataset.goto) {
+    const section = b.dataset.section;
+    if (window.innerWidth <= 640) setOpen(false);
+    // No "explain this page" nudge for a page the chat just sent them to.
+    write(sessionStorage, TIPS_KEY, [...(read(sessionStorage, TIPS_KEY) ?? []), b.dataset.goto]);
+    if (b.dataset.goto === currentPage()) {
+      highlight(section);
+    } else {
+      location.hash = b.dataset.goto;
+      setTimeout(() => highlight(section), 120);
+    }
+  }
 });
+
+// Scroll to a panel, card or button by its visible title and flash it.
+function highlight(section) {
+  const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const want = (section ?? "").trim().toLowerCase();
+  if (!want) return window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+  const nodes = [...document.querySelectorAll("#main h2, #main .metric .label, #main button, #main summary, #main label")];
+  const text = (n) => n.textContent.replace(/\s+/g, " ").trim().toLowerCase();
+  const hit =
+    nodes.find((n) => text(n) === want) ??
+    nodes.find((n) => text(n).startsWith(want)) ??
+    nodes.find((n) => text(n).includes(want));
+  if (!hit) return;
+  if (hit.tagName === "SUMMARY") hit.parentElement.open = true;
+  const target = hit.matches("button, summary, label") ? hit : (hit.closest(".metric, .panel") ?? hit);
+  // Step the chat out of the way when it would cover what we point at.
+  if (open) {
+    const p = panel.getBoundingClientRect(),
+      t = target.getBoundingClientRect();
+    if (t.left < p.right && t.right > p.left) setOpen(false);
+  }
+  target.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
+  target.classList.remove("tour-flash");
+  void target.offsetWidth;
+  target.classList.add("tour-flash");
+  setTimeout(() => target.classList.remove("tour-flash"), 2600);
+}
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const text = input.value;
@@ -396,19 +474,36 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// ---- First visit: a short hello next to the pet.
+// ---- Page nudges: a short offer to explain each page, once per session.
+let tipTimer = 0;
 function hideTip() {
   tip.hidden = true;
-  write(localStorage, SEEN_KEY, true);
+  root.classList.remove("tipping");
+  clearTimeout(tipTimer);
 }
-if (!read(localStorage, SEEN_KEY)) {
-  setTimeout(() => {
-    if (!open) tip.hidden = false;
-  }, 1500);
-  setTimeout(() => {
-    if (!tip.hidden) hideTip();
-  }, 12000);
+function maybeTip(delay) {
+  const page = currentPage();
+  const seen = read(sessionStorage, TIPS_KEY) ?? [];
+  if (seen.includes(page) || seen.includes("muted")) return;
+  clearTimeout(tipTimer);
+  tipTimer = setTimeout(() => {
+    if (open || currentPage() !== page) return;
+    write(sessionStorage, TIPS_KEY, [...seen, page]);
+    tip.querySelector(".pet-tip-body span").textContent = PAGE_HELP[page][0];
+    tip.hidden = false;
+    root.classList.add("tipping");
+    tipTimer = setTimeout(hideTip, 9000);
+  }, delay);
 }
+tip.querySelector(".pet-tip-close").addEventListener("click", () =>
+  write(sessionStorage, TIPS_KEY, [...(read(sessionStorage, TIPS_KEY) ?? []), "muted"]),
+);
+window.addEventListener("hashchange", () => {
+  hideTip();
+  maybeTip(900);
+  if (open && !messages.length) render();
+});
+maybeTip(1500);
 
 place();
 render();

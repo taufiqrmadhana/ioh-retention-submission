@@ -12,7 +12,7 @@ Churn analysis and budget-aware retention planning for the supplied telco extrac
 - `retention/agent.py` — tool-calling agent over the analysis and policy.
 - `web/` — the workbench frontend (vanilla JS, no build step). `web/policy.js` is the JS port of the policy, shared by the browser and the worker.
 - `worker/` — API layer: serves `web/`, exposes `/api/*`, owns validation, approval state and the agent call.
-- `web/assistant.js` + `worker/assistant.js` — the floating chat assistant (`/api/chat`). It answers questions about this project and runs read-only what-if simulations through the same policy; it cannot save, approve or execute plans. Uses the same `DEEPSEEK_API_KEY` as the agent.
+- `web/assistant.js` + `worker/assistant.js` — the floating chat assistant (`/api/chat`). It answers questions about this project, guides users through each page (`worker/guide.js`, with links that jump to and highlight a panel), and runs read-only what-if simulations through the same policy; it cannot save, approve or execute plans. Uses the same `DEEPSEEK_API_KEY` as the agent.
 - `outputs/` — generated artefacts; `intelligence.json` (scores, no labels) and `report.json` (evaluation) are committed because the API serves them.
 - `tests/` — analysis, policy and agent checks.
 

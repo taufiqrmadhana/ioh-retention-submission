@@ -264,6 +264,7 @@ async function runChatRequest(request, env, body) {
     return json(
       await runAssistant({
         messages,
+        page: typeof body.page === "string" ? body.page : null,
         customers: intelligence.customers,
         report,
         apiKey: env.DEEPSEEK_API_KEY,

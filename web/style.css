@@ -1195,39 +1195,78 @@ dialog p {
   right: 20px;
   bottom: var(--pet-bottom);
   z-index: 20;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: none;
-  box-shadow: 0 8px 22px rgba(79, 14, 34, 0.32);
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 4px rgba(116, 22, 51, 0.18),
+    0 12px 28px rgba(79, 14, 34, 0.45);
   touch-action: none;
   animation: pet-bob 3.2s ease-in-out infinite;
-  transition:
-    transform 0.15s,
-    box-shadow 0.15s;
+  transition: box-shadow 0.15s;
+}
+.pet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background: #c98a9e;
+  opacity: 0;
+  animation: pet-halo 3.2s ease-out infinite;
 }
 .assistant[data-side="left"] .pet {
   right: auto;
   left: 20px;
 }
 .pet:hover {
-  box-shadow: 0 10px 26px rgba(79, 14, 34, 0.42);
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 5px rgba(116, 22, 51, 0.3),
+    0 14px 32px rgba(79, 14, 34, 0.5);
 }
 .pet svg {
   display: block;
   width: 100%;
   height: 100%;
 }
-.pet-eyes {
-  transform: translate(var(--look-x), var(--look-y));
-  transition: transform 0.12s ease-out;
-}
-.pet-eyes rect {
+.pet-eye {
   transform-box: fill-box;
   transform-origin: center;
   animation: pet-blink 5.5s infinite;
+}
+.pet-pupil {
+  transform: translate(var(--look-x), var(--look-y));
+  transition: transform 0.12s ease-out;
+}
+.pet-label {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  transform: translateY(-50%);
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #4f0e22;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(79, 14, 34, 0.3);
+  pointer-events: none;
+}
+.assistant[data-side="left"] .pet-label {
+  right: auto;
+  left: calc(100% + 12px);
+}
+.assistant.open .pet-label,
+.assistant.tipping .pet-label,
+.assistant.dragging .pet-label {
+  display: none;
 }
 .assistant.dragging .pet {
   animation: none;
@@ -1235,18 +1274,19 @@ dialog p {
   transform: scale(1.08);
   transition: none;
 }
-.assistant.thinking .pet-eyes {
+.assistant.thinking .pet-pupil {
   animation: pet-think 1.4s ease-in-out infinite;
 }
-.assistant.open .pet {
+.assistant.open .pet,
+.assistant.open .pet::before {
   animation: none;
 }
 .pet-badge {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 12px;
-  height: 12px;
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #e9ccd5;
   border: 2px solid #741633;
@@ -1254,28 +1294,46 @@ dialog p {
 .pet-tip {
   position: fixed;
   right: 20px;
-  bottom: calc(var(--pet-bottom) + 68px);
+  bottom: calc(var(--pet-bottom) + 78px);
   z-index: 20;
-  max-width: 230px;
-  padding: 10px 30px 10px 12px;
-  border-radius: 10px;
+  width: 250px;
+  border-radius: 12px;
   background: #fff;
-  color: var(--ink);
-  font-size: 12px;
-  line-height: 1.45;
-  box-shadow: 0 8px 24px rgba(31, 31, 31, 0.14);
+  box-shadow: 0 10px 28px rgba(31, 31, 31, 0.18);
   border: 1px solid #e9ccd5;
+  animation: chat-in 0.2s ease-out;
+}
+.pet-tip[hidden] {
+  display: none;
 }
 .assistant[data-side="left"] .pet-tip {
   right: auto;
   left: 20px;
 }
+.pet-tip-body {
+  display: block;
+  width: 100%;
+  padding: 11px 30px 11px 13px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--ink);
+  font-size: 12.5px;
+  line-height: 1.45;
+  text-align: left;
+}
+.pet-tip-body strong {
+  display: block;
+  margin-top: 4px;
+  color: #741633;
+  font-weight: 600;
+}
 .pet-tip-close {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border: 0;
   background: none;
   color: var(--muted);
@@ -1284,7 +1342,7 @@ dialog p {
 }
 .chat-panel {
   position: fixed;
-  right: 88px;
+  right: 96px;
   z-index: 19;
   width: 384px;
   display: flex;
@@ -1301,7 +1359,7 @@ dialog p {
 }
 .assistant[data-side="left"] .chat-panel {
   right: auto;
-  left: 88px;
+  left: 96px;
 }
 .chat-head {
   display: flex;
@@ -1467,6 +1525,47 @@ dialog p {
 .chat-chips button:hover {
   background: #f6e9ed;
 }
+.chat-chips .chip-main {
+  background: #741633;
+  border-color: #741633;
+  color: #fff;
+}
+.chat-chips .chip-main:hover {
+  background: #4f0e22;
+}
+.chat-link {
+  display: inline;
+  padding: 1px 7px 2px;
+  margin: 0 1px;
+  border: 1px solid #d9b8c3;
+  border-radius: 999px;
+  background: #f6e9ed;
+  color: #741633;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.chat-link::after {
+  content: " →";
+}
+.chat-link:hover {
+  background: #e9ccd5;
+}
+.tour-flash {
+  position: relative;
+  animation: tour-flash 2.4s ease-out;
+}
+@keyframes tour-flash {
+  0%,
+  60% {
+    box-shadow:
+      0 0 0 3px #9e4462,
+      0 0 0 9px rgba(158, 68, 98, 0.18);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(158, 68, 98, 0);
+  }
+}
 .chat-off {
   padding: 10px 12px;
   border-radius: 10px;
@@ -1583,7 +1682,18 @@ dialog p {
 }
 @keyframes pet-bob {
   50% {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
+  }
+}
+@keyframes pet-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  60%,
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
   }
 }
 @keyframes pet-blink {
@@ -1625,8 +1735,14 @@ dialog p {
 }
 @media (max-width: 640px) {
   .pet {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
+  }
+  .pet-label {
+    display: none;
+  }
+  .pet-tip {
+    bottom: calc(var(--pet-bottom) + 70px);
   }
   .assistant.open .pet,
   .assistant.open .pet-tip {

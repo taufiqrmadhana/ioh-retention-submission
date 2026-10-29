@@ -1,4 +1,5 @@
 import { ACTIONS, DEFAULTS, buildPlan, compareActions, settings } from "../web/policy.js";
+import { PAGES, SITE_GUIDE } from "./guide.js";
 
 // A small question-answering assistant for the workbench. It reads the same
 // report and customer intelligence as the UI, runs what-if plans through the
@@ -107,11 +108,17 @@ export function projectBrief(report) {
   ].join("\n");
 }
 
-function systemPrompt(report) {
-  return `You are the Retention assistant inside a retrospective telco churn workbench (IOH data scientist take-home).
-Answer only questions about this workbench: its data, cohort, churn model and evaluation, the retention policy and economics, the agent workflow, individual customers, and budget simulations. For anything else, say in one sentence that you only cover this workbench.
-Use the facts below and the tools. Never invent numbers, customers or results. For any what-if about budget, capacity, retained value or success rates, call simulate_plan and quote its numbers. To discuss a customer, call get_customer. Simulations are scenario economics on assumed success rates, not measured uplift; nothing is saved or executed and no customer is contacted. Scores are retrospective out-of-fold estimates, not causes of churn.
-Reply in the user's language (Indonesian or English). Keep it short: at most about 120 words unless asked for detail, plain sentences or "- " bullets, **bold** for key numbers. Write rupiah like Rp3.000.000 or Rp3M and customer IDs exactly, for example IOH-430.
+function systemPrompt(report, page) {
+  return `You are the Retention assistant inside a retrospective telco churn workbench (IOH data scientist take-home). You are also its guide: you explain what each page shows, how to read its numbers and charts, and how to complete tasks in it.
+Answer only questions about this workbench: how to use and read it, its data, cohort, churn model and evaluation, the retention policy and economics, the agent workflow, individual customers, and budget simulations. For anything else, say in one sentence that you only cover this workbench.
+Use the guide, the facts and the tools below. Never invent numbers, customers, pages, buttons or results. For any what-if about budget, capacity, retained value or success rates, call simulate_plan and quote its numbers. To discuss a customer, call get_customer. Simulations are scenario economics on assumed success rates, not measured uplift; nothing is saved or executed and no customer is contacted. Scores are retrospective out-of-fold estimates, not causes of churn.
+For "how do I" questions give short numbered steps that name the exact buttons. To explain a chart, say what the axes are, what a good result looks like, and what this chart shows here.
+Link a page as [Agent workspace](#agent) and a panel as [Campaign settings](#agent/Campaign settings), using only the page ids overview, customers, agent, evidence and the exact quoted panel titles in the guide. Links take the user there and highlight the panel; add one or two where they help.
+Reply in the user's language (Indonesian or English). Keep it short: at most about 120 words, or about 180 for a page tour or step-by-step guide, unless asked for detail. Use plain sentences, "- " bullets or "1. " steps, **bold** for key numbers. Write rupiah like Rp3.000.000 or Rp3M and customer IDs exactly, for example IOH-430.
+${page ? `The user is currently on the ${PAGES[page]} page; "this page" means it.` : ""}
+
+Workbench guide:
+${SITE_GUIDE}
 
 Project facts:
 ${projectBrief(report)}`;
@@ -212,6 +219,7 @@ export function cleanHistory(messages) {
 
 export async function runAssistant({
   messages,
+  page = null,
   customers,
   report,
   apiKey,
@@ -220,7 +228,7 @@ export async function runAssistant({
   fetcher = fetch,
 }) {
   const history = cleanHistory(messages);
-  const convo = [{ role: "system", content: systemPrompt(report) }, ...history];
+  const convo = [{ role: "system", content: systemPrompt(report, Object.hasOwn(PAGES, page) ? page : null) }, ...history];
   const trace = [],
     simulations = [];
   let calls = 0,
