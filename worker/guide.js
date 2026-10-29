@@ -9,11 +9,11 @@ export const PAGES = {
   evidence: "Evidence & model",
 };
 
-export const SITE_GUIDE = `Layout: a left sidebar with the four pages (Overview, Customer explorer, Agent workspace, Evidence & model) and a "Model & policy" card (logistic model with 5-fold out-of-fold scores, policy retention-v1, execution = simulation only). The top bar shows the page name and the decision date, 01 Nov 2025. Overview, Customer explorer and Agent workspace start with a pink "Retrospective simulation" banner: scores are historical estimates and nothing is sent to customers. The chat assistant is the floating face in a bottom corner; it can be dragged to either side.
+export const SITE_GUIDE = `Layout: a left sidebar with the four pages (Overview, Customer explorer, Agent workspace, Evidence & model) and a "Model & policy" card (logistic model with 5-fold out-of-fold scores, policy retention-v2, execution = simulation only). The top bar shows the page name and the decision date, 01 Nov 2025. Overview, Customer explorer and Agent workspace start with a pink "Retrospective simulation" banner: scores are historical estimates and nothing is sent to customers. The chat assistant is the floating face in a bottom corner; it can be dragged to either side.
 
 Risk bands: High = OOF score at least 50%, Medium = 20% to 50%, Low = under 20% (40 High, 13 Medium, 155 Low). The OOF (out-of-fold) score is the model's churn estimate for a customer from a model that never saw that customer in training.
 
-Review route (Overview and Customer explorer tables): "Technical review" if the customer had a technical support contact in the 30 days before 1 Nov; "Billing review" if a billing contact and no technical one; "Compare incentives" if an offer has positive scenario net benefit under the current assumptions; otherwise "Observe".
+Review route (Overview and Customer explorer tables): "Technical review" if the customer had a technical support contact in the 30 days before 1 Nov and their risk clears the offer break-even (12.5% at default assumptions); "Billing review" if a billing contact and no technical one, with the same risk floor; "Observe · below break-even" for a recent contact under that floor; "Compare incentives" if an offer has positive scenario net benefit under the current assumptions; otherwise "Observe".
 
 PAGE overview — Overview (#overview). Starting point.
 - Buttons top right: "Model evaluation" opens Evidence & model; "Create proposal" opens Agent workspace.
@@ -31,7 +31,7 @@ Customer detail (pop-up, opens from any customer ID or "Inspect" anywhere):
 - Tiles: OOF risk estimate, tenure in months, monthly charge.
 - "Observed evidence": plain facts behind the score, such as short tenure or a month-to-month contract. "Unknown at decision time": consent, live status, contact limits, eligibility, resolution status.
 - "Model contributions": signed log-odds per input. Positive pushes the score up, negative pulls it down; bigger magnitude = bigger effect. They explain the score, not the cause of churn.
-- "Action comparison": each action's cost, scenario net benefit (risk × success rate × retained value − cost; "Unmeasured" for reviews) and status: "Review required" = allowed in a proposal, "Not eligible" = blocked (offers are blocked when there was a recent service or billing contact).
+- "Action comparison": each action's cost, scenario net benefit (risk × success rate × retained value − cost; "Unmeasured" for reviews) and status: "Review required" = allowed in a proposal, "Not eligible" = blocked (offers are blocked when there was a recent service or billing contact; reviews are blocked when risk is below the offer break-even).
 
 PAGE agent — Agent workspace (#agent). Where proposals are made, reviewed and approved.
 - "Campaign settings" (left): budget slider Rp0–10M, maximum customers 1–20, "Prioritize technical reviews over billing reviews", and "Economic assumptions" (retained customer value, basic and premium prevention %). "Generate policy plan" runs the deterministic policy over all 208 customers and saves the result as a proposal.

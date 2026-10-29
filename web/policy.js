@@ -1,4 +1,4 @@
-export const POLICY_VERSION = "retention-v1";
+export const POLICY_VERSION = "retention-v2";
 export const DEFAULTS = Object.freeze({
   budget: 3000000,
   maxCustomers: 10,
@@ -39,12 +39,28 @@ export function settings(input = {}) {
   return Object.fromEntries(Object.keys(DEFAULTS).map((k) => [k, s[k]]));
 }
 
+// Lowest risk at which any offer has positive scenario net benefit. A service
+// review is the first step towards an offer, so it is proposed only above it.
+// Null when no offer can break even under the current assumptions.
+export function reviewFloor(input = {}) {
+  const s = settings(input);
+  const floors = [
+    ["basic_offer", s.basicSuccess],
+    ["premium_offer", s.premiumSuccess],
+  ]
+    .filter(([, success]) => success * s.retainedValue > 0)
+    .map(([action, success]) => ACTIONS[action].cost / (success * s.retainedValue));
+  return floors.length ? Math.min(...floors) : null;
+}
+
 export function compareActions(customer, input = {}) {
   const s = settings(input);
   const technical = customer.features.technical_30d > 0;
   const billing = customer.features.billing_30d > 0;
   const blocked =
     customer.consent === "denied" || customer.eligibility === "ineligible";
+  const floor = reviewFloor(s);
+  const worthReview = floor !== null && customer.risk_score >= floor;
   return Object.entries(ACTIONS).map(([action, a]) => {
     const isOffer = action.endsWith("_offer");
     const eligible =
@@ -52,9 +68,9 @@ export function compareActions(customer, input = {}) {
       (!blocked &&
         (isOffer
           ? !technical && !billing
-          : action === "technical_review"
-            ? technical
-            : billing && !technical));
+          : (action === "technical_review"
+              ? technical
+              : billing && !technical) && worthReview));
     const success =
       action === "basic_offer"
         ? s.basicSuccess
@@ -76,7 +92,9 @@ export function compareActions(customer, input = {}) {
         ? "Customer is ineligible or has denied contact consent."
         : isOffer && (technical || billing)
           ? "Verify the recent service/billing issue before offering an incentive."
-          : action === "no_action"
+          : action.endsWith("_review") && !worthReview && (technical || billing)
+            ? "Risk is below the offer break-even; observe instead of reviewing."
+            : action === "no_action"
             ? "Observe; no outreach or incentive."
             : "Proposal only: verify consent, current account status, resolution, contact frequency and offer eligibility.",
       cost_source: isOffer
@@ -173,7 +191,7 @@ export function buildPlan(customers, input = {}) {
       0,
     ),
     methodology:
-      "Reserve up to 30% of customer capacity (rounded down; minimum one) for service reviews first; allocate offers by greedy marginal net benefit per rupiah. No global-optimum claim.",
+      "Reserve up to 30% of customer capacity (rounded down; minimum one) for service reviews of customers whose risk clears the offer break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No global-optimum claim.",
     economic_note:
       "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",
     review_checklist: [

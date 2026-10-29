@@ -38,6 +38,8 @@ SYNTHETIC = [customer(f"C{i:02}", round(0.9 - i * 0.03, 4)) for i in range(14)] 
     customer("DENIED", 0.99, consent="denied"),
     customer("INELIGIBLE", 0.98, eligibility="ineligible"),
     customer("LOW", 0.01),
+    customer("TLOW", 0.05, technical=1),
+    customer("BLOW", 0.12, billing=2),
 ]
 
 PLANS = [
@@ -61,6 +63,9 @@ COMPARE = [
     ("technical", customer("TECH", 0.7, technical=1), {}),
     ("billing_and_technical", customer("BOTH", 0.7, technical=1, billing=1), {}),
     ("denied", customer("NO", 0.7, consent="denied"), {}),
+    ("review_below_floor", customer("TL", 0.05, technical=1), {}),
+    ("review_at_floor", customer("BF", 0.125, billing=1), {}),
+    ("no_offer_can_pay", customer("NP", 0.9, technical=1), {"basic_success": 0, "premium_success": 0}),
 ]
 
 # Forged plans that both validators must reject.

@@ -1,4 +1,4 @@
-import { ACTIONS, DEFAULTS, buildPlan, compareActions, settings } from "../web/policy.js";
+import { ACTIONS, DEFAULTS, buildPlan, compareActions, reviewFloor, settings } from "../web/policy.js";
 import { PAGES, SITE_GUIDE } from "./guide.js";
 
 // A small question-answering assistant for the workbench. It reads the same
@@ -40,7 +40,7 @@ export const TOOLS = [
   ),
   tool(
     "simulate_plan",
-    "Run the retention-v1 policy on all 208 customers with the given budget and assumptions. Returns spend, scenario net benefit and the selected actions. Nothing is saved or executed.",
+    "Run the retention-v2 policy on all 208 customers with the given budget and assumptions. Returns spend, scenario net benefit and the selected actions. Nothing is saved or executed.",
     {
       budget: { type: "integer", minimum: 0, maximum: 10000000, description: "Campaign budget in rupiah" },
       max_customers: { type: "integer", minimum: 1, maximum: 20 },
@@ -111,7 +111,7 @@ export function projectBrief(report) {
     cal
       ? `Calibration test: sigmoid scaling fitted on training rows only changed holdout Brier ${cal.holdout.raw.brier.toFixed(3)}→${cal.holdout.sigmoid.brier.toFixed(3)} and log-loss ${cal.holdout.raw.log_loss.toFixed(3)}→${cal.holdout.sigmoid.log_loss.toFixed(3)}; the demo plan kept ${cal.plan_impact.same_customers} of ${cal.plan_impact.raw.customers} customers. Raw scores are kept.`
       : "",
-    `Policy retention-v1: costs ${costs}. Offers only for customers without a recent service or billing contact; technical review if a technical contact; billing review if billing without technical. Up to 30% of capacity (rounded down, minimum one) goes to service reviews first, then offers by greedy marginal net benefit per rupiah within budget. Net benefit = risk × success rate × retained value − cost. Defaults: budget ${rp(DEFAULTS.budget)}, ${DEFAULTS.maxCustomers} customers, retained value ${rp(DEFAULTS.retainedValue)}, basic success ${pct(DEFAULTS.basicSuccess, 0)}, premium success ${pct(DEFAULTS.premiumSuccess, 0)}. Success rates come from the brief, not from tests.`,
+    `Policy retention-v2: costs ${costs}. Offers only for customers without a recent service or billing contact; technical review if a technical contact, billing review if billing without technical, and only when the customer's risk clears the offer break-even (${pct(reviewFloor(), 1)} at default assumptions), so low-risk contacts are observed instead. Up to 30% of capacity (rounded down, minimum one) goes to those service reviews first, then offers by greedy marginal net benefit per rupiah within budget. Net benefit = risk × success rate × retained value − cost. Defaults: budget ${rp(DEFAULTS.budget)}, ${DEFAULTS.maxCustomers} customers, retained value ${rp(DEFAULTS.retainedValue)}, basic success ${pct(DEFAULTS.basicSuccess, 0)}, premium success ${pct(DEFAULTS.premiumSuccess, 0)}. Success rates come from the brief, not from tests.`,
     `Economics: break-even at ${eco.sensitivity.breakeven_multiplier ?? "n/a"}x the assumed success rates, found by re-planning (below it the plan loses money). Greedy versus an exact optimiser keeping the same ${eco.optimisation.reviews_in_plan} service reviews: ${rp(eco.optimisation.greedy_net_benefit)} vs ${rp(eco.optimisation.exact_same_reviews_net_benefit)} (algorithm gap ${eco.optimisation.algorithm_gap_pct}%). Dropping the review reservation would add ${rp(eco.optimisation.review_reservation_cost)} of scenario value; that is a policy choice, not an algorithm gap.`,
     strategies
       ? `Same budget (${rp(strategies.settings.budget)}), capacity and eligibility: ${strategies.rows.map((r) => `${r.label}: ${r.customers} customers, cost ${rp(r.cost)}, expected saves ${r.expected_saves}, scenario net ${rp(r.scenario_net_benefit)}`).join("; ")}. An uncapped threshold rule would reach ${strategies.uncapped_threshold_rule.with_policy_checks.customers} customers with the service/billing checks; without them it adds ${strategies.uncapped_threshold_rule.without_policy_checks.blocked_by_policy} offers the policy blocks.`

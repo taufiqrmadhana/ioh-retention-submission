@@ -230,6 +230,26 @@
     "technical_30d": 0,
     "billing_30d": 0
    }
+  },
+  {
+   "customer_id": "TLOW",
+   "risk_score": 0.05,
+   "consent": "unknown",
+   "eligibility": "review_required",
+   "features": {
+    "technical_30d": 1,
+    "billing_30d": 0
+   }
+  },
+  {
+   "customer_id": "BLOW",
+   "risk_score": 0.12,
+   "consent": "unknown",
+   "eligibility": "review_required",
+   "features": {
+    "technical_30d": 0,
+    "billing_30d": 2
+   }
   }
  ],
  "plans": [
@@ -600,29 +620,10 @@
     "premium_success": 0
    },
    "expected": {
-    "items": [
-     [
-      "T1",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "T2",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "B1",
-      "billing_review",
-      25000,
-      null
-     ]
-    ],
-    "total_cost": 125000,
-    "remaining_budget": 2875000,
-    "scenario_net_benefit": -125000,
+    "items": [],
+    "total_cost": 0,
+    "remaining_budget": 3000000,
+    "scenario_net_benefit": 0,
     "scenario_prevented_churn": 0.0
    }
   },
@@ -634,29 +635,10 @@
     "budget": 5000000
    },
    "expected": {
-    "items": [
-     [
-      "T1",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "T2",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "B1",
-      "billing_review",
-      25000,
-      null
-     ]
-    ],
-    "total_cost": 125000,
-    "remaining_budget": 4875000,
-    "scenario_net_benefit": -125000,
+    "items": [],
+    "total_cost": 0,
+    "remaining_budget": 5000000,
+    "scenario_net_benefit": 0,
     "scenario_prevented_churn": 0.0
    }
   },
@@ -667,21 +649,21 @@
    "expected": {
     "items": [
      [
-      "IOH-174",
-      "technical_review",
-      50000,
+      "IOH-565",
+      "billing_review",
+      25000,
       null
      ],
      [
-      "IOH-074",
-      "technical_review",
-      50000,
+      "IOH-198",
+      "billing_review",
+      25000,
       null
      ],
      [
-      "IOH-098",
-      "technical_review",
-      50000,
+      "IOH-067",
+      "billing_review",
+      25000,
       null
      ],
      [
@@ -727,9 +709,9 @@
       1028099
      ]
     ],
-    "total_cost": 3000000,
-    "remaining_budget": 0,
-    "scenario_net_benefit": 15912689,
+    "total_cost": 2925000,
+    "remaining_budget": 75000,
+    "scenario_net_benefit": 15987689,
     "scenario_prevented_churn": 3.1521148
    }
   },
@@ -742,24 +724,6 @@
    },
    "expected": {
     "items": [
-     [
-      "IOH-174",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "IOH-074",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "IOH-098",
-      "technical_review",
-      50000,
-      null
-     ],
      [
       "IOH-565",
       "billing_review",
@@ -774,6 +738,24 @@
      ],
      [
       "IOH-067",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-167",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-195",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-365",
       "billing_review",
       25000,
       null
@@ -863,9 +845,9 @@
       2085591
      ]
     ],
-    "total_cost": 6525000,
-    "remaining_budget": 3475000,
-    "scenario_net_benefit": 33812106,
+    "total_cost": 6450000,
+    "remaining_budget": 3550000,
+    "scenario_net_benefit": 33887106,
     "scenario_prevented_churn": 6.722851
    }
   },
@@ -878,24 +860,6 @@
    },
    "expected": {
     "items": [
-     [
-      "IOH-174",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "IOH-074",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "IOH-098",
-      "technical_review",
-      50000,
-      null
-     ],
      [
       "IOH-430",
       "basic_offer",
@@ -937,12 +901,30 @@
       "basic_offer",
       150000,
       20824
+     ],
+     [
+      "IOH-501",
+      "basic_offer",
+      150000,
+      20128
+     ],
+     [
+      "IOH-621",
+      "basic_offer",
+      150000,
+      19706
+     ],
+     [
+      "IOH-421",
+      "basic_offer",
+      150000,
+      19296
      ]
     ],
-    "total_cost": 1200000,
-    "remaining_budget": 1800000,
-    "scenario_net_benefit": -569,
-    "scenario_prevented_churn": 0.199905091
+    "total_cost": 1500000,
+    "remaining_budget": 1500000,
+    "scenario_net_benefit": 208561,
+    "scenario_prevented_churn": 0.28476004800000004
    }
   },
   {
@@ -1214,6 +1196,132 @@
      "premium_offer",
      false,
      1650000
+    ],
+    [
+     "technical_review",
+     false,
+     null
+    ],
+    [
+     "billing_review",
+     false,
+     null
+    ],
+    [
+     "no_action",
+     true,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "review_below_floor",
+   "customer": {
+    "customer_id": "TL",
+    "risk_score": 0.05,
+    "consent": "unknown",
+    "eligibility": "review_required",
+    "features": {
+     "technical_30d": 1,
+     "billing_30d": 0
+    }
+   },
+   "settings": {},
+   "expected": [
+    [
+     "basic_offer",
+     false,
+     -90000
+    ],
+    [
+     "premium_offer",
+     false,
+     -300000
+    ],
+    [
+     "technical_review",
+     false,
+     null
+    ],
+    [
+     "billing_review",
+     false,
+     null
+    ],
+    [
+     "no_action",
+     true,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "review_at_floor",
+   "customer": {
+    "customer_id": "BF",
+    "risk_score": 0.125,
+    "consent": "unknown",
+    "eligibility": "review_required",
+    "features": {
+     "technical_30d": 0,
+     "billing_30d": 1
+    }
+   },
+   "settings": {},
+   "expected": [
+    [
+     "basic_offer",
+     false,
+     0
+    ],
+    [
+     "premium_offer",
+     false,
+     -75000
+    ],
+    [
+     "technical_review",
+     false,
+     null
+    ],
+    [
+     "billing_review",
+     true,
+     null
+    ],
+    [
+     "no_action",
+     true,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "no_offer_can_pay",
+   "customer": {
+    "customer_id": "NP",
+    "risk_score": 0.9,
+    "consent": "unknown",
+    "eligibility": "review_required",
+    "features": {
+     "technical_30d": 1,
+     "billing_30d": 0
+    }
+   },
+   "settings": {
+    "basic_success": 0,
+    "premium_success": 0
+   },
+   "expected": [
+    [
+     "basic_offer",
+     false,
+     -150000
+    ],
+    [
+     "premium_offer",
+     false,
+     -450000
     ],
     [
      "technical_review",

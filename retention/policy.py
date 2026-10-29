@@ -2,7 +2,7 @@
 
 from math import floor, isfinite
 
-POLICY_VERSION = "retention-v1"
+POLICY_VERSION = "retention-v2"
 DEFAULTS = {
     "budget": 3_000_000,
     "max_customers": 10,
@@ -47,6 +47,22 @@ def settings(overrides=None):
     return {key: values[key] for key in DEFAULTS}
 
 
+def review_floor(overrides=None):
+    """Lowest risk at which any offer has positive scenario net benefit.
+
+    A service review is the first step towards an offer, so it is proposed only
+    for customers whose risk would justify one once the issue is resolved.
+    None when no offer can break even under the current assumptions.
+    """
+    config = settings(overrides)
+    floors = [
+        ACTIONS[action]["cost"] / (config[success] * config["retained_value"])
+        for action, success in (("basic_offer", "basic_success"), ("premium_offer", "premium_success"))
+        if config[success] * config["retained_value"] > 0
+    ]
+    return min(floors) if floors else None
+
+
 def compare_actions(customer, overrides=None):
     """Return authoritative costs and scenario values; never authorize execution."""
     config = settings(overrides)
@@ -56,6 +72,8 @@ def compare_actions(customer, overrides=None):
         customer.get("consent") == "denied"
         or customer.get("eligibility") == "ineligible"
     )
+    risk_floor = review_floor(config)
+    worth_review = risk_floor is not None and customer["risk_score"] >= risk_floor
     results = []
     for action, details in ACTIONS.items():
         offer = action.endswith("_offer")
@@ -65,6 +83,7 @@ def compare_actions(customer, overrides=None):
             else (
                 technical if action == "technical_review" else billing and not technical
             )
+            and worth_review
         )
         eligible = action == "no_action" or (not blocked and allowed)
         success = {
@@ -82,6 +101,8 @@ def compare_actions(customer, overrides=None):
             reason = (
                 "Verify the recent service/billing issue before offering an incentive."
             )
+        elif action.endswith("_review") and not worth_review and (technical or billing):
+            reason = "Risk is below the offer break-even; observe instead of reviewing."
         elif action == "no_action":
             reason = "Observe; no outreach or incentive."
         else:
@@ -203,7 +224,7 @@ def build_plan(customers, overrides=None):
             for a in items
         ),
         "scenario_prevented_churn": prevented,
-        "methodology": "Reserve up to 30% of customer capacity (rounded down; minimum one) for service reviews first; allocate offers by greedy marginal net benefit per rupiah. No global-optimum claim.",
+        "methodology": "Reserve up to 30% of customer capacity (rounded down; minimum one) for service reviews of customers whose risk clears the offer break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No global-optimum claim.",
         "economic_note": "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",
         "review_checklist": [
             "Confirm account is still active",

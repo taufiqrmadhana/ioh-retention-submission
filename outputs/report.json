@@ -195,27 +195,27 @@
       "raw": {
         "customers": 10,
         "actions": {
-          "technical_review": 3,
+          "billing_review": 3,
           "premium_offer": 6,
           "basic_offer": 1
         },
-        "cost": 3000000,
+        "cost": 2925000,
         "expected_saves": 3.15,
-        "scenario_net_benefit": 15912689,
-        "churners_reached": 7,
+        "scenario_net_benefit": 15987689,
+        "churners_reached": 8,
         "blocked_by_policy": 0
       },
       "alternative": {
         "customers": 10,
         "actions": {
-          "technical_review": 3,
+          "billing_review": 3,
           "premium_offer": 6,
           "basic_offer": 1
         },
-        "cost": 3000000,
+        "cost": 2925000,
         "expected_saves": 3.1,
-        "scenario_net_benefit": 15608889,
-        "churners_reached": 7,
+        "scenario_net_benefit": 15683889,
+        "churners_reached": 8,
         "blocked_by_policy": 0
       },
       "same_customers": 10,
@@ -461,43 +461,43 @@
           "success_multiplier": 0.02,
           "basic_success": 0.004,
           "premium_success": 0.01,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 3000000,
           "success_multiplier": 0.05,
           "basic_success": 0.01,
           "premium_success": 0.025,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 3000000,
           "success_multiplier": 0.1,
           "basic_success": 0.02,
           "premium_success": 0.05,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 3000000,
           "success_multiplier": 0.2,
           "basic_success": 0.04,
           "premium_success": 0.1,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 3000000,
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 309721,
+          "net_benefit": 614684,
           "cost": 3000000,
           "customers": 10
         },
@@ -506,7 +506,7 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 1728173,
+          "net_benefit": 2163836,
           "cost": 3000000,
           "customers": 10
         },
@@ -515,8 +515,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 4092259,
-          "cost": 3000000,
+          "net_benefit": 4432918,
+          "cost": 2875000,
           "customers": 10
         },
         {
@@ -524,8 +524,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 6456345,
-          "cost": 3000000,
+          "net_benefit": 6531345,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -533,8 +533,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 8820430,
-          "cost": 3000000,
+          "net_benefit": 8895430,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -542,8 +542,8 @@
           "success_multiplier": 1.5,
           "basic_success": 0.3,
           "premium_success": 0.75,
-          "net_benefit": 11184518,
-          "cost": 3000000,
+          "net_benefit": 11259518,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -551,8 +551,8 @@
           "success_multiplier": 1.75,
           "basic_success": 0.35,
           "premium_success": 0.875,
-          "net_benefit": 13548602,
-          "cost": 3000000,
+          "net_benefit": 13623602,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -560,34 +560,34 @@
           "success_multiplier": 0.02,
           "basic_success": 0.004,
           "premium_success": 0.01,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 6000000,
           "success_multiplier": 0.05,
           "basic_success": 0.01,
           "premium_success": 0.025,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 6000000,
           "success_multiplier": 0.1,
           "basic_success": 0.02,
           "premium_success": 0.05,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 6000000,
           "success_multiplier": 0.2,
           "basic_success": 0.04,
           "premium_success": 0.1,
-          "net_benefit": 782538,
+          "net_benefit": 1131068,
           "cost": 3000000,
           "customers": 10
         },
@@ -596,7 +596,7 @@
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 3619442,
+          "net_benefit": 4229369,
           "cost": 3000000,
           "customers": 10
         },
@@ -605,8 +605,8 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 6456345,
-          "cost": 3000000,
+          "net_benefit": 6531345,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -614,8 +614,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 11184518,
-          "cost": 3000000,
+          "net_benefit": 11259518,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -623,8 +623,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 15912689,
-          "cost": 3000000,
+          "net_benefit": 15987689,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -632,8 +632,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 20640862,
-          "cost": 3000000,
+          "net_benefit": 20715862,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -641,8 +641,8 @@
           "success_multiplier": 1.5,
           "basic_success": 0.3,
           "premium_success": 0.75,
-          "net_benefit": 25369034,
-          "cost": 3000000,
+          "net_benefit": 25444034,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -650,8 +650,8 @@
           "success_multiplier": 1.75,
           "basic_success": 0.35,
           "premium_success": 0.875,
-          "net_benefit": 30097207,
-          "cost": 3000000,
+          "net_benefit": 30172207,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -659,26 +659,26 @@
           "success_multiplier": 0.02,
           "basic_success": 0.004,
           "premium_success": 0.01,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 9000000,
           "success_multiplier": 0.05,
           "basic_success": 0.01,
           "premium_success": 0.025,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 9000000,
           "success_multiplier": 0.1,
           "basic_success": 0.02,
           "premium_success": 0.05,
-          "net_benefit": 40791,
-          "cost": 1200000,
+          "net_benefit": 267477,
+          "cost": 1500000,
           "customers": 10
         },
         {
@@ -686,7 +686,7 @@
           "success_multiplier": 0.2,
           "basic_success": 0.04,
           "premium_success": 0.1,
-          "net_benefit": 2673807,
+          "net_benefit": 3196602,
           "cost": 3000000,
           "customers": 10
         },
@@ -695,8 +695,8 @@
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 6929162,
-          "cost": 3000000,
+          "net_benefit": 7004162,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -704,8 +704,8 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 11184518,
-          "cost": 3000000,
+          "net_benefit": 11259518,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -713,8 +713,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 18276776,
-          "cost": 3000000,
+          "net_benefit": 18351776,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -722,8 +722,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 25369034,
-          "cost": 3000000,
+          "net_benefit": 25444034,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -731,8 +731,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 32461291,
-          "cost": 3000000,
+          "net_benefit": 32536291,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -740,8 +740,8 @@
           "success_multiplier": 1.5,
           "basic_success": 0.3,
           "premium_success": 0.75,
-          "net_benefit": 39553550,
-          "cost": 3000000,
+          "net_benefit": 39628550,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -749,8 +749,8 @@
           "success_multiplier": 1.75,
           "basic_success": 0.35,
           "premium_success": 0.875,
-          "net_benefit": 46645808,
-          "cost": 3000000,
+          "net_benefit": 46670808,
+          "cost": 2975000,
           "customers": 10
         },
         {
@@ -758,25 +758,25 @@
           "success_multiplier": 0.02,
           "basic_success": 0.004,
           "premium_success": 0.01,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 12000000,
           "success_multiplier": 0.05,
           "basic_success": 0.01,
           "premium_success": 0.025,
-          "net_benefit": -150000,
-          "cost": 150000,
-          "customers": 3
+          "net_benefit": 0,
+          "cost": 0,
+          "customers": 0
         },
         {
           "retained_value": 12000000,
           "success_multiplier": 0.1,
           "basic_success": 0.02,
           "premium_success": 0.05,
-          "net_benefit": 782538,
+          "net_benefit": 1131068,
           "cost": 3000000,
           "customers": 10
         },
@@ -785,8 +785,8 @@
           "success_multiplier": 0.2,
           "basic_success": 0.04,
           "premium_success": 0.1,
-          "net_benefit": 4565076,
-          "cost": 3000000,
+          "net_benefit": 4576958,
+          "cost": 2750000,
           "customers": 10
         },
         {
@@ -794,8 +794,8 @@
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 10238882,
-          "cost": 3000000,
+          "net_benefit": 10313882,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -803,8 +803,8 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 15912689,
-          "cost": 3000000,
+          "net_benefit": 15987689,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -812,8 +812,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 25369034,
-          "cost": 3000000,
+          "net_benefit": 25444034,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -821,8 +821,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 34825378,
-          "cost": 3000000,
+          "net_benefit": 34900378,
+          "cost": 2925000,
           "customers": 10
         },
         {
@@ -830,8 +830,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 44281721,
-          "cost": 3000000,
+          "net_benefit": 44331721,
+          "cost": 2950000,
           "customers": 10
         },
         {
@@ -858,27 +858,27 @@
         "success_multiplier": 1.0,
         "basic_success": 0.2,
         "premium_success": 0.5,
-        "net_benefit": 15912689,
-        "cost": 3000000,
+        "net_benefit": 15987689,
+        "cost": 2925000,
         "customers": 10
       },
-      "breakeven_multiplier": 0.1451,
+      "breakeven_multiplier": 0.1264,
       "breakeven_success": {
-        "basic": 0.029,
-        "premium": 0.0726
+        "basic": 0.0253,
+        "premium": 0.0632
       },
       "note": "Each point re-plans under identical constraints. Break-even is the smallest multiplier at which the re-planned net benefit turns positive, found by bisection on the plan itself: plan composition changes between grid points, so a straight line between them would misplace it. Below it the same spend destroys assumed value."
     },
     "optimisation": {
-      "greedy_net_benefit": 15912689.0,
+      "greedy_net_benefit": 15987689.0,
       "reviews_in_plan": 3,
-      "review_cost": 150000,
-      "exact_same_reviews_net_benefit": 15912689.0,
+      "review_cost": 75000,
+      "exact_same_reviews_net_benefit": 15987689.0,
       "algorithm_gap_absolute": 0.0,
       "algorithm_gap_pct": 0.0,
       "exact_offers_only_net_benefit": 17655338.0,
       "exact_offers_only_customers": 10,
-      "review_reservation_cost": 1742649.0,
+      "review_reservation_cost": 1667649.0,
       "note": "Algorithm gap compares the greedy offer allocation with the exact optimum under the same budget, capacity and the same service reviews. Reservation cost is the scenario value an offers-only optimum would add by dropping those reviews; reviews have unmeasured benefit, so this is the price of a business rule, not a weakness of the allocator."
     },
     "strategies": {
@@ -892,14 +892,14 @@
           "label": "Policy plan: reviews first, then offers",
           "customers": 10,
           "actions": {
-            "technical_review": 3,
+            "billing_review": 3,
             "premium_offer": 6,
             "basic_offer": 1
           },
-          "cost": 3000000,
+          "cost": 2925000,
           "expected_saves": 3.15,
-          "scenario_net_benefit": 15912689,
-          "churners_reached": 7,
+          "scenario_net_benefit": 15987689,
+          "churners_reached": 8,
           "blocked_by_policy": 0
         },
         {

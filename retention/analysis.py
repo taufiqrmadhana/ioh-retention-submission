@@ -26,7 +26,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
-from retention import decisions
+from retention import decisions, policy
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
@@ -566,7 +566,7 @@ def main():
     intelligence = {
         "snapshot": report["snapshot"],
         "model_version": "lr-oof-v1-seed42",
-        "policy_version": "retention-v1",
+        "policy_version": policy.POLICY_VERSION,
         "mode": "retrospective_demo",
         "customers": customers,
     }

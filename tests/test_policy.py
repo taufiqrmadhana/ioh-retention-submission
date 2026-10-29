@@ -2,7 +2,13 @@ from copy import deepcopy
 
 import pytest
 
-from retention.policy import build_plan, compare_actions, settings, validate_plan
+from retention.policy import (
+    build_plan,
+    compare_actions,
+    review_floor,
+    settings,
+    validate_plan,
+)
 
 
 def customer(identifier="A", risk=0.8, technical=0, billing=0, **fields):
@@ -50,6 +56,32 @@ def test_service_review_precedes_incentives_and_respects_reserve():
         for a in compare_actions(customer(technical=1))
         if a["action"].endswith("_offer")
     )
+
+
+def test_reviews_need_risk_above_the_offer_breakeven():
+    """A low-risk contact is observed; its review slot goes to an offer instead."""
+    assert review_floor() == pytest.approx(0.125)
+    low = customer("LOW", risk=0.05, technical=1)
+    review = next(a for a in compare_actions(low) if a["action"] == "technical_review")
+    assert not review["eligible_for_proposal"]
+    assert "break-even" in review["reason"]
+    plan = build_plan(CUSTOMERS[:12] + [low], {"max_customers": 3})
+    assert {i["action"] for i in plan["items"]} <= {"basic_offer", "premium_offer"}
+    assert len(plan["items"]) == 3
+    with pytest.raises(ValueError):
+        forged = deepcopy(plan)
+        forged["items"][0] = {
+            "customer_id": "LOW",
+            "risk_score": 0.05,
+            **review,
+        }
+        validate_plan(forged, CUSTOMERS[:12] + [low])
+
+
+def test_no_reviews_when_no_offer_can_break_even():
+    assert review_floor({"basic_success": 0, "premium_success": 0}) is None
+    plan = build_plan(CUSTOMERS, {"basic_success": 0, "premium_success": 0})
+    assert plan["items"] == []
 
 
 @pytest.mark.parametrize(
