@@ -9,7 +9,7 @@ CUSTOMER = {
     "customer_id": "TEST-1",
     "region": "Jakarta",
     "risk_score": 0.7,
-    "features": {"technical_30d": 0, "billing_30d": 0},
+    "features": {"technical_30d": 0, "billing_30d": 0, "hasInternetService": "Fiber optic"},
     "evidence": ["Fixture"],
     "consent": "unknown",
     "eligibility": "review_required",
@@ -43,7 +43,7 @@ def test_agent_executes_tools_and_submits_canonical_plan():
                     "tool_calls": [
                         call(
                             "get_priority_customers",
-                            {"focus": "all", "region": "any", "limit": 10},
+                            {"focus": "all", "region": "any", "internet": "any", "limit": 10},
                         )
                     ]
                 }
@@ -64,7 +64,7 @@ def test_agent_executes_tools_and_submits_canonical_plan():
                 {
                     "tool_calls": [
                         call(
-                            "simulate_retention_plan", {"focus": "all", "region": "any"}
+                            "simulate_retention_plan", {"focus": "all", "region": "any", "internet": "any"}
                         )
                     ]
                 }
@@ -117,7 +117,7 @@ def test_unknown_tools_ids_and_policy_overrides_are_rejected():
                         ),
                         call(
                             "get_priority_customers",
-                            {"focus": "all", "region": "any", "limit": 1, "budget": 999999999},
+                            {"focus": "all", "region": "any", "internet": "any", "limit": 1, "budget": 999999999},
                             "c",
                         ),
                     ]
@@ -145,7 +145,7 @@ def test_provider_failure_preserves_prior_trace_without_leaking_response():
                     "tool_calls": [
                         call(
                             "get_priority_customers",
-                            {"focus": "all", "region": "any", "limit": 1},
+                            {"focus": "all", "region": "any", "internet": "any", "limit": 1},
                         )
                     ]
                 }
@@ -170,7 +170,7 @@ def test_run_is_bounded_even_if_provider_keeps_calling_tools():
                 "tool_calls": [
                     call(
                         "get_priority_customers",
-                        {"focus": "all", "region": "any", "limit": 1},
+                        {"focus": "all", "region": "any", "internet": "any", "limit": 1},
                         str(i),
                     )
                     for i in range(3)
@@ -235,7 +235,7 @@ TECHNICAL = {
     "customer_id": "TEST-2",
     "region": "Bandung",
     "risk_score": 0.2,
-    "features": {"technical_30d": 1, "billing_30d": 0},
+    "features": {"technical_30d": 1, "billing_30d": 0, "hasInternetService": "DSL"},
 }
 
 
@@ -269,7 +269,7 @@ def test_backend_plans_every_customer_in_scope_even_if_unread():
     """The model never listed TEST-2, yet its technical review is still planned."""
     result = run(
         scripted(
-            [("simulate_retention_plan", {"focus": "all", "region": "any"})],
+            [("simulate_retention_plan", {"focus": "all", "region": "any", "internet": "any"})],
             [("submit_retention_plan", {})],
         ),
         [CUSTOMER, TECHNICAL],
@@ -283,12 +283,12 @@ def test_backend_plans_every_customer_in_scope_even_if_unread():
 def test_scope_filters_by_region_and_contact():
     result = run(
         scripted(
-            [("simulate_retention_plan", {"focus": "no_contact", "region": "Jakarta"})],
+            [("simulate_retention_plan", {"focus": "no_contact", "region": "Jakarta", "internet": "any"})],
             [("submit_retention_plan", {})],
         ),
         [CUSTOMER, TECHNICAL],
     )
-    assert result["plan"]["scope"] == {"focus": "no_contact", "region": "Jakarta"}
+    assert result["plan"]["scope"] == {"focus": "no_contact", "region": "Jakarta", "internet": "any"}
     assert [i["customer_id"] for i in result["plan"]["items"]] == ["TEST-1"]
 
 
@@ -296,8 +296,8 @@ def test_unknown_region_and_empty_scope_are_rejected():
     result = run(
         scripted(
             [
-                ("simulate_retention_plan", {"focus": "all", "region": "Atlantis"}),
-                ("simulate_retention_plan", {"focus": "billing", "region": "any"}),
+                ("simulate_retention_plan", {"focus": "all", "region": "Atlantis", "internet": "any"}),
+                ("simulate_retention_plan", {"focus": "billing", "region": "any", "internet": "any"}),
                 ("get_customer_context", {"customer_id": "TEST-2"}),
             ]
         ),
@@ -310,10 +310,22 @@ def test_unknown_region_and_empty_scope_are_rejected():
 def test_plan_customers_can_be_inspected_after_simulation():
     result = run(
         scripted(
-            [("simulate_retention_plan", {"focus": "all", "region": "any"})],
+            [("simulate_retention_plan", {"focus": "all", "region": "any", "internet": "any"})],
             [("compare_retention_actions", {"customer_id": "TEST-2"})],
             [("submit_retention_plan", {})],
         ),
         [CUSTOMER, TECHNICAL],
     )
     assert [e["status"] for e in result["trace"]] == ["completed"] * 3
+
+
+def test_scope_filters_by_internet_type():
+    result = run(
+        scripted(
+            [("simulate_retention_plan", {"focus": "all", "region": "any", "internet": "Fiber optic"})],
+            [("submit_retention_plan", {})],
+        ),
+        [CUSTOMER, TECHNICAL],
+    )
+    assert result["plan"]["candidates_evaluated"] == 1
+    assert [i["customer_id"] for i in result["plan"]["items"]] == ["TEST-1"]

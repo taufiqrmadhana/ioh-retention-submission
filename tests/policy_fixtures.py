@@ -40,12 +40,18 @@ SYNTHETIC = [customer(f"C{i:02}", round(0.9 - i * 0.03, 4)) for i in range(14)] 
     customer("LOW", 0.01),
     customer("TLOW", 0.05, technical=1),
     customer("BLOW", 0.12, billing=2),
+    # Calibrated risks: one isotonic block (ties) ordered by the raw score.
+    customer("CAL-A", 0.97, calibrated_risk=0.95),
+    customer("CAL-B", 0.93, calibrated_risk=0.95),
+    customer("CAL-C", 0.96, calibrated_risk=0.95),
+    customer("CAL-LOW", 0.6, calibrated_risk=0.01, billing=1),
 ]
 
 PLANS = [
     ("defaults", "synthetic", {}),
     ("tight_budget", "synthetic", {"budget": 149_999, "max_customers": 5}),
     ("one_slot", "synthetic", {"budget": 3_000_000, "max_customers": 1}),
+    ("calibrated_ties", "synthetic", {"budget": 1_350_000, "max_customers": 3}),
     ("billing_first", "synthetic", {"prioritize_technical": False, "max_customers": 20}),
     ("generous", "synthetic", {"budget": 10_000_000, "max_customers": 20}),
     ("no_prevention", "synthetic", {"basic_success": 0, "premium_success": 0}),
@@ -66,6 +72,8 @@ COMPARE = [
     ("review_below_floor", customer("TL", 0.05, technical=1), {}),
     ("review_at_floor", customer("BF", 0.125, billing=1), {}),
     ("no_offer_can_pay", customer("NP", 0.9, technical=1), {"basic_success": 0, "premium_success": 0}),
+    ("calibrated_prices", customer("CP", 0.99, calibrated_risk=0.4), {}),
+    ("calibrated_below_floor", customer("CF", 0.5, calibrated_risk=0.1, technical=1), {}),
 ]
 
 # Forged plans that both validators must reject.

@@ -250,6 +250,50 @@
     "technical_30d": 0,
     "billing_30d": 2
    }
+  },
+  {
+   "customer_id": "CAL-A",
+   "risk_score": 0.97,
+   "consent": "unknown",
+   "eligibility": "review_required",
+   "features": {
+    "technical_30d": 0,
+    "billing_30d": 0
+   },
+   "calibrated_risk": 0.95
+  },
+  {
+   "customer_id": "CAL-B",
+   "risk_score": 0.93,
+   "consent": "unknown",
+   "eligibility": "review_required",
+   "features": {
+    "technical_30d": 0,
+    "billing_30d": 0
+   },
+   "calibrated_risk": 0.95
+  },
+  {
+   "customer_id": "CAL-C",
+   "risk_score": 0.96,
+   "consent": "unknown",
+   "eligibility": "review_required",
+   "features": {
+    "technical_30d": 0,
+    "billing_30d": 0
+   },
+   "calibrated_risk": 0.95
+  },
+  {
+   "customer_id": "CAL-LOW",
+   "risk_score": 0.6,
+   "consent": "unknown",
+   "eligibility": "review_required",
+   "features": {
+    "technical_30d": 0,
+    "billing_30d": 1
+   },
+   "calibrated_risk": 0.01
   }
  ],
  "plans": [
@@ -278,6 +322,24 @@
       null
      ],
      [
+      "CAL-A",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-C",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-B",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
       "C00",
       "premium_offer",
       450000,
@@ -297,33 +359,15 @@
      ],
      [
       "C03",
-      "premium_offer",
-      450000,
-      1980000
-     ],
-     [
-      "C04",
-      "premium_offer",
-      450000,
-      1890000
-     ],
-     [
-      "C05",
-      "premium_offer",
-      450000,
-      1800000
-     ],
-     [
-      "C06",
       "basic_offer",
       150000,
-      714000
+      822000
      ]
     ],
     "total_cost": 2975000,
     "remaining_budget": 25000,
-    "scenario_net_benefit": 12739000,
-    "scenario_prevented_churn": 2.619
+    "scenario_net_benefit": 14377000,
+    "scenario_prevented_churn": 2.8919999999999995
    }
   },
   {
@@ -371,6 +415,40 @@
    }
   },
   {
+   "name": "calibrated_ties",
+   "customers": "synthetic",
+   "settings": {
+    "budget": 1350000,
+    "max_customers": 3
+   },
+   "expected": {
+    "items": [
+     [
+      "T1",
+      "technical_review",
+      50000,
+      null
+     ],
+     [
+      "CAL-A",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-C",
+      "premium_offer",
+      450000,
+      2400000
+     ]
+    ],
+    "total_cost": 950000,
+    "remaining_budget": 400000,
+    "scenario_net_benefit": 4750000,
+    "scenario_prevented_churn": 0.95
+   }
+  },
+  {
    "name": "billing_first",
    "customers": "synthetic",
    "settings": {
@@ -404,6 +482,24 @@
       null
      ],
      [
+      "CAL-A",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-C",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-B",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
       "C00",
       "premium_offer",
       450000,
@@ -411,21 +507,21 @@
      ],
      [
       "C01",
-      "premium_offer",
-      450000,
-      2160000
+      "basic_offer",
+      150000,
+      894000
      ],
      [
       "C02",
-      "premium_offer",
-      450000,
-      2070000
+      "basic_offer",
+      150000,
+      858000
      ],
      [
       "C03",
-      "premium_offer",
-      450000,
-      1980000
+      "basic_offer",
+      150000,
+      822000
      ],
      [
       "C04",
@@ -450,30 +546,12 @@
       "basic_offer",
       150000,
       678000
-     ],
-     [
-      "C08",
-      "basic_offer",
-      150000,
-      642000
-     ],
-     [
-      "C09",
-      "basic_offer",
-      150000,
-      606000
-     ],
-     [
-      "C10",
-      "basic_offer",
-      150000,
-      570000
      ]
     ],
     "total_cost": 3000000,
     "remaining_budget": 0,
-    "scenario_net_benefit": 13056000,
-    "scenario_prevented_churn": 2.676
+    "scenario_net_benefit": 14802000,
+    "scenario_prevented_churn": 2.967
    }
   },
   {
@@ -508,6 +586,24 @@
       "billing_review",
       25000,
       null
+     ],
+     [
+      "CAL-A",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-C",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-B",
+      "premium_offer",
+      450000,
+      2400000
      ],
      [
       "C00",
@@ -586,30 +682,12 @@
       "premium_offer",
       450000,
       1170000
-     ],
-     [
-      "C13",
-      "premium_offer",
-      450000,
-      1080000
-     ],
-     [
-      "TIE-A",
-      "premium_offer",
-      450000,
-      1050000
-     ],
-     [
-      "TIE-B",
-      "premium_offer",
-      450000,
-      1050000
      ]
     ],
     "total_cost": 7350000,
     "remaining_budget": 2650000,
-    "scenario_net_benefit": 25260000,
-    "scenario_prevented_churn": 5.435
+    "scenario_net_benefit": 29280000,
+    "scenario_prevented_churn": 6.105
    }
   },
   {
@@ -670,49 +748,49 @@
       "IOH-430",
       "premium_offer",
       450000,
-      2519013
+      2461764
      ],
      [
       "IOH-581",
       "premium_offer",
       450000,
-      2513262
+      2461764
      ],
      [
       "IOH-630",
       "premium_offer",
       450000,
-      2506341
+      2461764
      ],
      [
       "IOH-701",
       "premium_offer",
       450000,
-      2499360
+      2461764
      ],
      [
       "IOH-561",
       "premium_offer",
       450000,
-      2498964
+      2461764
      ],
      [
       "IOH-521",
       "premium_offer",
       450000,
-      2497650
+      2461764
      ],
      [
       "IOH-541",
       "basic_offer",
       150000,
-      1028099
+      1014706
      ]
     ],
     "total_cost": 2925000,
     "remaining_budget": 75000,
-    "scenario_net_benefit": 15987689,
-    "scenario_prevented_churn": 3.1521148
+    "scenario_net_benefit": 15710290,
+    "scenario_prevented_churn": 3.1058816
    }
   },
   {
@@ -764,91 +842,91 @@
       "IOH-430",
       "premium_offer",
       450000,
-      2519013
+      2461764
      ],
      [
       "IOH-581",
       "premium_offer",
       450000,
-      2513262
+      2461764
      ],
      [
       "IOH-630",
       "premium_offer",
       450000,
-      2506341
+      2461764
      ],
      [
       "IOH-701",
       "premium_offer",
       450000,
-      2499360
+      2461764
      ],
      [
       "IOH-561",
       "premium_offer",
       450000,
-      2498964
+      2461764
      ],
      [
       "IOH-521",
       "premium_offer",
       450000,
-      2497650
+      2461764
      ],
      [
       "IOH-541",
       "premium_offer",
       450000,
-      2495247
+      2461764
      ],
      [
       "IOH-501",
       "premium_offer",
       450000,
-      2483235
+      2461764
      ],
      [
       "IOH-621",
       "premium_offer",
       450000,
-      2475966
+      2461764
      ],
      [
       "IOH-421",
       "premium_offer",
       450000,
-      2468898
+      2461764
      ],
      [
       "IOH-681",
       "premium_offer",
       450000,
-      2457336
+      2461764
      ],
      [
       "IOH-481",
       "premium_offer",
       450000,
-      2450652
+      2461764
      ],
      [
       "IOH-401",
       "premium_offer",
       450000,
-      2085591
+      2461764
      ],
      [
       "IOH-601",
       "premium_offer",
       450000,
-      2085591
+      2461764
      ]
     ],
     "total_cost": 6450000,
     "remaining_budget": 3550000,
-    "scenario_net_benefit": 33887106,
-    "scenario_prevented_churn": 6.722851
+    "scenario_net_benefit": 34314696,
+    "scenario_prevented_churn": 6.794115999999999
    }
   },
   {
@@ -864,67 +942,67 @@
       "IOH-430",
       "basic_offer",
       150000,
-      22203
+      18882
      ],
      [
       "IOH-581",
       "basic_offer",
       150000,
-      21869
+      18882
      ],
      [
       "IOH-630",
       "basic_offer",
       150000,
-      21468
+      18882
      ],
      [
       "IOH-701",
       "basic_offer",
       150000,
-      21063
+      18882
      ],
      [
       "IOH-561",
       "basic_offer",
       150000,
-      21040
+      18882
      ],
      [
       "IOH-521",
       "basic_offer",
       150000,
-      20964
+      18882
      ],
      [
       "IOH-541",
       "basic_offer",
       150000,
-      20824
+      18882
      ],
      [
       "IOH-501",
       "basic_offer",
       150000,
-      20128
+      18882
      ],
      [
       "IOH-621",
       "basic_offer",
       150000,
-      19706
+      18882
      ],
      [
       "IOH-421",
       "basic_offer",
       150000,
-      19296
+      18882
      ]
     ],
     "total_cost": 1500000,
     "remaining_budget": 1500000,
-    "scenario_net_benefit": 208561,
-    "scenario_prevented_churn": 0.28476004800000004
+    "scenario_net_benefit": 188820,
+    "scenario_prevented_churn": 0.28147052
    }
   },
   {
@@ -958,49 +1036,49 @@
       "IOH-430",
       "premium_offer",
       450000,
-      2519013
+      2461764
      ],
      [
       "IOH-581",
       "basic_offer",
       150000,
-      1035305
+      1014706
      ],
      [
       "IOH-630",
       "basic_offer",
       150000,
-      1032536
+      1014706
      ],
      [
       "IOH-701",
       "basic_offer",
       150000,
-      1029744
+      1014706
      ],
      [
       "IOH-561",
       "basic_offer",
       150000,
-      1029586
+      1014706
      ],
      [
       "IOH-521",
       "basic_offer",
       150000,
-      1029060
+      1014706
      ],
      [
       "IOH-541",
       "basic_offer",
       150000,
-      1028099
+      1014706
      ]
     ],
     "total_cost": 1425000,
     "remaining_budget": 75000,
-    "scenario_net_benefit": 8628343,
-    "scenario_prevented_churn": 1.6755571000000002
+    "scenario_net_benefit": 8475000,
+    "scenario_prevented_churn": 1.6499996
    }
   }
  ],
@@ -1322,6 +1400,90 @@
      "premium_offer",
      false,
      -450000
+    ],
+    [
+     "technical_review",
+     false,
+     null
+    ],
+    [
+     "billing_review",
+     false,
+     null
+    ],
+    [
+     "no_action",
+     true,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "calibrated_prices",
+   "customer": {
+    "customer_id": "CP",
+    "risk_score": 0.99,
+    "consent": "unknown",
+    "eligibility": "review_required",
+    "features": {
+     "technical_30d": 0,
+     "billing_30d": 0
+    },
+    "calibrated_risk": 0.4
+   },
+   "settings": {},
+   "expected": [
+    [
+     "basic_offer",
+     true,
+     330000
+    ],
+    [
+     "premium_offer",
+     true,
+     750000
+    ],
+    [
+     "technical_review",
+     false,
+     null
+    ],
+    [
+     "billing_review",
+     false,
+     null
+    ],
+    [
+     "no_action",
+     true,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "calibrated_below_floor",
+   "customer": {
+    "customer_id": "CF",
+    "risk_score": 0.5,
+    "consent": "unknown",
+    "eligibility": "review_required",
+    "features": {
+     "technical_30d": 1,
+     "billing_30d": 0
+    },
+    "calibrated_risk": 0.1
+   },
+   "settings": {},
+   "expected": [
+    [
+     "basic_offer",
+     false,
+     -30000
+    ],
+    [
+     "premium_offer",
+     false,
+     -150000
     ],
     [
      "technical_review",

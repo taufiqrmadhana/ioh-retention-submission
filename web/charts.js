@@ -280,3 +280,30 @@ export function decisionChart(report) {
     ],
   });
 }
+
+export function premiumStressChart(report) {
+  const stress = report.economics.premium_stress;
+  if (!stress) return "";
+  const series = [
+    ["policy_plan", "policy plan", NAVY],
+    ["premium_by_risk", "premium only", "#c98a9e"],
+    ["basic_by_risk", "basic only", "#9e9e9e"],
+  ];
+  return lines({
+    title: "premium success stress test",
+    legendHtml: legend(series.map(([, label, color]) => ({ label, color }))),
+    guide: stress.policy_beats_basic_above,
+    guideLabel: `${Math.round((stress.policy_beats_basic_above ?? 0) * 1000) / 10}%`,
+    xLabelPad: true,
+    yLabel: "net benefit · IDR M",
+    xLabel: "premium success rate (basic fixed at 20%)",
+    yFmt: (v) => v.toFixed(0),
+    xFmt: (v) => `${Math.round(v * 100)}%`,
+    series: series.map(([key, label, color]) => ({
+      name: label,
+      label,
+      color,
+      points: stress.rows.map((row) => [row.premium_success, row[key] / 1e6]),
+    })),
+  });
+}

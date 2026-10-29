@@ -47,6 +47,14 @@ def settings(overrides=None):
     return {key: values[key] for key in DEFAULTS}
 
 
+def decision_risk(customer):
+    """Probability used for economics: calibrated when available, else the raw score.
+
+    The raw score orders customers; the calibrated risk prices them.
+    """
+    return customer.get("calibrated_risk", customer["risk_score"])
+
+
 def review_floor(overrides=None):
     """Lowest risk at which any offer has positive scenario net benefit.
 
@@ -73,7 +81,8 @@ def compare_actions(customer, overrides=None):
         or customer.get("eligibility") == "ineligible"
     )
     risk_floor = review_floor(config)
-    worth_review = risk_floor is not None and customer["risk_score"] >= risk_floor
+    risk = decision_risk(customer)
+    worth_review = risk_floor is not None and risk >= risk_floor
     results = []
     for action, details in ACTIONS.items():
         offer = action.endswith("_offer")
@@ -93,7 +102,7 @@ def compare_actions(customer, overrides=None):
         gross = (
             None
             if success is None
-            else customer["risk_score"] * success * config["retained_value"]
+            else risk * success * config["retained_value"]
         )
         if blocked:
             reason = "Customer is ineligible or has denied contact consent."
@@ -106,7 +115,7 @@ def compare_actions(customer, overrides=None):
         elif action == "no_action":
             reason = "Observe; no outreach or incentive."
         else:
-            reason = "Proposal only: verify consent, current account status, resolution, contact frequency and offer eligibility."
+            reason = "Proposal only. Unknown consent is not consent: verify a lawful basis for contact (UU PDP No. 27/2022), account status, resolution, contact frequency and offer eligibility before any outreach."
         results.append(
             {
                 "action": action,
@@ -120,7 +129,7 @@ def compare_actions(customer, overrides=None):
                 else floor(gross - details["cost"] + 0.5),
                 "scenario_prevented_churn": None
                 if success is None
-                else customer["risk_score"] * success,
+                else risk * success,
                 "reason": reason,
                 "cost_source": "Assignment reference"
                 if offer
@@ -197,7 +206,15 @@ def build_plan(customers, overrides=None):
                     candidates.append((gain / extra, gain, customer, action, extra))
         if not candidates:
             break
-        candidates.sort(key=lambda item: (-item[0], -item[1], item[2]["customer_id"]))
+        # Ties in calibrated value (one isotonic block) fall back to the raw ranking.
+        candidates.sort(
+            key=lambda item: (
+                -item[0],
+                -item[1],
+                -item[2]["risk_score"],
+                item[2]["customer_id"],
+            )
+        )
         _, _, customer, action, extra = candidates[0]
         spent += extra
         selected[customer["customer_id"]] = {
@@ -228,7 +245,7 @@ def build_plan(customers, overrides=None):
         "economic_note": "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",
         "review_checklist": [
             "Confirm account is still active",
-            "Verify contact consent and frequency cap",
+            "Verify consent or another lawful basis for contact (UU PDP No. 27/2022) and the frequency cap",
             "Verify service/billing resolution",
             "Check offer eligibility and remaining campaign budget",
         ],

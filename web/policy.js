@@ -39,6 +39,11 @@ export function settings(input = {}) {
   return Object.fromEntries(Object.keys(DEFAULTS).map((k) => [k, s[k]]));
 }
 
+// Probability used for economics: calibrated when available, else the raw
+// score. The raw score orders customers; the calibrated risk prices them.
+export const decisionRisk = (customer) =>
+  customer.calibrated_risk ?? customer.risk_score;
+
 // Lowest risk at which any offer has positive scenario net benefit. A service
 // review is the first step towards an offer, so it is proposed only above it.
 // Null when no offer can break even under the current assumptions.
@@ -60,7 +65,8 @@ export function compareActions(customer, input = {}) {
   const blocked =
     customer.consent === "denied" || customer.eligibility === "ineligible";
   const floor = reviewFloor(s);
-  const worthReview = floor !== null && customer.risk_score >= floor;
+  const risk = decisionRisk(customer);
+  const worthReview = floor !== null && risk >= floor;
   return Object.entries(ACTIONS).map(([action, a]) => {
     const isOffer = action.endsWith("_offer");
     const eligible =
@@ -78,7 +84,7 @@ export function compareActions(customer, input = {}) {
           ? s.premiumSuccess
           : null;
     const gross =
-      success === null ? null : customer.risk_score * success * s.retainedValue;
+      success === null ? null : risk * success * s.retainedValue;
     return {
       action,
       ...a,
@@ -87,7 +93,7 @@ export function compareActions(customer, input = {}) {
       review_required: action !== "no_action",
       scenario_net_benefit: gross === null ? null : Math.round(gross - a.cost),
       scenario_prevented_churn:
-        success === null ? null : customer.risk_score * success,
+        success === null ? null : risk * success,
       reason: blocked
         ? "Customer is ineligible or has denied contact consent."
         : isOffer && (technical || billing)
@@ -96,7 +102,7 @@ export function compareActions(customer, input = {}) {
             ? "Risk is below the offer break-even; observe instead of reviewing."
             : action === "no_action"
             ? "Observe; no outreach or incentive."
-            : "Proposal only: verify consent, current account status, resolution, contact frequency and offer eligibility.",
+            : "Proposal only. Unknown consent is not consent: verify a lawful basis for contact (UU PDP No. 27/2022), account status, resolution, contact frequency and offer eligibility before any outreach.",
       cost_source: isOffer
         ? "Assignment reference"
         : action === "no_action"
@@ -158,10 +164,12 @@ export function buildPlan(customers, input = {}) {
           candidates.push({ c, a, extra, gain, ratio: gain / extra });
       }
     }
+    // Ties in calibrated value (one isotonic block) fall back to the raw ranking.
     candidates.sort(
       (a, b) =>
         b.ratio - a.ratio ||
         b.gain - a.gain ||
+        b.c.risk_score - a.c.risk_score ||
         a.c.customer_id.localeCompare(b.c.customer_id),
     );
     if (!candidates.length) break;
@@ -196,7 +204,7 @@ export function buildPlan(customers, input = {}) {
       "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",
     review_checklist: [
       "Confirm account is still active",
-      "Verify contact consent and frequency cap",
+      "Verify consent or another lawful basis for contact (UU PDP No. 27/2022) and the frequency cap",
       "Verify service/billing resolution",
       "Check offer eligibility and remaining campaign budget",
     ],

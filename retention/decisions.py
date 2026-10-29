@@ -224,7 +224,7 @@ def _summary(items, labels=None, blocked=0):
         "customers": len(items),
         "actions": counts,
         "cost": sum(i["cost"] for i in items),
-        "expected_saves": round(sum(i["scenario_prevented_churn"] or 0 for i in items), 2),
+        "expected_saves": round(sum(i["scenario_prevented_churn"] or 0 for i in items), 3),
         "scenario_net_benefit": sum(
             i["cost"] * -1 if i["scenario_net_benefit"] is None else i["scenario_net_benefit"]
             for i in items
@@ -318,11 +318,11 @@ def _offer_breakeven(config):
     return policy.ACTIONS["basic_offer"]["cost"] / scale if scale else None
 
 
-def plan_impact(customers, scores, base=None, labels=None):
-    """How a plan changes if the same policy runs on alternative scores (e.g. calibrated)."""
+def plan_impact(customers, base=None, labels=None):
+    """The same policy priced with raw scores versus calibrated risks."""
     config = policy.settings(base)
-    swapped = [{**c, "risk_score": float(scores[c["customer_id"]])} for c in customers]
-    raw, alt = policy.build_plan(customers, config), policy.build_plan(swapped, config)
+    raw_only = [{k: v for k, v in c.items() if k != "calibrated_risk"} for c in customers]
+    raw, cal = policy.build_plan(raw_only, config), policy.build_plan(customers, config)
     threshold = _offer_breakeven(config)
 
     def picked(plan):
@@ -330,13 +330,59 @@ def plan_impact(customers, scores, base=None, labels=None):
 
     return {
         "raw": _summary(raw["items"], labels),
-        "alternative": _summary(alt["items"], labels),
-        "same_customers": len({i["customer_id"] for i in raw["items"]} & {i["customer_id"] for i in alt["items"]}),
-        "same_customer_actions": len(picked(raw) & picked(alt)),
+        "calibrated": _summary(cal["items"], labels),
+        "same_customers": len({i["customer_id"] for i in raw["items"]} & {i["customer_id"] for i in cal["items"]}),
+        "same_customer_actions": len(picked(raw) & picked(cal)),
         "offer_breakeven_risk": threshold,
         "above_breakeven_raw": None if threshold is None else sum(c["risk_score"] >= threshold for c in customers),
-        "above_breakeven_alternative": None if threshold is None else sum(c["risk_score"] >= threshold for c in swapped),
-        "note": "Each plan's net benefit is valued with its own scores; compare actions and churners reached, not only the totals.",
+        "above_breakeven_calibrated": None if threshold is None else sum(policy.decision_risk(c) >= threshold for c in customers),
+        "note": "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, not only the totals.",
+    }
+
+
+PREMIUM_GRID = tuple(round(0.2 + 0.025 * i, 3) for i in range(17))
+
+
+def premium_stress(customers, base=None):
+    """Policy plan versus single-offer strategies as the premium success rate falls.
+
+    Basic success, budget and capacity stay fixed. Crossings are found by bisection
+    on the re-planned values, like the break-even.
+    """
+    config = policy.settings(base)
+
+    def values(premium):
+        c = {**config, "premium_success": premium}
+        return {
+            "policy_plan": policy.build_plan(customers, c)["scenario_net_benefit"],
+            "premium_by_risk": sum(a["scenario_net_benefit"] for a in _offer_by_risk(customers, c, "premium_offer")),
+            "basic_by_risk": sum(a["scenario_net_benefit"] for a in _offer_by_risk(customers, c, "basic_offer")),
+        }
+
+    def crossing(first, second, low=0.0, high=1.0, tolerance=1e-5):
+        def gap(premium):
+            v = values(premium)
+            return v[first] - v[second]
+
+        if gap(low) > 0 or gap(high) <= 0:
+            return None
+        while high - low > tolerance:
+            middle = (low + high) / 2
+            if gap(middle) > 0:
+                high = middle
+            else:
+                low = middle
+        return ceil(high * 10_000) / 10_000
+
+    return {
+        "settings": {"budget": config["budget"], "max_customers": config["max_customers"], "basic_success": config["basic_success"]},
+        "rows": [{"premium_success": p, **values(p)} for p in PREMIUM_GRID],
+        "policy_beats_basic_above": crossing("policy_plan", "basic_by_risk"),
+        "premium_beats_basic_above": crossing("premium_by_risk", "basic_by_risk"),
+        "note": (
+            "Below the first crossing, basic offers to the highest-risk customers beat the policy plan: the "
+            "review slots displace basic offers while review benefit is counted as zero."
+        ),
     }
 
 
@@ -369,7 +415,7 @@ def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
         c
         for c in customers
         if threshold is not None
-        and c["risk_score"] >= threshold
+        and policy.decision_risk(c) >= threshold
         and next(a for a in policy.compare_actions(c, config) if a["action"] == "premium_offer")["eligible_for_proposal"]
     ]
     observed = sum(labels[c["customer_id"]] for c in population) / len(population) if population else None
@@ -415,7 +461,7 @@ def targeting_diagnostic(customers, base=None):
     def segment(rows):
         if not rows:
             return None
-        expected = sum(r["risk_score"] * config["premium_success"] for r in rows)
+        expected = sum(policy.decision_risk(r) * config["premium_success"] for r in rows)
         with_issue = sum(
             1
             for r in rows
@@ -423,7 +469,7 @@ def targeting_diagnostic(customers, base=None):
         )
         return {
             "n": len(rows),
-            "mean_risk": round(float(np.mean([r["risk_score"] for r in rows])), 4),
+            "mean_risk": round(float(np.mean([policy.decision_risk(r) for r in rows])), 4),
             "expected_saves": round(expected, 2),
             "cost_per_expected_save": round(len(rows) * premium_cost / expected) if expected else None,
             "share_with_open_service_issue": round(with_issue / len(rows), 3),

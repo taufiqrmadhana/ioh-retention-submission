@@ -92,11 +92,33 @@ def test_strategies_share_budget_capacity_and_eligibility():
     assert unchecked["customers"] - checked["customers"] == 2
 
 
-def test_plan_impact_with_identical_scores_changes_nothing():
-    scores = {c["customer_id"]: c["risk_score"] for c in COHORT}
-    impact = decisions.plan_impact(COHORT, scores, BASE)
-    assert impact["raw"] == impact["alternative"]
+def test_plan_impact_without_calibration_changes_nothing():
+    impact = decisions.plan_impact(COHORT, BASE)
+    assert impact["raw"] == impact["calibrated"]
     assert impact["same_customer_actions"] == impact["raw"]["customers"]
+
+
+def test_plan_impact_prices_with_calibrated_risk():
+    calibrated = [{**c, "calibrated_risk": 0.05} for c in COHORT]
+    impact = decisions.plan_impact(calibrated, BASE)
+    assert impact["above_breakeven_calibrated"] == 0
+    assert impact["calibrated"]["customers"] == 0  # nobody is worth an offer or a review
+
+
+def test_premium_stress_crossings_are_real():
+    stress = decisions.premium_stress(COHORT, BASE)
+    cut = stress["policy_beats_basic_above"]
+    assert cut is not None and 0 < cut < 0.5
+    config = policy.settings(BASE)
+
+    def gap(premium):
+        c = {**config, "premium_success": premium}
+        plan = policy.build_plan(COHORT, c)["scenario_net_benefit"]
+        basic = sum(a["scenario_net_benefit"] for a in decisions._offer_by_risk(COHORT, c, "basic_offer"))
+        return plan - basic
+
+    assert gap(cut) > 0 and gap(cut - 0.002) <= 0
+    assert [r["premium_success"] for r in stress["rows"]] == sorted(r["premium_success"] for r in stress["rows"])
 
 
 def test_pilot_sample_size_matches_the_textbook_formula():

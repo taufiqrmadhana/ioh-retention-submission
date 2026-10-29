@@ -109,9 +109,15 @@ export function projectBrief(report) {
     `Calibration by out-of-fold quintile (mean score→observed churn): ${calibration}. Ranking is strong; probabilities are not calibrated.`,
     `Regions (one cohort-wide top-20% cutoff; a per-group quota would cap groups with many churners): ${regions}.`,
     cal
-      ? `Calibration test: sigmoid scaling fitted on training rows only changed holdout Brier ${cal.holdout.raw.brier.toFixed(3)}→${cal.holdout.sigmoid.brier.toFixed(3)} and log-loss ${cal.holdout.raw.log_loss.toFixed(3)}→${cal.holdout.sigmoid.log_loss.toFixed(3)}; the demo plan kept ${cal.plan_impact.same_customers} of ${cal.plan_impact.raw.customers} customers. Raw scores are kept.`
+      ? `Calibration: raw scores rank well but overstate risk between 12% and 30% (none of the customers scored 12.5-20% churned). Out-of-fold Brier / log-loss: raw ${cal.out_of_fold.raw.brier.toFixed(4)} / ${cal.out_of_fold.raw.log_loss.toFixed(4)}, sigmoid ${cal.out_of_fold.sigmoid.brier.toFixed(4)} / ${cal.out_of_fold.sigmoid.log_loss.toFixed(4)}, isotonic ${cal.out_of_fold.isotonic.brier.toFixed(4)} / ${cal.out_of_fold.isotonic.log_loss.toFixed(4)}, smoothed isotonic ${cal.out_of_fold.smoothed_isotonic.brier.toFixed(4)} / ${cal.out_of_fold.smoothed_isotonic.log_loss.toFixed(4)}. Decisions use calibrated_risk from one smoothed-isotonic map (${cal.decision_map.map((s) => `${pct(s.calibrated_risk)} from score ${pct(s.score_from)}`).join(", ")}); the raw score only orders customers. ${cal.plan_impact.above_breakeven_calibrated} customers clear the 12.5% break-even instead of ${cal.plan_impact.above_breakeven_raw}.`
       : "",
-    `Policy retention-v2: costs ${costs}. Offers only for customers without a recent service or billing contact; technical review if a technical contact, billing review if billing without technical, and only when the customer's risk clears the offer break-even (${pct(reviewFloor(), 1)} at default assumptions), so low-risk contacts are observed instead. Up to 30% of capacity (rounded down, minimum one) goes to those service reviews first, then offers by greedy marginal net benefit per rupiah within budget. Net benefit = risk × success rate × retained value − cost. Defaults: budget ${rp(DEFAULTS.budget)}, ${DEFAULTS.maxCustomers} customers, retained value ${rp(DEFAULTS.retainedValue)}, basic success ${pct(DEFAULTS.basicSuccess, 0)}, premium success ${pct(DEFAULTS.premiumSuccess, 0)}. Success rates come from the brief, not from tests.`,
+    report.rule_check
+      ? `Rule check: segment = ${report.rule_check.segment}. ${report.rule_check.rows.map((r) => `${r.approach.replace(/_/g, " ")}: ${r.flagged} flagged, ${r.churners} churners`).join("; ")}. Inside the segment the model's top 10 and top 30 are all churners (random ${report.rule_check.within_segment.top_10_random} and ${report.rule_check.within_segment.top_30_random}). ${report.rule_check.note}`
+      : "",
+    eco.premium_stress
+      ? `Stress test at ${rp(eco.premium_stress.settings.budget)}: basic-only beats the policy plan when premium success falls below ${pct(eco.premium_stress.policy_beats_basic_above)}, and premium-only falls behind basic-only below ${pct(eco.premium_stress.premium_beats_basic_above)}.`
+      : "",
+    `Policy retention-v2: costs ${costs}. Offers only for customers without a recent service or billing contact; technical review if a technical contact, billing review if billing without technical, and only when the customer's risk clears the offer break-even (${pct(reviewFloor(), 1)} at default assumptions), so low-risk contacts are observed instead. Up to 30% of capacity (rounded down, minimum one) goes to those service reviews first, then offers by greedy marginal net benefit per rupiah within budget. Net benefit = calibrated risk × success rate × retained value − cost. Unknown consent is not consent: every action is a proposal until a lawful basis for contact is verified (UU PDP No. 27/2022). Defaults: budget ${rp(DEFAULTS.budget)}, ${DEFAULTS.maxCustomers} customers, retained value ${rp(DEFAULTS.retainedValue)}, basic success ${pct(DEFAULTS.basicSuccess, 0)}, premium success ${pct(DEFAULTS.premiumSuccess, 0)}. Success rates come from the brief, not from tests.`,
     `Economics: break-even at ${eco.sensitivity.breakeven_multiplier ?? "n/a"}x the assumed success rates, found by re-planning (below it the plan loses money). Greedy versus an exact optimiser keeping the same ${eco.optimisation.reviews_in_plan} service reviews: ${rp(eco.optimisation.greedy_net_benefit)} vs ${rp(eco.optimisation.exact_same_reviews_net_benefit)} (algorithm gap ${eco.optimisation.algorithm_gap_pct}%). Dropping the review reservation would add ${rp(eco.optimisation.review_reservation_cost)} of scenario value; that is a policy choice, not an algorithm gap.`,
     strategies
       ? `Same budget (${rp(strategies.settings.budget)}), capacity and eligibility: ${strategies.rows.map((r) => `${r.label}: ${r.customers} customers, cost ${rp(r.cost)}, expected saves ${r.expected_saves}, scenario net ${rp(r.scenario_net_benefit)}`).join("; ")}. An uncapped threshold rule would reach ${strategies.uncapped_threshold_rule.with_policy_checks.customers} customers with the service/billing checks; without them it adds ${strategies.uncapped_threshold_rule.without_policy_checks.blocked_by_policy} offers the policy blocks.`
@@ -181,6 +187,7 @@ export function runTool(name, args, customers) {
         customer_id: c.customer_id,
         region: c.region,
         risk_score: Math.round(c.risk_score * 1000) / 1000,
+        calibrated_risk: Math.round((c.calibrated_risk ?? c.risk_score) * 1000) / 1000,
         risk_band: c.risk_band,
         contract: c.features.contractType,
         tenure_months: c.features.tenureMonths,
@@ -196,6 +203,7 @@ export function runTool(name, args, customers) {
       customer_id: c.customer_id,
       region: c.region,
       risk_score: c.risk_score,
+      calibrated_risk: c.calibrated_risk,
       risk_band: c.risk_band,
       features: c.features,
       evidence: c.evidence,

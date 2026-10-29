@@ -14,6 +14,7 @@ import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
+from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     average_precision_score,
@@ -249,6 +250,66 @@ def audit(base, usage, support):
     }
 
 
+SEGMENT = "month-to-month contract, tenure under 6 months, fiber internet, electronic check"
+
+
+def segment_rule(frame, no_contact=False):
+    """The churn segment from the exploratory analysis, found by looking at all labels."""
+    rule = (
+        (frame.contractType == "Month-to-month")
+        & (frame.tenureMonths < 6)
+        & (frame.hasInternetService == "Fiber optic")
+        & (frame.paymentMethod == "Electronic check")
+    )
+    if no_contact:
+        rule &= frame.support_30d == 0
+    return rule.astype(float)
+
+
+def rule_check(frame, y, scores):
+    """Does the model add anything over the segment rule? Out-of-fold, all 208 customers."""
+    y = np.asarray(y)
+    segment = segment_rule(frame).to_numpy() == 1
+    flags = global_flags(scores)
+
+    def row(name, selected):
+        flagged = float(np.sum(selected))
+        found = float(np.sum(selected * y))
+        return {
+            "approach": name,
+            "flagged": round(flagged, 2),
+            "churners": round(found, 2),
+            "precision": found / flagged if flagged else None,
+            "recall": found / y.sum(),
+        }
+
+    inside = np.argsort(-scores[segment], kind="stable")
+    y_in = y[segment][inside]
+    return {
+        "segment": SEGMENT,
+        "rows": [
+            row("segment_rule", segment.astype(float)),
+            row("segment_no_contact_rule", segment_rule(frame, no_contact=True).to_numpy()),
+            row("model_top_20pct", flags),
+            {**row("random_top_20pct", np.full(len(y), flags.sum() / len(y))), "flagged": round(float(flags.sum()), 2)},
+        ],
+        "within_segment": {
+            "n": int(segment.sum()),
+            "churners": int(y[segment].sum()),
+            "roc_auc": float(roc_auc_score(y[segment], scores[segment])),
+            "top_10_churners": int(y_in[:10].sum()),
+            "top_10_random": round(10 * float(y[segment].mean()), 2),
+            "top_30_churners": int(y_in[:30].sum()),
+            "top_30_random": round(30 * float(y[segment].mean()), 2),
+        },
+        "note": (
+            "The segment was found by inspecting all labels, so its precision is optimistic; the model never "
+            "scores a customer whose label it saw. The model's added value is the order inside the segment and a "
+            "graded score that feeds the spend decision. A later labelled month decides which one holds."
+        ),
+    }
+
+
 def evaluate_holdout(frame, X, y, train, test):
     """Compare the pre-specified models on the 25% holdout; nothing is tuned on it."""
     fitted = model().fit(X.iloc[train], y.iloc[train])
@@ -276,6 +337,13 @@ def evaluate_holdout(frame, X, y, train, test):
         **metrics(y.iloc[test], rule.iloc[test]),
         "brier": None,
     }
+    # Found by looking at every label, holdout included: an optimistic comparator.
+    for name, no_contact in (("segment_rule", False), ("segment_no_contact_rule", True)):
+        comparison[name] = {
+            **metrics(y.iloc[test], segment_rule(frame, no_contact).iloc[test]),
+            "brier": None,
+            "note": "Segment found on all labels; optimistic.",
+        }
     return comparison, predictions
 
 
@@ -368,38 +436,103 @@ def probability_scores(y, scores):
     }
 
 
-def calibration_check(X, y, train, test, holdout_raw, oof_raw, folds):
-    """Does sigmoid calibration improve probability error? Reported, never auto-applied.
+def isotonic(scores, labels):
+    """Plain isotonic regression as a step function of the score."""
+    return _step_calibrator(scores, labels, smooth=False)
 
-    Holdout: calibrated on the 75% training rows only. Out-of-fold: inside each of the
-    same five outer folds used for the shipped scores, so no customer's own label
-    calibrates its score.
+
+def smoothed_isotonic(scores, labels):
+    """Isotonic blocks whose churn rates are shrunk by one churner and one stayer.
+
+    Isotonic regression groups customers into score blocks with a monotone churn
+    rate. With 41 churners a block can be all-churn or no-churn, which would claim
+    a certain outcome; adding one of each keeps every estimate inside (0, 1).
+    New scores take the rate of the block of the nearest lower training score.
     """
-    holdout_cal = (
-        calibrated_model()
-        .fit(X.iloc[train], y.iloc[train])
-        .predict_proba(X.iloc[test])[:, 1]
-    )
-    oof_cal = np.zeros(len(X))
+    return _step_calibrator(scores, labels, smooth=True)
+
+
+def _step_calibrator(scores, labels, smooth):
+    scores, labels = np.asarray(scores, float), np.asarray(labels, float)
+    order = np.argsort(scores, kind="stable")
+    xs, ys = scores[order], labels[order]
+    blocks = IsotonicRegression().fit_transform(xs, ys)
+    rates = blocks.copy()
+    if smooth:
+        for level in np.unique(blocks):
+            members = blocks == level
+            rates[members] = (ys[members].sum() + 1) / (members.sum() + 2)
+        rates = np.maximum.accumulate(rates)
+
+    def predict(new):
+        index = np.searchsorted(xs, np.asarray(new, float), side="right") - 1
+        return rates[np.clip(index, 0, len(xs) - 1)]
+
+    return predict
+
+
+def _map_steps(scores, calibrated):
+    """Lowest score at which each calibrated level starts, for the report."""
+    order = np.argsort(scores, kind="stable")
+    steps, previous = [], None
+    for index in order:
+        if calibrated[index] != previous:
+            steps.append((round(float(scores[index]), 4), round(float(calibrated[index]), 4)))
+            previous = calibrated[index]
+    return steps
+
+
+def inner_scores(X, y):
+    """Five-fold out-of-fold scores inside a training set, for fitting a calibrator."""
+    scores = np.zeros(len(X))
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
+    for fit, val in cv.split(X, y):
+        scores[val] = model().fit(X.iloc[fit], y.iloc[fit]).predict_proba(X.iloc[val])[:, 1]
+    return scores
+
+
+def calibration_check(X, y, train, test, holdout_raw, oof_raw, folds):
+    """Compare calibration methods, each fitted without the labels it is scored on.
+
+    Holdout: calibrators are fitted on out-of-fold scores of the 75% training rows.
+    Out-of-fold: inside each of the five outer folds used for the shipped scores,
+    on inner out-of-fold scores, then applied to that fold's own scores. These
+    nested numbers measure the method. Decisions use one smoothed-isotonic map
+    fitted on all out-of-fold scores, as it would be fitted at deployment: a single
+    monotone map keeps the raw ranking, which five per-fold maps would scramble.
+    """
+    X_train, y_train = X.iloc[train], y.iloc[train]
+    inner_train = inner_scores(X_train, y_train)
+    holdout = {
+        "raw": holdout_raw,
+        "sigmoid": calibrated_model().fit(X_train, y_train).predict_proba(X.iloc[test])[:, 1],
+        "isotonic": isotonic(inner_train, y_train)(holdout_raw),
+        "smoothed_isotonic": smoothed_isotonic(inner_train, y_train)(holdout_raw),
+    }
+    oof = {name: np.zeros(len(X)) for name in ("sigmoid", "isotonic", "smoothed_isotonic")}
     for fold in np.unique(folds):
         fit, val = folds != fold, folds == fold
-        oof_cal[val] = (
-            calibrated_model().fit(X[fit], y[fit]).predict_proba(X[val])[:, 1]
-        )
+        inner = inner_scores(X[fit], y[fit])
+        oof["sigmoid"][val] = calibrated_model().fit(X[fit], y[fit]).predict_proba(X[val])[:, 1]
+        oof["isotonic"][val] = isotonic(inner, y[fit])(oof_raw[val])
+        oof["smoothed_isotonic"][val] = smoothed_isotonic(inner, y[fit])(oof_raw[val])
     y_test = y.iloc[test]
+    decision = smoothed_isotonic(oof_raw, y)(oof_raw)
     return {
-        "method": "Sigmoid (Platt) scaling via CalibratedClassifierCV, 5 internal folds, fitted on training rows only.",
-        "holdout": {
-            "raw": probability_scores(y_test, holdout_raw),
-            "sigmoid": probability_scores(y_test, holdout_cal),
-        },
+        "method": "Each calibrator is fitted on out-of-fold scores of its training rows only. Smoothed isotonic: isotonic score blocks with one churner and one stayer added to each block.",
+        "holdout": {name: probability_scores(y_test, p) for name, p in holdout.items()},
         "out_of_fold": {
             "raw": probability_scores(y, oof_raw),
-            "sigmoid": probability_scores(y, oof_cal),
+            **{name: probability_scores(y, p) for name, p in oof.items()},
         },
-        "calibration_sigmoid_oof": calibration_table(y, oof_cal),
-        "shipped_scores": "raw out-of-fold logistic",
-    }, oof_cal
+        "calibration_smoothed_oof": calibration_table(y, oof["smoothed_isotonic"]),
+        "decision_risk": "One smoothed-isotonic map fitted on all out-of-fold scores (deployment-style); quality measured nested above.",
+        "decision_map": [
+            {"score_from": float(lo), "calibrated_risk": float(v)}
+            for lo, v in _map_steps(oof_raw, decision)
+        ],
+        "ordering": "raw out-of-fold score",
+    }, decision
 
 
 def subgroup_table(frame, y, scores, columns=("gender", "region")):
@@ -463,7 +596,7 @@ def evidence(row):
     return reasons or ["No recent support signal in the supplied extract."]
 
 
-def customer_records(frame, usage, scores, folds, signals):
+def customer_records(frame, usage, scores, folds, signals, calibrated):
     """Decision records without outcome columns; consent and eligibility stay unknown."""
     history = usage[usage.available_at <= CUTOFF].groupby("customerId").size()
     records = []
@@ -481,6 +614,7 @@ def customer_records(frame, usage, scores, folds, signals):
                 "customer_id": row.customerId,
                 "region": row.region,
                 "risk_score": round(float(scores[i]), 6),
+                "calibrated_risk": round(float(calibrated[i]), 6),
                 "risk_band": risk_band(scores[i]),
                 "features": features,
                 "evidence": evidence(row),
@@ -492,6 +626,7 @@ def customer_records(frame, usage, scores, folds, signals):
                 "resolution_status": "unknown_at_snapshot",
                 "last_contact_at": None,
                 "score_method": "out_of_fold_logistic",
+                "calibration_method": "smoothed_isotonic_out_of_fold",
                 "fold": int(folds[i]),
             }
         )
@@ -507,7 +642,7 @@ def limitations(overlap_rows, flow):
         "Support resolution status is excluded: no status-effective timestamp.",
         "Random customer holdout is internal validation in one selected historical cohort.",
         f"{overlap_rows} holdout customers share exact model features with training customers; non-overlap sensitivity is reported separately.",
-        "OOF demo scores are retrospective estimates, not production-calibrated probabilities.",
+        "Raw OOF scores rank well but overstate risk between 12% and 30%; economics use smoothed-isotonic risks fitted out-of-fold, which still rest on 41 churners.",
         "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
         "Gender, age, partner and dependents are excluded from scoring; proxies may remain.",
     ]
@@ -525,7 +660,7 @@ def main():
     comparison, predictions = evaluate_holdout(frame, X, y, train, test)
     sensitivity = overlap_sensitivity(X, y, train, test, predictions)
     oof, folds, signals = out_of_fold(X, y)
-    calibration, oof_sigmoid = calibration_check(X, y, train, test, predictions, oof, folds)
+    calibration, calibrated = calibration_check(X, y, train, test, predictions, oof, folds)
     flow = cohort_flow(base, usage, frame)
     report = {
         "snapshot": "2025-11-01",
@@ -545,10 +680,11 @@ def main():
         "calibration": calibration_table(y, oof),
         "calibration_check": calibration,
         "subgroups": subgroup_table(frame, y, oof),
+        "rule_check": rule_check(frame, y, oof),
         "audit": audit(base, usage, support),
         "limitations": limitations(sensitivity["exact_feature_overlap_test_rows"], flow),
     }
-    customers = customer_records(frame, usage, oof, folds, signals)
+    customers = customer_records(frame, usage, oof, folds, signals, calibrated)
     # Retrospective labels for reporting only; they never enter intelligence.json.
     labels = dict(zip(frame.customerId, y.astype(int)))
     policy_base = {"budget": 3_000_000, "max_customers": 10}
@@ -556,10 +692,11 @@ def main():
         "sensitivity": decisions.sensitivity_curve(customers, policy_base),
         "optimisation": decisions.optimisation_gap(customers, policy_base),
         "strategies": decisions.strategy_comparison(customers, policy_base, labels),
+        "premium_stress": decisions.premium_stress(customers, policy_base),
         "decision_curve": decisions.decision_curve(y.iloc[test].to_numpy(), predictions),
     }
     report["calibration_check"]["plan_impact"] = decisions.plan_impact(
-        customers, dict(zip(frame.customerId, oof_sigmoid)), policy_base, labels
+        customers, policy_base, labels
     )
     report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
     report["pilot"] = decisions.pilot_design(customers, labels, policy_base)

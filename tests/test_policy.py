@@ -78,6 +78,19 @@ def test_reviews_need_risk_above_the_offer_breakeven():
         validate_plan(forged, CUSTOMERS[:12] + [low])
 
 
+def test_calibrated_risk_prices_and_raw_score_breaks_ties():
+    high_raw = customer("A", risk=0.99, calibrated_risk=0.9)
+    low_raw = customer("B", risk=0.70, calibrated_risk=0.9)
+    actions = {a["action"]: a for a in compare_actions(high_raw)}
+    assert actions["premium_offer"]["scenario_net_benefit"] == round(0.9 * 0.5 * 6_000_000 - 450_000)
+    assert actions["premium_offer"]["scenario_prevented_churn"] == pytest.approx(0.45)
+    plan = build_plan([low_raw, high_raw], {"budget": 450_000, "max_customers": 1})
+    assert [i["customer_id"] for i in plan["items"]] == ["A"]
+    # A raw score above the floor does not earn a review if calibrated risk is below it.
+    contact = customer("C", risk=0.6, calibrated_risk=0.01, technical=1)
+    assert build_plan([contact])["items"] == []
+
+
 def test_no_reviews_when_no_offer_can_break_even():
     assert review_floor({"basic_success": 0, "premium_success": 0}) is None
     plan = build_plan(CUSTOMERS, {"basic_success": 0, "premium_success": 0})

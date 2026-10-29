@@ -8,6 +8,7 @@
       "customer_id": "IOH-011",
       "region": "Semarang",
       "risk_score": 0.13196,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -53,12 +54,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-012",
       "region": "Bandung",
       "risk_score": 0.210139,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 24.0,
@@ -103,12 +106,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-014",
       "region": "Surabaya",
       "risk_score": 0.002292,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 60.0,
@@ -153,12 +158,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-016",
       "region": "Medan",
       "risk_score": 0.004605,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 45.0,
@@ -203,12 +210,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-017",
       "region": "Jakarta",
       "risk_score": 0.031981,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 68.0,
@@ -253,12 +262,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-019",
       "region": "Surabaya",
       "risk_score": 0.034358,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 22.0,
@@ -303,12 +314,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-021",
       "region": "Jakarta",
       "risk_score": 0.181016,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -355,12 +368,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-022",
       "region": "Bandung",
       "risk_score": 0.072041,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 50.0,
@@ -405,12 +420,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-023",
       "region": "Surabaya",
       "risk_score": 0.145171,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 6.0,
@@ -455,12 +472,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-024",
       "region": "Medan",
       "risk_score": 0.011896,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 30.0,
@@ -505,12 +524,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-025",
       "region": "Jakarta",
       "risk_score": 0.202812,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 2.0,
@@ -557,12 +578,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-026",
       "region": "Semarang",
       "risk_score": 0.007252,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 40.0,
@@ -607,12 +630,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-027",
       "region": "Bandung",
       "risk_score": 0.043732,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 58.0,
@@ -657,12 +682,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-028",
       "region": "Jakarta",
       "risk_score": 0.170861,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 7.0,
@@ -707,12 +734,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-029",
       "region": "Surabaya",
       "risk_score": 0.03285,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 19.0,
@@ -757,12 +786,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-032",
       "region": "Jakarta",
       "risk_score": 0.066908,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 55.0,
@@ -807,12 +838,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-033",
       "region": "Surabaya",
       "risk_score": 0.010865,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 25.0,
@@ -857,12 +890,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-034",
       "region": "Semarang",
       "risk_score": 0.044112,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -908,12 +943,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-035",
       "region": "Medan",
       "risk_score": 0.009165,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 33.0,
@@ -958,12 +995,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-037",
       "region": "Jakarta",
       "risk_score": 0.02039,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 15.0,
@@ -1008,12 +1047,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-038",
       "region": "Surabaya",
       "risk_score": 0.073083,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 8.0,
@@ -1058,12 +1099,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-039",
       "region": "Jakarta",
       "risk_score": 0.001503,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 70.0,
@@ -1108,12 +1151,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-041",
       "region": "Medan",
       "risk_score": 0.00346,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 48.0,
@@ -1158,12 +1203,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-042",
       "region": "Jakarta",
       "risk_score": 0.170068,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 3.0,
@@ -1209,12 +1256,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-043",
       "region": "Semarang",
       "risk_score": 0.011514,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 28.0,
@@ -1259,12 +1308,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-044",
       "region": "Surabaya",
       "risk_score": 0.607256,
+      "calibrated_risk": 0.777778,
       "risk_band": "High",
       "features": {
         "tenureMonths": 4.0,
@@ -1310,12 +1361,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-045",
       "region": "Bandung",
       "risk_score": 0.052264,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 62.0,
@@ -1360,12 +1413,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-046",
       "region": "Jakarta",
       "risk_score": 0.216147,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 5.0,
@@ -1412,12 +1467,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-047",
       "region": "Medan",
       "risk_score": 0.001588,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 65.0,
@@ -1462,12 +1519,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-049",
       "region": "Surabaya",
       "risk_score": 0.040593,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 18.0,
@@ -1512,12 +1571,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-050",
       "region": "Jakarta",
       "risk_score": 0.015074,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 20.0,
@@ -1562,12 +1623,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-052",
       "region": "Bandung",
       "risk_score": 0.075542,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 54.0,
@@ -1612,12 +1675,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-053",
       "region": "Semarang",
       "risk_score": 0.02154,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -1664,12 +1729,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-054",
       "region": "Jakarta",
       "risk_score": 0.001444,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 71.0,
@@ -1714,12 +1781,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-055",
       "region": "Surabaya",
       "risk_score": 0.225299,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 9.0,
@@ -1764,12 +1833,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-056",
       "region": "Medan",
       "risk_score": 0.009906,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 31.0,
@@ -1814,12 +1885,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-058",
       "region": "Bandung",
       "risk_score": 0.048587,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 61.0,
@@ -1864,12 +1937,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-059",
       "region": "Surabaya",
       "risk_score": 0.006518,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 52.0,
@@ -1914,12 +1989,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-060",
       "region": "Jakarta",
       "risk_score": 0.58658,
+      "calibrated_risk": 0.5,
       "risk_band": "High",
       "features": {
         "tenureMonths": 4.0,
@@ -1965,12 +2042,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-061",
       "region": "Semarang",
       "risk_score": 0.018984,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 17.0,
@@ -2015,12 +2094,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-062",
       "region": "Medan",
       "risk_score": 0.002877,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 53.0,
@@ -2065,12 +2146,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-064",
       "region": "Jakarta",
       "risk_score": 0.023085,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 16.0,
@@ -2115,12 +2198,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-065",
       "region": "Surabaya",
       "risk_score": 0.013356,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 11.0,
@@ -2165,12 +2250,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-066",
       "region": "Jakarta",
       "risk_score": 0.001335,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 72.0,
@@ -2215,12 +2302,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-067",
       "region": "Bandung",
       "risk_score": 0.299242,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 2.0,
@@ -2267,12 +2356,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-068",
       "region": "Bandung",
       "risk_score": 0.064203,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 56.0,
@@ -2317,12 +2408,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-069",
       "region": "Jakarta",
       "risk_score": 0.165472,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 3.0,
@@ -2368,12 +2461,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-070",
       "region": "Semarang",
       "risk_score": 0.02437,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 29.0,
@@ -2418,12 +2513,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-072",
       "region": "Medan",
       "risk_score": 0.008852,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 35.0,
@@ -2468,12 +2565,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-073",
       "region": "Jakarta",
       "risk_score": 0.002267,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 58.0,
@@ -2518,12 +2617,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-074",
       "region": "Bandung",
       "risk_score": 0.048189,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -2570,12 +2671,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-075",
       "region": "Bandung",
       "risk_score": 0.048352,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 64.0,
@@ -2620,12 +2723,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-076",
       "region": "Surabaya",
       "risk_score": 0.012789,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 10.0,
@@ -2671,12 +2776,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-077",
       "region": "Jakarta",
       "risk_score": 0.024933,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 21.0,
@@ -2721,12 +2828,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-079",
       "region": "Medan",
       "risk_score": 0.001299,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 69.0,
@@ -2771,12 +2880,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-080",
       "region": "Semarang",
       "risk_score": 0.005791,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 42.0,
@@ -2821,12 +2932,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-082",
       "region": "Surabaya",
       "risk_score": 0.010408,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 26.0,
@@ -2871,12 +2984,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-083",
       "region": "Jakarta",
       "risk_score": 0.165933,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 6.0,
@@ -2921,12 +3036,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-084",
       "region": "Bandung",
       "risk_score": 0.068718,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 57.0,
@@ -2971,12 +3088,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-085",
       "region": "Surabaya",
       "risk_score": 0.647255,
+      "calibrated_risk": 0.777778,
       "risk_band": "High",
       "features": {
         "tenureMonths": 4.0,
@@ -3022,12 +3141,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-086",
       "region": "Medan",
       "risk_score": 0.002175,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 60.0,
@@ -3072,12 +3193,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-088",
       "region": "Semarang",
       "risk_score": 0.02497,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 32.0,
@@ -3122,12 +3245,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-089",
       "region": "Bandung",
       "risk_score": 0.006845,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 13.0,
@@ -3173,12 +3298,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-090",
       "region": "Jakarta",
       "risk_score": 0.001407,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 72.0,
@@ -3223,12 +3350,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-092",
       "region": "Surabaya",
       "risk_score": 0.077521,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 51.0,
@@ -3273,12 +3402,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-093",
       "region": "Jakarta",
       "risk_score": 0.022794,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 23.0,
@@ -3323,12 +3454,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-094",
       "region": "Bandung",
       "risk_score": 0.001847,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 66.0,
@@ -3373,12 +3506,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-095",
       "region": "Surabaya",
       "risk_score": 0.224083,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 5.0,
@@ -3425,12 +3560,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-096",
       "region": "Medan",
       "risk_score": 0.067149,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 8.0,
@@ -3475,12 +3612,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-097",
       "region": "Jakarta",
       "risk_score": 0.00197,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 59.0,
@@ -3525,12 +3664,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-098",
       "region": "Bandung",
       "risk_score": 0.042392,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 2.0,
@@ -3577,12 +3718,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-099",
       "region": "Semarang",
       "risk_score": 0.025723,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 34.0,
@@ -3627,12 +3770,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-100",
       "region": "Jakarta",
       "risk_score": 0.001422,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 70.0,
@@ -3677,12 +3822,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-101",
       "region": "Bandung",
       "risk_score": 0.751023,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 3.0,
@@ -3728,12 +3875,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-102",
       "region": "Surabaya",
       "risk_score": 0.002612,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 54.0,
@@ -3778,12 +3927,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-103",
       "region": "Jakarta",
       "risk_score": 0.002267,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 24.0,
@@ -3828,12 +3979,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-104",
       "region": "Bandung",
       "risk_score": 0.066174,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 63.0,
@@ -3878,12 +4031,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-106",
       "region": "Medan",
       "risk_score": 0.153194,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -3929,12 +4084,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-107",
       "region": "Jakarta",
       "risk_score": 0.001441,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 68.0,
@@ -3979,12 +4136,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-108",
       "region": "Bandung",
       "risk_score": 0.029115,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 4.0,
@@ -4031,12 +4190,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-109",
       "region": "Semarang",
       "risk_score": 0.044204,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 18.0,
@@ -4081,12 +4242,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-110",
       "region": "Jakarta",
       "risk_score": 0.0017,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 67.0,
@@ -4131,12 +4294,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-112",
       "region": "Surabaya",
       "risk_score": 0.00963,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 27.0,
@@ -4181,12 +4346,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-113",
       "region": "Jakarta",
       "risk_score": 0.034796,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 7.0,
@@ -4232,12 +4399,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-114",
       "region": "Bandung",
       "risk_score": 0.063943,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 59.0,
@@ -4282,12 +4451,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-116",
       "region": "Medan",
       "risk_score": 0.002122,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 62.0,
@@ -4332,12 +4503,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-117",
       "region": "Jakarta",
       "risk_score": 0.026714,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 20.0,
@@ -4382,12 +4555,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-118",
       "region": "Bandung",
       "risk_score": 0.052592,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 60.0,
@@ -4432,12 +4607,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-119",
       "region": "Semarang",
       "risk_score": 0.019759,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 3.0,
@@ -4484,12 +4661,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-120",
       "region": "Jakarta",
       "risk_score": 0.001591,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 71.0,
@@ -4534,12 +4713,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-122",
       "region": "Surabaya",
       "risk_score": 0.002342,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 56.0,
@@ -4584,12 +4765,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-123",
       "region": "Jakarta",
       "risk_score": 0.03467,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 5.0,
@@ -4636,12 +4819,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-124",
       "region": "Bandung",
       "risk_score": 0.00167,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 65.0,
@@ -4686,12 +4871,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-125",
       "region": "Surabaya",
       "risk_score": 0.042466,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 19.0,
@@ -4736,12 +4923,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-128",
       "region": "Bandung",
       "risk_score": 0.062958,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 58.0,
@@ -4786,12 +4975,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-129",
       "region": "Semarang",
       "risk_score": 0.038041,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -4837,12 +5028,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-130",
       "region": "Jakarta",
       "risk_score": 0.001695,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 70.0,
@@ -4887,12 +5080,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-132",
       "region": "Surabaya",
       "risk_score": 0.003329,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 49.0,
@@ -4937,12 +5132,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-133",
       "region": "Jakarta",
       "risk_score": 0.002247,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 26.0,
@@ -4987,12 +5184,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-134",
       "region": "Semarang",
       "risk_score": 0.157438,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -5038,12 +5237,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-135",
       "region": "Medan",
       "risk_score": 0.010031,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 34.0,
@@ -5088,12 +5289,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-137",
       "region": "Jakarta",
       "risk_score": 0.019679,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 17.0,
@@ -5138,12 +5341,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-138",
       "region": "Surabaya",
       "risk_score": 0.009351,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 9.0,
@@ -5189,12 +5394,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-139",
       "region": "Jakarta",
       "risk_score": 0.00138,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 72.0,
@@ -5239,12 +5446,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-140",
       "region": "Bandung",
       "risk_score": 0.71943,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 4.0,
@@ -5290,12 +5499,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-141",
       "region": "Medan",
       "risk_score": 0.003222,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 50.0,
@@ -5340,12 +5551,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-142",
       "region": "Jakarta",
       "risk_score": 0.180004,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 2.0,
@@ -5391,12 +5604,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-143",
       "region": "Semarang",
       "risk_score": 0.01074,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 30.0,
@@ -5441,12 +5656,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-145",
       "region": "Bandung",
       "risk_score": 0.051777,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 64.0,
@@ -5491,12 +5708,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-146",
       "region": "Jakarta",
       "risk_score": 0.189316,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 6.0,
@@ -5542,12 +5761,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-147",
       "region": "Medan",
       "risk_score": 0.001508,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 67.0,
@@ -5592,12 +5813,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-149",
       "region": "Surabaya",
       "risk_score": 0.037085,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 20.0,
@@ -5642,12 +5865,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-150",
       "region": "Jakarta",
       "risk_score": 0.014093,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 22.0,
@@ -5692,12 +5917,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-152",
       "region": "Bandung",
       "risk_score": 0.070972,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 56.0,
@@ -5742,12 +5969,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-153",
       "region": "Semarang",
       "risk_score": 0.027632,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -5794,12 +6023,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-154",
       "region": "Jakarta",
       "risk_score": 0.001483,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 72.0,
@@ -5844,12 +6075,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-155",
       "region": "Surabaya",
       "risk_score": 0.174421,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 10.0,
@@ -5894,12 +6127,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-156",
       "region": "Medan",
       "risk_score": 0.010443,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 33.0,
@@ -5944,12 +6179,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-158",
       "region": "Bandung",
       "risk_score": 0.047016,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 63.0,
@@ -5994,12 +6231,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-159",
       "region": "Surabaya",
       "risk_score": 0.007091,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 54.0,
@@ -6044,12 +6283,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-160",
       "region": "Jakarta",
       "risk_score": 0.233761,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 5.0,
@@ -6096,12 +6337,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-161",
       "region": "Semarang",
       "risk_score": 0.017745,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 19.0,
@@ -6146,12 +6389,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-162",
       "region": "Medan",
       "risk_score": 0.002927,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 55.0,
@@ -6196,12 +6441,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-164",
       "region": "Jakarta",
       "risk_score": 0.019896,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 18.0,
@@ -6246,12 +6493,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-165",
       "region": "Surabaya",
       "risk_score": 0.013191,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 12.0,
@@ -6296,12 +6545,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-166",
       "region": "Jakarta",
       "risk_score": 0.00138,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 72.0,
@@ -6346,12 +6597,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-167",
       "region": "Bandung",
       "risk_score": 0.295716,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 3.0,
@@ -6398,12 +6651,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-168",
       "region": "Bandung",
       "risk_score": 0.060937,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 58.0,
@@ -6448,12 +6703,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-169",
       "region": "Jakarta",
       "risk_score": 0.037442,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 4.0,
@@ -6500,12 +6757,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-170",
       "region": "Semarang",
       "risk_score": 0.023984,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 31.0,
@@ -6550,12 +6809,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-171",
       "region": "Surabaya",
       "risk_score": 0.642476,
+      "calibrated_risk": 0.777778,
       "risk_band": "High",
       "features": {
         "tenureMonths": 2.0,
@@ -6601,12 +6862,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-172",
       "region": "Medan",
       "risk_score": 0.008748,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 37.0,
@@ -6651,12 +6914,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-173",
       "region": "Jakarta",
       "risk_score": 0.00188,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 60.0,
@@ -6701,12 +6966,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-174",
       "region": "Bandung",
       "risk_score": 0.050874,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -6753,12 +7020,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-175",
       "region": "Bandung",
       "risk_score": 0.04714,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 66.0,
@@ -6803,12 +7072,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-176",
       "region": "Surabaya",
       "risk_score": 0.012845,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 11.0,
@@ -6854,12 +7125,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-177",
       "region": "Jakarta",
       "risk_score": 0.023283,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 23.0,
@@ -6904,12 +7177,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-179",
       "region": "Medan",
       "risk_score": 0.001193,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 71.0,
@@ -6954,12 +7229,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-180",
       "region": "Semarang",
       "risk_score": 0.005095,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 44.0,
@@ -7004,12 +7281,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-182",
       "region": "Surabaya",
       "risk_score": 0.009518,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 28.0,
@@ -7054,12 +7333,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-183",
       "region": "Jakarta",
       "risk_score": 0.158137,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 8.0,
@@ -7104,12 +7385,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-184",
       "region": "Bandung",
       "risk_score": 0.063073,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 59.0,
@@ -7154,12 +7437,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-185",
       "region": "Surabaya",
       "risk_score": 0.318157,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 6.0,
@@ -7204,12 +7489,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-186",
       "region": "Medan",
       "risk_score": 0.002392,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 62.0,
@@ -7254,12 +7541,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-188",
       "region": "Semarang",
       "risk_score": 0.022549,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 34.0,
@@ -7304,12 +7593,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-189",
       "region": "Bandung",
       "risk_score": 0.006712,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 14.0,
@@ -7355,12 +7646,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-190",
       "region": "Jakarta",
       "risk_score": 0.001657,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 72.0,
@@ -7405,12 +7698,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-192",
       "region": "Surabaya",
       "risk_score": 0.071614,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 53.0,
@@ -7455,12 +7750,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-193",
       "region": "Jakarta",
       "risk_score": 0.021346,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 25.0,
@@ -7505,12 +7802,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-194",
       "region": "Bandung",
       "risk_score": 0.001725,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 68.0,
@@ -7555,12 +7854,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-195",
       "region": "Surabaya",
       "risk_score": 0.247823,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 7.0,
@@ -7606,12 +7907,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-196",
       "region": "Medan",
       "risk_score": 0.079681,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 9.0,
@@ -7656,12 +7959,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-197",
       "region": "Jakarta",
       "risk_score": 0.002087,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 61.0,
@@ -7706,12 +8011,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-198",
       "region": "Bandung",
       "risk_score": 0.314529,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 3.0,
@@ -7758,12 +8065,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-199",
       "region": "Semarang",
       "risk_score": 0.022896,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 36.0,
@@ -7808,12 +8117,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-200",
       "region": "Jakarta",
       "risk_score": 0.001618,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 71.0,
@@ -7858,12 +8169,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-201",
       "region": "Bandung",
       "risk_score": 0.795866,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -7909,12 +8222,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-202",
       "region": "Surabaya",
       "risk_score": 0.002126,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 56.0,
@@ -7959,12 +8274,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-203",
       "region": "Jakarta",
       "risk_score": 0.00331,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 26.0,
@@ -8009,12 +8326,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-204",
       "region": "Bandung",
       "risk_score": 0.064117,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 65.0,
@@ -8059,12 +8378,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-206",
       "region": "Medan",
       "risk_score": 0.1682,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 1.0,
@@ -8110,12 +8431,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-207",
       "region": "Jakarta",
       "risk_score": 0.001343,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 70.0,
@@ -8160,12 +8483,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-208",
       "region": "Bandung",
       "risk_score": 0.029038,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 2.0,
@@ -8212,12 +8537,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-209",
       "region": "Semarang",
       "risk_score": 0.038346,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 20.0,
@@ -8262,12 +8589,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-210",
       "region": "Jakarta",
       "risk_score": 0.001487,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 69.0,
@@ -8312,12 +8641,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-212",
       "region": "Surabaya",
       "risk_score": 0.011733,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 29.0,
@@ -8362,12 +8693,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-213",
       "region": "Jakarta",
       "risk_score": 0.156075,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 9.0,
@@ -8412,12 +8745,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-214",
       "region": "Bandung",
       "risk_score": 0.065556,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 61.0,
@@ -8462,12 +8797,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-216",
       "region": "Medan",
       "risk_score": 0.001978,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 64.0,
@@ -8512,12 +8849,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-217",
       "region": "Jakarta",
       "risk_score": 0.029937,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 22.0,
@@ -8562,12 +8901,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-218",
       "region": "Bandung",
       "risk_score": 0.052503,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 62.0,
@@ -8612,12 +8953,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-219",
       "region": "Semarang",
       "risk_score": 0.140455,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 2.0,
@@ -8663,12 +9006,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-220",
       "region": "Jakarta",
       "risk_score": 0.001682,
+      "calibrated_risk": 0.006369,
       "risk_band": "Low",
       "features": {
         "tenureMonths": 72.0,
@@ -8713,12 +9058,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-221",
       "region": "Bandung",
       "risk_score": 0.81737,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -8764,12 +9111,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-230",
       "region": "Bandung",
       "risk_score": 0.75333,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -8815,12 +9164,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-234",
       "region": "Surabaya",
       "risk_score": 0.619924,
+      "calibrated_risk": 0.777778,
       "risk_band": "High",
       "features": {
         "tenureMonths": 4.0,
@@ -8866,12 +9217,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-247",
       "region": "Jakarta",
       "risk_score": 0.657516,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -8917,12 +9270,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-268",
       "region": "Jakarta",
       "risk_score": 0.606952,
+      "calibrated_risk": 0.777778,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -8968,12 +9323,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-281",
       "region": "Bandung",
       "risk_score": 0.75597,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9019,12 +9376,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-301",
       "region": "Bandung",
       "risk_score": 0.779062,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9070,12 +9429,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-321",
       "region": "Bandung",
       "risk_score": 0.81968,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9121,12 +9482,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-341",
       "region": "Bandung",
       "risk_score": 0.81737,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9172,12 +9535,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-361",
       "region": "Bandung",
       "risk_score": 0.798209,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9223,12 +9588,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-365",
       "region": "Surabaya",
       "risk_score": 0.239297,
+      "calibrated_risk": 0.214286,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 1.0,
@@ -9275,12 +9642,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-381",
       "region": "Bandung",
       "risk_score": 0.827892,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9326,12 +9695,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-401",
       "region": "Bandung",
       "risk_score": 0.845197,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9377,12 +9748,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-405",
       "region": "Surabaya",
       "risk_score": 0.737232,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9428,12 +9801,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-421",
       "region": "Bandung",
       "risk_score": 0.972966,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9479,12 +9854,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-430",
       "region": "Bandung",
       "risk_score": 0.989671,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9530,12 +9907,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-434",
       "region": "Surabaya",
       "risk_score": 0.67766,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 3.0,
@@ -9581,12 +9960,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-447",
       "region": "Jakarta",
       "risk_score": 0.664066,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9632,12 +10013,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-468",
       "region": "Jakarta",
       "risk_score": 0.629392,
+      "calibrated_risk": 0.777778,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9683,12 +10066,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-481",
       "region": "Bandung",
       "risk_score": 0.966884,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9734,12 +10119,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-501",
       "region": "Bandung",
       "risk_score": 0.977745,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9785,12 +10172,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-521",
       "region": "Bandung",
       "risk_score": 0.98255,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9836,12 +10225,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-541",
       "region": "Bandung",
       "risk_score": 0.981749,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9887,12 +10278,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-561",
       "region": "Bandung",
       "risk_score": 0.982988,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -9938,12 +10331,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-565",
       "region": "Surabaya",
       "risk_score": 0.342084,
+      "calibrated_risk": 0.5,
       "risk_band": "Medium",
       "features": {
         "tenureMonths": 1.0,
@@ -9990,12 +10385,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-581",
       "region": "Bandung",
       "risk_score": 0.987754,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10041,12 +10438,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     },
     {
       "customer_id": "IOH-601",
       "region": "Bandung",
       "risk_score": 0.845197,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10092,12 +10491,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-605",
       "region": "Surabaya",
       "risk_score": 0.715751,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10143,12 +10544,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-621",
       "region": "Bandung",
       "risk_score": 0.975322,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10194,12 +10597,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-630",
       "region": "Bandung",
       "risk_score": 0.985447,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10245,12 +10650,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 2
     },
     {
       "customer_id": "IOH-634",
       "region": "Surabaya",
       "risk_score": 0.692413,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 3.0,
@@ -10296,12 +10703,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-647",
       "region": "Jakarta",
       "risk_score": 0.645797,
+      "calibrated_risk": 0.777778,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10347,12 +10756,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 3
     },
     {
       "customer_id": "IOH-668",
       "region": "Jakarta",
       "risk_score": 0.659288,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10398,12 +10809,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 5
     },
     {
       "customer_id": "IOH-681",
       "region": "Bandung",
       "risk_score": 0.969112,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10449,12 +10862,14 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 4
     },
     {
       "customer_id": "IOH-701",
       "region": "Bandung",
       "risk_score": 0.98312,
+      "calibrated_risk": 0.970588,
       "risk_band": "High",
       "features": {
         "tenureMonths": 1.0,
@@ -10500,6 +10915,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
+      "calibration_method": "smoothed_isotonic_out_of_fold",
       "fold": 1
     }
   ]

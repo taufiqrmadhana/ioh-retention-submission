@@ -11,8 +11,8 @@ One design, used in the deck, the workbench and here:
 
 1. **Population.** Customers the policy could make an offer to: no technical or
    billing contact in the prior 30 days, not blocked by consent or eligibility,
-   and a score at or above the basic-offer break-even (12.5% at the brief's
-   assumptions). In the November cohort that is 57 of 208 customers (27%).
+   and a calibrated risk at or above the basic-offer break-even (12.5% at the
+   brief's assumptions). In the November cohort that is 43 of 208 customers (21%).
    Customers with a recent service or billing contact take the review route and
    are not part of this offer test.
 2. **Pilot randomisation: 50/50.** Within that population, stratified by risk
@@ -30,7 +30,7 @@ control group the result cannot be attributed to the offer.
 
 ## Baseline and effect
 
-- **Baseline.** November churn in the pilot population was 66.7% (38 of 57),
+- **Baseline.** November churn in the pilot population was 88.4% (38 of 43),
   but that is a 30-day rate on out-of-fold scores in a cohort whose inclusion
   depends on the outcome (`cohort_flow` in the report), so it is not a planning
   baseline. The 90-day baseline must be measured on the live population. For a
@@ -57,7 +57,7 @@ control group the result cannot be attributed to the offer.
 | 50% | Brief's assumption, 25 pts | 58 (116) | 30 / 267 (297) |
 
 Plan the pilot on about 1,400 offer-eligible customers, 700 per arm. At the
-cohort's 27% eligible share that means roughly 5,100 scored customers; pool
+cohort's 21% eligible share that means roughly 6,800 scored customers; pool
 consecutive monthly scoring runs if one month is not enough. Running the pilot
 90/10 instead would need about 2.8 times as many customers for the same power,
 which is why the 10% split is kept for after rollout.
