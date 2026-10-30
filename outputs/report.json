@@ -116,7 +116,7 @@
       "prevalence": 0.14893617021276595,
       "pr_auc": 0.9404761904761902,
       "roc_auc": 0.9821428571428571,
-      "brier": 0.03633100060855952,
+      "brier": 0.03633100060855953,
       "top_k": 10,
       "precision_at_20pct": 0.6,
       "recall_at_20pct": 0.8571428571428571,
@@ -130,7 +130,7 @@
     "prevalence": 0.1971153846153846,
     "pr_auc": 0.9856371569377052,
     "roc_auc": 0.9960566671534978,
-    "brier": 0.02781462278635097,
+    "brier": 0.027814622786350975,
     "top_k": 42,
     "precision_at_20pct": 0.9285714285714286,
     "recall_at_20pct": 0.9512195121951219,
@@ -139,22 +139,22 @@
   "calibration": [
     {
       "n": 42,
-      "mean_score": 0.0018926220439460916,
+      "mean_score": 0.0018926220439460933,
       "observed_rate": 0.0
     },
     {
       "n": 42,
-      "mean_score": 0.012343385652302625,
+      "mean_score": 0.01234338565230263,
       "observed_rate": 0.0
     },
     {
       "n": 42,
-      "mean_score": 0.040575622704457734,
+      "mean_score": 0.04057562270445775,
       "observed_rate": 0.0
     },
     {
       "n": 41,
-      "mean_score": 0.15985088595195734,
+      "mean_score": 0.15985088595195737,
       "observed_rate": 0.04878048780487805
     },
     {
@@ -168,12 +168,12 @@
     "holdout": {
       "raw": {
         "brier": 0.03458215914962986,
-        "log_loss": 0.12696820510929094,
+        "log_loss": 0.12696820510929097,
         "pr_auc": 0.9666666666666666
       },
       "sigmoid": {
         "brier": 0.03960163701743123,
-        "log_loss": 0.14981744678077114,
+        "log_loss": 0.14981744678077116,
         "pr_auc": 0.9666666666666666
       },
       "isotonic": {
@@ -189,12 +189,12 @@
     },
     "out_of_fold": {
       "raw": {
-        "brier": 0.02781462278635097,
+        "brier": 0.027814622786350975,
         "log_loss": 0.11487744017609604,
         "pr_auc": 0.9856371569377052
       },
       "sigmoid": {
-        "brier": 0.032841983446273246,
+        "brier": 0.03284198344627325,
         "log_loss": 0.13738839182286824,
         "pr_auc": 0.9859039721153915
       },
@@ -316,7 +316,7 @@
       "n": 101,
       "positive_count": 20,
       "observed_rate": 0.19801980198019803,
-      "mean_score": 0.1898203689752998,
+      "mean_score": 0.18982036897529986,
       "flagged_at_global_top20pct": 21.0,
       "recall_at_global_top20pct": 0.95,
       "group_quota_top20pct": 21,
@@ -330,7 +330,7 @@
       "n": 8,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.06694759844081144,
+      "mean_score": 0.06694759844081151,
       "flagged_at_global_top20pct": 0.0,
       "recall_at_global_top20pct": null,
       "group_quota_top20pct": 2,
@@ -344,7 +344,7 @@
       "n": 60,
       "positive_count": 25,
       "observed_rate": 0.4166666666666667,
-      "mean_score": 0.4110189437134289,
+      "mean_score": 0.41101894371342895,
       "flagged_at_global_top20pct": 25.0,
       "recall_at_global_top20pct": 1.0,
       "group_quota_top20pct": 12,
@@ -372,7 +372,7 @@
       "n": 24,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.02369200791764488,
+      "mean_score": 0.023692007917644902,
       "flagged_at_global_top20pct": 0.0,
       "recall_at_global_top20pct": null,
       "group_quota_top20pct": 5,
@@ -386,7 +386,7 @@
       "n": 23,
       "positive_count": 0,
       "observed_rate": 0.0,
-      "mean_score": 0.038482583515364086,
+      "mean_score": 0.038482583515364106,
       "flagged_at_global_top20pct": 0.0,
       "recall_at_global_top20pct": null,
       "group_quota_top20pct": 5,
@@ -400,7 +400,7 @@
       "n": 41,
       "positive_count": 9,
       "observed_rate": 0.21951219512195122,
-      "mean_score": 0.19038699378087118,
+      "mean_score": 0.1903869937808712,
       "flagged_at_global_top20pct": 10.0,
       "recall_at_global_top20pct": 0.8888888888888888,
       "group_quota_top20pct": 9,
@@ -1015,6 +1015,20 @@
           "blocked_by_policy": 0
         },
         {
+          "strategy": "offers_only",
+          "label": "Mixed offers, no review slots",
+          "customers": 10,
+          "actions": {
+            "premium_offer": 5,
+            "basic_offer": 5
+          },
+          "cost": 3000000,
+          "expected_saves": 3.397,
+          "scenario_net_benefit": 17382350,
+          "churners_reached": 10,
+          "blocked_by_policy": 0
+        },
+        {
           "strategy": "premium_by_risk",
           "label": "Premium offer to the highest risk",
           "customers": 6,
@@ -1066,7 +1080,8 @@
           "blocked_churners": 3
         }
       },
-      "note": "Rows share the budget, capacity and eligibility rules of the shipped plan. The uncapped threshold rule gives every customer their best positive offer with no budget; without the policy checks it would send offers to customers whose recent service or billing contact must be reviewed first."
+      "review_share": 0.3,
+      "note": "Rows share the budget, capacity and eligibility rules of the shipped plan; only the offers-only row drops the review reservation, so its gap to the policy plan is the scenario price of reserving slots for reviews whose benefit is unmeasured. The uncapped threshold rule gives every customer their best positive offer with no budget; without the policy checks it would send offers to customers whose recent service or billing contact must be reviewed first."
     },
     "premium_stress": {
       "settings": {
@@ -1335,6 +1350,19 @@
     "population_share_of_cohort": 0.2067,
     "observed_30d_churn_in_population": 0.8837209302325582,
     "horizon": "90-day",
+    "horizon_bridge": "The model predicts 30-day churn. Read 30-day churn in both arms as a secondary outcome to check the score's calibration on live data; 90-day churn is primary so offers that only delay churn are not counted as saves.",
+    "what_two_arms_measure": "Policy versus business as usual measures the whole policy's effect, not the basic and premium success rates separately, because the policy chooses the offer. Measuring each rate needs the offer randomised: a second stage, or three arms sized below.",
+    "offer_arms_at_baseline": 0.5,
+    "offer_arms": {
+      "basic_offer": {
+        "breakeven_absolute_reduction": 0.025,
+        "per_arm": 7598
+      },
+      "premium_offer": {
+        "breakeven_absolute_reduction": 0.075,
+        "per_arm": 839
+      }
+    },
     "premium_breakeven_absolute_reduction": 0.075,
     "rows": [
       {
@@ -1399,5 +1427,29 @@
       }
     ],
     "note": "The 30-day rate is retrospective, measured on out-of-fold scores in an outcome-selected cohort, so 90-day baselines are planning values to replace with the live population's rate. For a fixed absolute effect the required sample is largest near 50% churn, so sizing at 0.5 is conservative."
+  },
+  "manifest": {
+    "snapshot": "2025-11-01",
+    "seed": 42,
+    "features": [
+      "tenureMonths",
+      "monthlyCharges",
+      "dataUsageGB",
+      "support_30d",
+      "technical_30d",
+      "billing_30d",
+      "contractType",
+      "paymentMethod",
+      "hasInternetService"
+    ],
+    "model_version": "lr-oof-v1-seed42",
+    "calibrator_version": "smoothed-isotonic-v1",
+    "policy_version": "retention-v2",
+    "code_sha256": {
+      "retention/analysis.py": "587af6857773f5e1575e3f04f2dd5f1532b56851e07072af01601424bab5b1e4",
+      "retention/decisions.py": "be6433fd8938798f4f6f60813b5b4e90d7be8bd17b9424472ba06d0469777e6c",
+      "retention/policy.py": "75eba4afd75187d39e5b70aa292c0bc15e090e4a8e7f1ab44c65d2a7249ce5b9",
+      "web/policy.js": "c9dc326e2010b4cdeaf7b3611d8adeb968c6850f404c7358b99cdc7564f0307f"
+    }
   }
 }

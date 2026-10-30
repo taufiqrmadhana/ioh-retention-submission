@@ -1,6 +1,7 @@
 {
   "snapshot": "2025-11-01",
   "model_version": "lr-oof-v1-seed42",
+  "calibrator_version": "smoothed-isotonic-v1",
   "policy_version": "retention-v2",
   "mode": "retrospective_demo",
   "customers": [

@@ -142,3 +142,29 @@ def test_targeting_diagnostic_segments_the_highest_risk():
     assert diagnostic["top_capacity"]["n"] == BASE["max_customers"]
     assert diagnostic["top_capacity"]["mean_risk"] >= diagnostic["cohort"]["mean_risk"]
     assert 0 <= diagnostic["cohort"]["share_with_open_service_issue"] <= 1
+
+
+def test_offers_only_row_prices_the_review_reservation():
+    labels = {c["customer_id"]: 1 for c in COHORT}
+    rows = {r["strategy"]: r for r in decisions.strategy_comparison(COHORT, BASE, labels)["rows"]}
+    offers_only, shipped = rows["offers_only"], rows["policy_plan"]
+    assert set(offers_only["actions"]) <= {"basic_offer", "premium_offer"}
+    assert {"technical_review", "billing_review"} & set(shipped["actions"])
+    gap = decisions.optimisation_gap(COHORT, BASE)
+    assert offers_only["scenario_net_benefit"] == pytest.approx(gap["exact_offers_only_net_benefit"])
+    # The gap to the shipped plan splits into the reservation's price and the greedy shortfall.
+    assert offers_only["scenario_net_benefit"] - shipped["scenario_net_benefit"] == pytest.approx(
+        gap["review_reservation_cost"] + gap["algorithm_gap_absolute"]
+    )
+
+
+def test_pilot_sizes_each_offer_and_bridges_the_horizon():
+    labels = {c["customer_id"]: 1 for c in COHORT}
+    design = decisions.pilot_design(COHORT, labels, BASE)
+    arms = design["offer_arms"]
+    assert arms["basic_offer"]["breakeven_absolute_reduction"] == pytest.approx(0.025)
+    assert arms["premium_offer"]["breakeven_absolute_reduction"] == pytest.approx(0.075)
+    assert arms["basic_offer"]["per_arm"] > arms["premium_offer"]["per_arm"]
+    two_arm = next(r for r in design["rows"] if r["baseline_90d_churn"] == 0.5 and r["effect"] == "premium_breakeven")
+    assert arms["premium_offer"]["per_arm"] > two_arm["split_50_50"]["control"]  # stricter alpha
+    assert "30-day" in design["horizon_bridge"]

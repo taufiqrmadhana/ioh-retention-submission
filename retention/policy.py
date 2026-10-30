@@ -10,6 +10,9 @@ DEFAULTS = {
     "basic_success": 0.2,
     "premium_success": 0.5,
     "prioritize_technical": True,
+    # Business assumption, not a learned optimum: share of customer capacity reserved
+    # for service reviews, whose retention benefit is unmeasured. 0 gives offers only.
+    "review_share": 0.3,
 }
 ACTIONS = {
     "basic_offer": {"label": "Basic offer", "cost": 150_000},
@@ -29,6 +32,7 @@ def settings(overrides=None):
         "retained_value": (0, 12_000_000),
         "basic_success": (0, 1),
         "premium_success": (0, 1),
+        "review_share": (0, 0.5),
     }
     for key, (minimum, maximum) in bounds.items():
         value = values[key]
@@ -69,6 +73,12 @@ def review_floor(overrides=None):
         if config[success] * config["retained_value"] > 0
     ]
     return min(floors) if floors else None
+
+
+def review_capacity(config):
+    """Reserved review slots: share of capacity, rounded down, at least one unless zero."""
+    share = config["review_share"]
+    return max(1, floor(config["max_customers"] * share)) if share > 0 else 0
 
 
 def compare_actions(customer, overrides=None):
@@ -161,7 +171,7 @@ def build_plan(customers, overrides=None):
             -c["risk_score"],
         )
     )
-    review_capacity = max(1, floor(config["max_customers"] * 0.3))
+    reserved = review_capacity(config)
     for customer in reviews:
         action = next(
             (
@@ -175,7 +185,7 @@ def build_plan(customers, overrides=None):
         if (
             action
             and spent + action["cost"] <= config["budget"]
-            and len(selected) < review_capacity
+            and len(selected) < reserved
         ):
             selected[customer["customer_id"]] = {
                 "customer_id": customer["customer_id"],
@@ -241,7 +251,13 @@ def build_plan(customers, overrides=None):
             for a in items
         ),
         "scenario_prevented_churn": prevented,
-        "methodology": "Reserve up to 30% of customer capacity (rounded down; minimum one) for service reviews of customers whose risk clears the offer break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No global-optimum claim.",
+        "methodology": (
+            f"Reserve up to {round(config['review_share'] * 100):g}% of customer capacity (rounded down; "
+            "minimum one unless zero) for service reviews of customers whose risk clears the offer "
+            "break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No "
+            "global-optimum claim. The reservation and the review gate are business assumptions: "
+            "review benefit is unmeasured, so neither is derived from the economics."
+        ),
         "economic_note": "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",
         "review_checklist": [
             "Confirm account is still active",
@@ -325,6 +341,8 @@ def validate_plan(plan, customers):
             else -trusted["cost"]
         )
         prevented += trusted["scenario_prevented_churn"] or 0
+    if sum(not i["action"].endswith("_offer") for i in items) > review_capacity(config):
+        raise ValueError("Service-review reservation exceeded")
     if cost > config["budget"] or cost != plan.get("total_cost", _MISSING):
         raise ValueError("Budget validation failed")
     claimed = plan.get("scenario_prevented_churn")

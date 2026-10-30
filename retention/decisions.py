@@ -292,6 +292,7 @@ def strategy_comparison(customers, base=None, labels=None):
         "settings": {"budget": config["budget"], "max_customers": config["max_customers"]},
         "rows": [
             {"strategy": "policy_plan", "label": "Policy plan: reviews first, then offers", **_summary(plan["items"], labels)},
+            {"strategy": "offers_only", "label": "Mixed offers, no review slots", **_summary(policy.build_plan(customers, {**config, "review_share": 0})["items"], labels)},
             {"strategy": "premium_by_risk", "label": "Premium offer to the highest risk", **_summary(_offer_by_risk(customers, config, "premium_offer"), labels)},
             {"strategy": "basic_by_risk", "label": "Basic offer to the highest risk", **_summary(_offer_by_risk(customers, config, "basic_offer"), labels)},
         ],
@@ -304,8 +305,11 @@ def strategy_comparison(customers, base=None, labels=None):
                 else int(sum(labels[c] for c in blocked_ids)),
             },
         },
+        "review_share": config["review_share"],
         "note": (
-            "Rows share the budget, capacity and eligibility rules of the shipped plan. The uncapped threshold "
+            "Rows share the budget, capacity and eligibility rules of the shipped plan; only the offers-only row "
+            "drops the review reservation, so its gap to the policy plan is the scenario price of reserving "
+            "slots for reviews whose benefit is unmeasured. The uncapped threshold "
             "rule gives every customer their best positive offer with no budget; without the policy checks it "
             "would send offers to customers whose recent service or billing contact must be reviewed first."
         ),
@@ -435,6 +439,18 @@ def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
                     "split_90_10": pilot_sample_size(baseline, baseline - effect, control_share=0.1),
                 }
             )
+    # Separating basic from premium needs the action itself randomised: three arms,
+    # each offer against business as usual, alpha split over the two contrasts.
+    worst = max(baselines)
+    offer_arms = {
+        offer: {
+            "breakeven_absolute_reduction": round(policy.ACTIONS[offer]["cost"] / config["retained_value"], 4),
+            "per_arm": pilot_sample_size(
+                worst, worst - policy.ACTIONS[offer]["cost"] / config["retained_value"], alpha=0.025
+            )["control"],
+        }
+        for offer in OFFERS
+    }
     return {
         "population": "Offer-eligible customers (no recent service/billing contact, not blocked) with risk at or above the basic-offer break-even.",
         "offer_breakeven_risk": threshold,
@@ -442,6 +458,18 @@ def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
         "population_share_of_cohort": round(len(population) / len(customers), 4),
         "observed_30d_churn_in_population": observed,
         "horizon": "90-day",
+        "horizon_bridge": (
+            "The model predicts 30-day churn. Read 30-day churn in both arms as a secondary outcome to check "
+            "the score's calibration on live data; 90-day churn is primary so offers that only delay churn "
+            "are not counted as saves."
+        ),
+        "what_two_arms_measure": (
+            "Policy versus business as usual measures the whole policy's effect, not the basic and premium "
+            "success rates separately, because the policy chooses the offer. Measuring each rate needs the "
+            "offer randomised: a second stage, or three arms sized below."
+        ),
+        "offer_arms_at_baseline": worst,
+        "offer_arms": offer_arms,
         "premium_breakeven_absolute_reduction": breakeven,
         "rows": rows,
         "note": (

@@ -648,6 +648,26 @@ def limitations(overlap_rows, flow):
     ]
 
 
+MODEL_VERSION = "lr-oof-v1-seed42"
+CALIBRATOR_VERSION = "smoothed-isotonic-v1"
+CODE = ("retention/analysis.py", "retention/decisions.py", "retention/policy.py", "web/policy.js")
+
+
+def manifest():
+    """Versions and hashes that tie the committed outputs to the code that made them."""
+    return {
+        "snapshot": str(CUTOFF.date()),
+        "seed": SEED,
+        "features": FEATURES,
+        "model_version": MODEL_VERSION,
+        "calibrator_version": CALIBRATOR_VERSION,
+        "policy_version": policy.POLICY_VERSION,
+        "code_sha256": {
+            name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in CODE
+        },
+    }
+
+
 def main():
     out = ROOT / "outputs"
     out.mkdir(exist_ok=True)
@@ -700,9 +720,11 @@ def main():
     )
     report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
     report["pilot"] = decisions.pilot_design(customers, labels, policy_base)
+    report["manifest"] = manifest()
     intelligence = {
         "snapshot": report["snapshot"],
-        "model_version": "lr-oof-v1-seed42",
+        "model_version": MODEL_VERSION,
+        "calibrator_version": CALIBRATOR_VERSION,
         "policy_version": policy.POLICY_VERSION,
         "mode": "retrospective_demo",
         "customers": customers,

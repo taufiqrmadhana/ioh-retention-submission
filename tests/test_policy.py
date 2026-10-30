@@ -3,6 +3,7 @@ from copy import deepcopy
 import pytest
 
 from retention.policy import (
+    DEFAULTS,
     build_plan,
     compare_actions,
     review_floor,
@@ -118,6 +119,9 @@ def test_zero_prevention_does_not_allocate_unprofitable_offers():
         {"max_customers": 1.5},
         {"basic_success": 2},
         {"prioritize_technical": "yes"},
+        {"review_share": -0.1},
+        {"review_share": 0.6},
+        {"review_share": "0.3"},
     ],
 )
 def test_invalid_settings(overrides):
@@ -146,3 +150,27 @@ def test_forged_economics_flags_and_duplicates_rejected():
     changed["items"].append(changed["items"][0])
     with pytest.raises(ValueError, match="Duplicate"):
         validate_plan(changed, CUSTOMERS)
+
+
+@pytest.mark.parametrize("share,expected", [(0, 0), (0.1, 1), (0.3, 3), (0.5, 3)])
+def test_review_share_sets_the_reservation(share, expected):
+    assert DEFAULTS["review_share"] == 0.3
+    plan = build_plan(CUSTOMERS, {"review_share": share})
+    reviews = [i for i in plan["items"] if not i["action"].endswith("_offer")]
+    assert len(reviews) == expected  # only three customers have a recent contact
+    assert "business assumptions" in plan["methodology"]
+    assert validate_plan(plan, CUSTOMERS)
+
+
+def test_one_slot_still_reserves_a_review_unless_share_is_zero():
+    one = build_plan(CUSTOMERS, {"max_customers": 1})
+    assert one["items"][0]["action"].endswith("_review")
+    none = build_plan(CUSTOMERS, {"max_customers": 1, "review_share": 0})
+    assert none["items"][0]["action"].endswith("_offer")
+
+
+def test_plan_with_more_reviews_than_its_reservation_is_rejected():
+    wide = build_plan(CUSTOMERS, {"review_share": 0.3})
+    forged = {**deepcopy(wide), "settings": settings({"review_share": 0.1})}
+    with pytest.raises(ValueError, match="reservation"):
+        validate_plan(forged, CUSTOMERS)

@@ -48,6 +48,7 @@ export const TOOLS = [
       basic_success: { type: "number", minimum: 0, maximum: 1, description: "Share of would-be churners a basic offer keeps" },
       premium_success: { type: "number", minimum: 0, maximum: 1 },
       prioritize_technical: { type: "boolean" },
+      review_share: { type: "number", minimum: 0, maximum: 0.5, description: "Share of capacity reserved for service reviews; 0 plans offers only" },
     },
   ),
 ];
@@ -226,6 +227,7 @@ export function runTool(name, args, customers) {
     ...(args.basic_success !== undefined && { basicSuccess: args.basic_success }),
     ...(args.premium_success !== undefined && { premiumSuccess: args.premium_success }),
     ...(args.prioritize_technical !== undefined && { prioritizeTechnical: args.prioritize_technical }),
+    ...(args.review_share !== undefined && { reviewShare: args.review_share }),
   });
   return summarisePlan(buildPlan(customers, config));
 }

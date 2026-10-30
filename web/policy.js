@@ -6,6 +6,9 @@ export const DEFAULTS = Object.freeze({
   basicSuccess: 0.2,
   premiumSuccess: 0.5,
   prioritizeTechnical: true,
+  // Business assumption, not a learned optimum: share of customer capacity reserved
+  // for service reviews, whose retention benefit is unmeasured. 0 gives offers only.
+  reviewShare: 0.3,
 });
 export const ACTIONS = Object.freeze({
   basic_offer: { label: "Basic offer", cost: 150000 },
@@ -23,6 +26,7 @@ export function settings(input = {}) {
     ["retainedValue", 0, 12000000],
     ["basicSuccess", 0, 1],
     ["premiumSuccess", 0, 1],
+    ["reviewShare", 0, 0.5],
   ]) {
     if (
       typeof s[key] !== "number" ||
@@ -38,6 +42,10 @@ export function settings(input = {}) {
     throw new Error("Invalid prioritizeTechnical");
   return Object.fromEntries(Object.keys(DEFAULTS).map((k) => [k, s[k]]));
 }
+
+// Reserved review slots: share of capacity, rounded down, at least one unless zero.
+export const reviewCapacity = (s) =>
+  s.reviewShare > 0 ? Math.max(1, Math.floor(s.maxCustomers * s.reviewShare)) : 0;
 
 // Probability used for economics: calibrated when available, else the raw
 // score. The raw score orders customers; the calibrated risk prices them.
@@ -131,14 +139,14 @@ export function buildPlan(customers, input = {}) {
           Number(a.features.technical_30d > 0)
         : 0) || b.risk_score - a.risk_score,
   );
-  const reviewCapacity = Math.max(1, Math.floor(s.maxCustomers * 0.3));
+  const reserved = reviewCapacity(s);
   for (const c of reviews) {
     const a = compareActions(c, s).find(
       (a) =>
         a.eligible_for_proposal &&
         ["technical_review", "billing_review"].includes(a.action),
     );
-    if (a && spent + a.cost <= s.budget && selected.size < reviewCapacity) {
+    if (a && spent + a.cost <= s.budget && selected.size < reserved) {
       selected.set(c.customer_id, {
         customer_id: c.customer_id,
         risk_score: c.risk_score,
@@ -198,8 +206,7 @@ export function buildPlan(customers, input = {}) {
       (n, a) => n + (a.scenario_prevented_churn ?? 0),
       0,
     ),
-    methodology:
-      "Reserve up to 30% of customer capacity (rounded down; minimum one) for service reviews of customers whose risk clears the offer break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No global-optimum claim.",
+    methodology: `Reserve up to ${Math.round(s.reviewShare * 100)}% of customer capacity (rounded down; minimum one unless zero) for service reviews of customers whose risk clears the offer break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No global-optimum claim. The reservation and the review gate are business assumptions: review benefit is unmeasured, so neither is derived from the economics.`,
     economic_note:
       "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",
     review_checklist: [
@@ -257,6 +264,8 @@ export function validatePlan(plan, customers) {
     benefit += trusted.scenario_net_benefit ?? -trusted.cost;
     prevented += trusted.scenario_prevented_churn ?? 0;
   }
+  if (plan.items.filter((i) => !i.action.endsWith("_offer")).length > reviewCapacity(s))
+    throw new Error("Service-review reservation exceeded");
   if (cost > s.budget || cost !== plan.total_cost)
     throw new Error("Budget validation failed");
   // NaN fails every comparison, so a missing or NaN aggregate must be rejected

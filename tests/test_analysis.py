@@ -1,8 +1,12 @@
+import hashlib
+import json
+
 import numpy as np
 import pandas as pd
 from retention.analysis import (
     CUTOFF,
     FEATURES,
+    ROOT,
     build_cohort,
     cohort_flow,
     load_data,
@@ -105,3 +109,13 @@ def test_rule_check_counts_the_segment():
     assert rows["segment_rule"]["churners"] == 41
     assert rows["segment_no_contact_rule"]["flagged"] <= rows["segment_rule"]["flagged"]
     assert check["within_segment"]["n"] == 53
+
+
+def test_committed_outputs_match_the_current_code():
+    report = json.loads((ROOT / "outputs" / "report.json").read_text())
+    manifest = report["manifest"]
+    assert manifest["calibrator_version"] == "smoothed-isotonic-v1"
+    for name, digest in manifest["code_sha256"].items():
+        assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest, (
+            f"{name} changed since outputs were generated; rerun `python -m retention analyze`"
+        )

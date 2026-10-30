@@ -20,6 +20,7 @@ const KEYS = {
   basic_success: "basicSuccess",
   premium_success: "premiumSuccess",
   prioritize_technical: "prioritizeTechnical",
+  review_share: "reviewShare",
 };
 export const jsSettings = (settings) =>
   Object.fromEntries(Object.entries(settings).map(([k, v]) => [KEYS[k], v]));

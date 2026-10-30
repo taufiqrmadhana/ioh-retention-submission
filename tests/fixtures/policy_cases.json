@@ -1080,6 +1080,192 @@
     "scenario_net_benefit": 8475000,
     "scenario_prevented_churn": 1.6499996
    }
+  },
+  {
+   "name": "app_offers_only",
+   "customers": "intelligence",
+   "settings": {
+    "review_share": 0
+   },
+   "expected": {
+    "items": [
+     [
+      "IOH-430",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-581",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-630",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-701",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-561",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-521",
+      "basic_offer",
+      150000,
+      1014706
+     ],
+     [
+      "IOH-541",
+      "basic_offer",
+      150000,
+      1014706
+     ],
+     [
+      "IOH-501",
+      "basic_offer",
+      150000,
+      1014706
+     ],
+     [
+      "IOH-621",
+      "basic_offer",
+      150000,
+      1014706
+     ],
+     [
+      "IOH-421",
+      "basic_offer",
+      150000,
+      1014706
+     ]
+    ],
+    "total_cost": 3000000,
+    "remaining_budget": 0,
+    "scenario_net_benefit": 17382350,
+    "scenario_prevented_churn": 3.3970580000000012
+   }
+  },
+  {
+   "name": "app_wide_reservation",
+   "customers": "intelligence",
+   "settings": {
+    "review_share": 0.5,
+    "max_customers": 12
+   },
+   "expected": {
+    "items": [
+     [
+      "IOH-565",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-198",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-067",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-167",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-195",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-365",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-430",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-581",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-630",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-701",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-561",
+      "premium_offer",
+      450000,
+      2461764
+     ],
+     [
+      "IOH-521",
+      "premium_offer",
+      450000,
+      2461764
+     ]
+    ],
+    "total_cost": 2850000,
+    "remaining_budget": 150000,
+    "scenario_net_benefit": 14620584,
+    "scenario_prevented_churn": 2.9117640000000002
+   }
+  },
+  {
+   "name": "one_slot_offers_only",
+   "customers": "synthetic",
+   "settings": {
+    "budget": 3000000,
+    "max_customers": 1,
+    "review_share": 0
+   },
+   "expected": {
+    "items": [
+     [
+      "CAL-A",
+      "premium_offer",
+      450000,
+      2400000
+     ]
+    ],
+    "total_cost": 450000,
+    "remaining_budget": 2550000,
+    "scenario_net_benefit": 2400000,
+    "scenario_prevented_churn": 0.475
+   }
   }
  ],
  "compare": [

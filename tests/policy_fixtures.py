@@ -60,6 +60,9 @@ PLANS = [
     ("app_big", "intelligence", {"budget": 10_000_000, "max_customers": 20}),
     ("app_breakeven", "intelligence", {"basic_success": 0.029, "premium_success": 0.0726}),
     ("app_billing_first", "intelligence", {"prioritize_technical": False, "budget": 1_500_000}),
+    ("app_offers_only", "intelligence", {"review_share": 0}),
+    ("app_wide_reservation", "intelligence", {"review_share": 0.5, "max_customers": 12}),
+    ("one_slot_offers_only", "synthetic", {"budget": 3_000_000, "max_customers": 1, "review_share": 0}),
 ]
 
 # Rounding half toward +infinity: gross 1.5 - cost 150000 = -149998.5 -> -149998.
