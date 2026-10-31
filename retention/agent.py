@@ -6,6 +6,7 @@ from contextlib import nullcontext
 from copy import deepcopy
 import json
 import os
+import re
 from uuid import uuid4
 
 import httpx
@@ -33,6 +34,50 @@ def _tool(name, description, properties):
 
 
 FOCUS = ["all", "technical", "billing", "no_contact"]
+
+# Wording the model's text cannot back up: only a person approves, nothing is sent, and
+# prevention rates are assumptions. Kept in step with worker/agent.js.
+STATE_CLAIM = re.compile(r"\b(approved|executed|sent|contacted|issued|delivered)\b", re.I)
+CAUSAL_CLAIM = re.compile(
+    r"\b(guarantee\w*|proven|will (reduce|prevent|save|retain|stop|cut))\b", re.I
+)
+
+
+def outcome(plan):
+    """Status, scope and totals from the submitted plan's own fields, never from model text."""
+    if not plan:
+        return {
+            "status": "no_plan_submitted",
+            "summary": "No plan was submitted: nothing is pending review, approved or executed.",
+        }
+    return {
+        "status": "pending_review",
+        "scope": plan["scope"],
+        "candidates_evaluated": plan["candidates_evaluated"],
+        "customers": len(plan["items"]),
+        "total_cost": plan["total_cost"],
+        "scenario_net_benefit": plan["scenario_net_benefit"],
+        "summary": (
+            f"Pending human review: {len(plan['items'])} customers, Rp{plan['total_cost']:,} proposed spend, "
+            f"Rp{plan['scenario_net_benefit']:,} scenario net benefit under assumed rates. "
+            "Nothing has been approved or sent."
+        ),
+    }
+
+
+def claim_flags(text):
+    """Warnings for statements in the model's text that the backend state cannot support."""
+    flags = []
+    if text and STATE_CLAIM.search(text):
+        flags.append(
+            "The text mentions approval, sending or execution. Only a person approves, approval "
+            "records a simulation, and no message or offer is sent: trust the status, not the text."
+        )
+    if text and CAUSAL_CLAIM.search(text):
+        flags.append(
+            "The text states an effect as fact. Prevention rates are assumptions, not measured uplift."
+        )
+    return flags
 
 
 def build_tools(regions, internet):
@@ -270,6 +315,8 @@ def run_agent(
         return {
             "mode": "live_agent",
             "answer": answer,
+            "outcome": outcome(session.submitted),
+            "claim_flags": claim_flags(answer),
             "plan": session.submitted,
             "trace": trace,
             "token_usage": token_usage,

@@ -105,7 +105,7 @@ export function compareActions(customer, input = {}) {
       reason: blocked
         ? "Customer is ineligible or has denied contact consent."
         : isOffer && (technical || billing)
-          ? "Verify the recent service/billing issue before offering an incentive."
+          ? "Recent service/billing contact: verify the current issue status before offering an incentive."
           : action.endsWith("_review") && !worthReview && (technical || billing)
             ? "Risk is below the offer break-even; observe instead of reviewing."
             : action === "no_action"

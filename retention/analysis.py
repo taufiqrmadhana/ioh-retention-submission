@@ -500,6 +500,9 @@ def calibration_check(X, y, train, test, holdout_raw, oof_raw, folds):
     nested numbers measure the method. Decisions use one smoothed-isotonic map
     fitted on all out-of-fold scores, as it would be fitted at deployment: a single
     monotone map keeps the raw ranking, which five per-fold maps would scramble.
+    That map has seen every label it is applied to, so the retrospective plan is
+    in-sample; the nested risks are returned so the plan can be re-priced with
+    held-out calibration, and the refitted map is only out-of-sample for a later cohort.
     """
     X_train, y_train = X.iloc[train], y.iloc[train]
     inner_train = inner_scores(X_train, y_train)
@@ -518,21 +521,37 @@ def calibration_check(X, y, train, test, holdout_raw, oof_raw, folds):
         oof["smoothed_isotonic"][val] = smoothed_isotonic(inner, y[fit])(oof_raw[val])
     y_test = y.iloc[test]
     decision = smoothed_isotonic(oof_raw, y)(oof_raw)
+    scores_holdout = {name: probability_scores(y_test, p) for name, p in holdout.items()}
+    scores_oof = {
+        "raw": probability_scores(y, oof_raw),
+        **{name: probability_scores(y, p) for name, p in oof.items()},
+    }
+    nested, held = scores_oof["smoothed_isotonic"], scores_holdout["smoothed_isotonic"]
+    raw_oof, raw_held = scores_oof["raw"], scores_holdout["raw"]
     return {
         "method": "Each calibrator is fitted on out-of-fold scores of its training rows only. Smoothed isotonic: isotonic score blocks with one churner and one stayer added to each block.",
-        "holdout": {name: probability_scores(y_test, p) for name, p in holdout.items()},
-        "out_of_fold": {
-            "raw": probability_scores(y, oof_raw),
-            **{name: probability_scores(y, p) for name, p in oof.items()},
-        },
+        "holdout": scores_holdout,
+        "out_of_fold": scores_oof,
+        "evidence": (
+            f"Smoothed isotonic improves the nested out-of-fold scores (Brier {raw_oof['brier']:.4f} to "
+            f"{nested['brier']:.4f}, log-loss {raw_oof['log_loss']:.4f} to {nested['log_loss']:.4f}) but not "
+            f"the {len(test)}-customer holdout (Brier {raw_held['brier']:.4f} to {held['brier']:.4f}, log-loss "
+            f"{raw_held['log_loss']:.4f} to {held['log_loss']:.4f}). Evidence is mixed and rests on "
+            f"{int(y.sum())} churners, so the map is provisional."
+        ),
         "calibration_smoothed_oof": calibration_table(y, oof["smoothed_isotonic"]),
-        "decision_risk": "One smoothed-isotonic map fitted on all out-of-fold scores (deployment-style); quality measured nested above.",
+        "decision_risk": (
+            "One smoothed-isotonic map fitted on all out-of-fold scores and labels (deployment-style). "
+            "Applied back to the same customers it is in-sample: each customer's label shaped the map that "
+            "prices them. The raw scores are out-of-fold; the calibrated decision path is not. Method "
+            "quality is measured nested above; plan_impact re-prices the plan with the nested risks."
+        ),
         "decision_map": [
             {"score_from": float(lo), "calibrated_risk": float(v)}
             for lo, v in _map_steps(oof_raw, decision)
         ],
         "ordering": "raw out-of-fold score",
-    }, decision
+    }, decision, oof["smoothed_isotonic"]
 
 
 def subgroup_table(frame, y, scores, columns=("gender", "region")):
@@ -593,7 +612,9 @@ def evidence(row):
         reasons.append("Short tenure: under six months.")
     if row.contractType == "Month-to-month":
         reasons.append("Month-to-month contract.")
-    return reasons or ["No recent support signal in the supplied extract."]
+    return reasons or [
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
+    ]
 
 
 def customer_records(frame, usage, scores, folds, signals, calibrated):
@@ -626,7 +647,7 @@ def customer_records(frame, usage, scores, folds, signals, calibrated):
                 "resolution_status": "unknown_at_snapshot",
                 "last_contact_at": None,
                 "score_method": "out_of_fold_logistic",
-                "calibration_method": "smoothed_isotonic_out_of_fold",
+                "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
                 "fold": int(folds[i]),
             }
         )
@@ -642,7 +663,7 @@ def limitations(overlap_rows, flow):
         "Support resolution status is excluded: no status-effective timestamp.",
         "Random customer holdout is internal validation in one selected historical cohort.",
         f"{overlap_rows} holdout customers share exact model features with training customers; non-overlap sensitivity is reported separately.",
-        "Raw OOF scores rank well but overstate risk between 12% and 30%; economics use smoothed-isotonic risks fitted out-of-fold, which still rest on 41 churners.",
+        "Raw OOF scores rank well but overstate risk between 12% and 30%. Economics use one smoothed-isotonic map fitted on all 208 OOF scores and labels, so the retrospective plan is in-sample; nested calibration improves OOF Brier and log-loss but not the 52-customer holdout, and re-pricing with nested risks keeps the plan's mix and value but changes which customers are picked.",
         "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
         "Gender, age, partner and dependents are excluded from scoring; proxies may remain.",
     ]
@@ -680,7 +701,7 @@ def main():
     comparison, predictions = evaluate_holdout(frame, X, y, train, test)
     sensitivity = overlap_sensitivity(X, y, train, test, predictions)
     oof, folds, signals = out_of_fold(X, y)
-    calibration, calibrated = calibration_check(X, y, train, test, predictions, oof, folds)
+    calibration, calibrated, nested = calibration_check(X, y, train, test, predictions, oof, folds)
     flow = cohort_flow(base, usage, frame)
     report = {
         "snapshot": "2025-11-01",
@@ -716,7 +737,7 @@ def main():
         "decision_curve": decisions.decision_curve(y.iloc[test].to_numpy(), predictions),
     }
     report["calibration_check"]["plan_impact"] = decisions.plan_impact(
-        customers, policy_base, labels
+        customers, policy_base, labels, cross_fitted=dict(zip(frame.customerId, nested))
     )
     report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
     report["pilot"] = decisions.pilot_design(customers, labels, policy_base)
@@ -727,6 +748,10 @@ def main():
         "calibrator_version": CALIBRATOR_VERSION,
         "policy_version": policy.POLICY_VERSION,
         "mode": "retrospective_demo",
+        "calibration_provenance": (
+            "calibrated_risk comes from one map fitted on these customers' out-of-fold scores and labels, "
+            "so it is in-sample for this retrospective cohort and out-of-sample only for a later one."
+        ),
         "customers": customers,
     }
     (out / "report.json").write_text(json.dumps(report, indent=2, allow_nan=False))

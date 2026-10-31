@@ -121,6 +121,55 @@ function checkArguments(name, args, schemas) {
 const byRisk = (a, b) =>
   b.risk_score - a.risk_score || a.customer_id.localeCompare(b.customer_id);
 
+// Wording the model's text cannot back up: only a person approves, nothing is sent, and
+// prevention rates are assumptions. Kept in step with retention/agent.py.
+const STATE_CLAIM = /\b(approved|executed|sent|contacted|issued|delivered)\b/i;
+const CAUSAL_CLAIM = /\b(guarantee\w*|proven|will (reduce|prevent|save|retain|stop|cut))\b/i;
+const rp = (value) => `Rp${Math.round(value).toLocaleString("en-US")}`;
+
+// Status, scope and totals from the submitted plan's own fields, never from model text.
+export function outcome(plan) {
+  if (!plan)
+    return {
+      status: "no_plan_submitted",
+      summary: "No plan was submitted: nothing is pending review, approved or executed.",
+    };
+  return {
+    status: "pending_review",
+    scope: plan.scope,
+    candidates_evaluated: plan.candidates_evaluated,
+    customers: plan.items.length,
+    total_cost: plan.total_cost,
+    scenario_net_benefit: plan.scenario_net_benefit,
+    summary: `Pending human review: ${plan.items.length} customers, ${rp(plan.total_cost)} proposed spend, ${rp(plan.scenario_net_benefit)} scenario net benefit under assumed rates. Nothing has been approved or sent.`,
+  };
+}
+
+// Warnings for statements in the model's text that the backend state cannot support.
+export function claimFlags(text) {
+  const flags = [];
+  if (text && STATE_CLAIM.test(text))
+    flags.push(
+      "The text mentions approval, sending or execution. Only a person approves, approval records a simulation, and no message or offer is sent: trust the status, not the text.",
+    );
+  if (text && CAUSAL_CLAIM.test(text))
+    flags.push(
+      "The text states an effect as fact. Prevention rates are assumptions, not measured uplift.",
+    );
+  return flags;
+}
+
+const finish = (answer, plan, trace, tokenUsage, model) => ({
+  mode: "live_agent",
+  answer,
+  outcome: outcome(plan),
+  claim_flags: claimFlags(answer),
+  plan,
+  trace,
+  token_usage: tokenUsage,
+  model,
+});
+
 export async function runAgent({
   prompt,
   config,
@@ -201,14 +250,7 @@ export async function runAgent({
           });
           continue;
         }
-        return {
-          mode: "live_agent",
-          answer: msg.content || "No proposal generated.",
-          plan: submitted,
-          trace,
-          token_usage: tokenUsage,
-          model,
-        };
+        return finish(msg.content || "No proposal generated.", submitted, trace, tokenUsage, model);
       }
       for (const call of msg.tool_calls) {
         if (++calls > 14)
@@ -293,25 +335,15 @@ export async function runAgent({
           content: JSON.stringify(result),
         });
       }
-      if (submitted)
-        return {
-          mode: "live_agent",
-          answer: submitted.rationale,
-          plan: submitted,
-          trace,
-          token_usage: tokenUsage,
-          model,
-        };
+      if (submitted) return finish(submitted.rationale, submitted, trace, tokenUsage, model);
     }
-    return {
-      mode: "live_agent",
-      answer:
-        "The bounded run ended without a submitted proposal. Try a narrower request or the deterministic planner.",
-      plan: null,
+    return finish(
+      "The bounded run ended without a submitted proposal. Try a narrower request or the deterministic planner.",
+      null,
       trace,
-      token_usage: tokenUsage,
+      tokenUsage,
       model,
-    };
+    );
   } catch (error) {
     error.trace = trace;
     error.token_usage = tokenUsage;

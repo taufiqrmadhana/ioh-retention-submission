@@ -197,6 +197,9 @@ def optimisation_gap(customers, base=None):
         }
     exact_same = same["value"] - review_cost
     gap = exact_same - greedy_net
+    reservation = free["value"] - exact_same
+    # Retained customers the reviews must add between them to repay what they displace.
+    hurdle = reservation / config["retained_value"] if config["retained_value"] else None
     return {
         "greedy_net_benefit": round(greedy_net, 2),
         "reviews_in_plan": len(reviews),
@@ -206,12 +209,20 @@ def optimisation_gap(customers, base=None):
         "algorithm_gap_pct": round(gap / abs(greedy_net) * 100, 2) if greedy_net else None,
         "exact_offers_only_net_benefit": round(free["value"], 2),
         "exact_offers_only_customers": free["customers"],
-        "review_reservation_cost": round(free["value"] - exact_same, 2),
+        "review_reservation_cost": round(reservation, 2),
+        "review_hurdle": None
+        if hurdle is None or not reviews
+        else {
+            "extra_retained_customers": round(hurdle, 4),
+            "per_review_retention_points": round(hurdle / len(reviews) * 100, 2),
+        },
         "note": (
             "Algorithm gap compares the greedy offer allocation with the exact optimum under the same "
             "budget, capacity and the same service reviews. Reservation cost is the scenario value an "
             "offers-only optimum would add by dropping those reviews; reviews have unmeasured benefit, "
-            "so this is the price of a business rule, not a weakness of the allocator."
+            "so this is the price of a business rule, not a weakness of the allocator. The review hurdle "
+            "is the extra retention the reviews would need, at the assumed retained value, to repay it: "
+            "a target for a service test, not evidence that reviews work."
         ),
     }
 
@@ -322,8 +333,9 @@ def _offer_breakeven(config):
     return policy.ACTIONS["basic_offer"]["cost"] / scale if scale else None
 
 
-def plan_impact(customers, base=None, labels=None):
-    """The same policy priced with raw scores versus calibrated risks."""
+def plan_impact(customers, base=None, labels=None, cross_fitted=None):
+    """The same policy priced with raw scores, the shipped calibrated risks and, if given,
+    cross-fitted calibrated risks (each customer priced by a map that never saw their label)."""
     config = policy.settings(base)
     raw_only = [{k: v for k, v in c.items() if k != "calibrated_risk"} for c in customers]
     raw, cal = policy.build_plan(raw_only, config), policy.build_plan(customers, config)
@@ -332,16 +344,43 @@ def plan_impact(customers, base=None, labels=None):
     def picked(plan):
         return {(i["customer_id"], i["action"]) for i in plan["items"]}
 
-    return {
+    def ids(plan):
+        return {i["customer_id"] for i in plan["items"]}
+
+    result = {
         "raw": _summary(raw["items"], labels),
         "calibrated": _summary(cal["items"], labels),
-        "same_customers": len({i["customer_id"] for i in raw["items"]} & {i["customer_id"] for i in cal["items"]}),
+        "same_customers": len(ids(raw) & ids(cal)),
         "same_customer_actions": len(picked(raw) & picked(cal)),
         "offer_breakeven_risk": threshold,
         "above_breakeven_raw": None if threshold is None else sum(c["risk_score"] >= threshold for c in customers),
         "above_breakeven_calibrated": None if threshold is None else sum(policy.decision_risk(c) >= threshold for c in customers),
         "note": "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, not only the totals.",
     }
+    if cross_fitted:
+        held = [{**c, "calibrated_risk": float(cross_fitted[c["customer_id"]])} for c in customers]
+        nested = policy.build_plan(held, config)
+        top = max(policy.decision_risk(c) for c in customers)
+        result["cross_fitted"] = {
+            **_summary(nested["items"], labels),
+            "same_customers_as_calibrated": len(ids(cal) & ids(nested)),
+            "same_customer_actions_as_calibrated": len(picked(cal) & picked(nested)),
+            "gate_flips": None
+            if threshold is None
+            else sum(
+                (policy.decision_risk(c) >= threshold) != (h["calibrated_risk"] >= threshold)
+                for c, h in zip(customers, held)
+            ),
+            "customers_at_top_calibrated_risk": sum(policy.decision_risk(c) == top for c in customers),
+            "note": (
+                "Nested risks come from five per-fold maps, each fitted without the fold it prices. The "
+                "action mix, spend and scenario value barely move, but the chosen customers change: the "
+                "shipped map gives every top customer the same risk, so offers among them follow the raw "
+                "order, while the per-fold maps differ slightly at the top. The economics cannot tell those "
+                "customers apart; which of them receive offers is not a robust result."
+            ),
+        }
+    return result
 
 
 PREMIUM_GRID = tuple(round(0.2 + 0.025 * i, 3) for i in range(17))
@@ -405,13 +444,33 @@ def pilot_sample_size(p_control, p_treatment, alpha=0.05, power=0.8, control_sha
     return {"control": control, "treatment": treatment, "total": control + treatment}
 
 
+def pilot_margin_sample_size(p_control, p_treatment, margin, alpha=0.05, power=0.8):
+    """Per-arm size (50/50) for the lower end of the two-sided 1 - alpha interval of the
+    churn reduction to clear `margin` with the given power, normal approximation."""
+    effect = p_control - p_treatment
+    if effect - margin <= 1e-9:
+        raise ValueError("The assumed effect must exceed the margin")
+    z = norm.ppf(1 - alpha / 2) + norm.ppf(power)
+    variance = p_control * (1 - p_control) + p_treatment * (1 - p_treatment)
+    return ceil(z**2 * variance / (effect - margin) ** 2)
+
+
+def difference_interval(p_control, p_treatment, per_arm, alpha=0.05):
+    """Approximate two-sided interval for an observed churn reduction at `per_arm` customers per arm."""
+    se = sqrt((p_control * (1 - p_control) + p_treatment * (1 - p_treatment)) / per_arm)
+    difference, z = p_control - p_treatment, norm.ppf(1 - alpha / 2)
+    return [round(float(difference - z * se), 4), round(float(difference + z * se), 4)]
+
+
 def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
-    """Size one pilot: who is randomised, over what horizon, against which effect.
+    """Size one offer-policy pilot: who is randomised, over what horizon, against which effect.
 
     Population: customers the policy could offer to (no recent service/billing contact,
-    not blocked) whose risk clears the basic-offer break-even. Primary outcome: 90-day
-    churn. Smallest effect worth detecting: the absolute churn reduction at which a
-    premium offer pays for itself, cost / retained value, whatever the baseline.
+    not blocked) whose risk clears the basic-offer break-even. Customers routed to a
+    service review are not in it. Primary outcome: 90-day churn. The profitability
+    hurdle is the policy arm's incremental cost per randomised customer divided by the
+    retained value; premium for everyone (cost / retained value) is the conservative
+    reference used for sizing.
     """
     config = policy.settings(base)
     threshold = _offer_breakeven(config)
@@ -439,9 +498,26 @@ def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
                     "split_90_10": pilot_sample_size(baseline, baseline - effect, control_share=0.1),
                 }
             )
+    worst = max(baselines)
+    planned = next(
+        r["split_50_50"]["control"]
+        for r in rows
+        if r["baseline_90d_churn"] == worst and r["effect"] == "premium_breakeven"
+    )
+    # Showing that the effect beats break-even, not just zero, needs an effect above it.
+    margin_rows = [
+        {
+            "baseline_90d_churn": baseline,
+            "assumed_reduction": round(2 * breakeven, 4),
+            "per_arm": pilot_margin_sample_size(baseline, baseline - 2 * breakeven, breakeven),
+        }
+        for baseline in baselines
+    ]
+    # The shipped plan's offers, as an example of a cheaper mix than premium for everyone.
+    offers = [i for i in policy.build_plan(customers, config)["items"] if i["action"] in OFFERS]
+    mix_cost = sum(i["cost"] for i in offers) / len(offers) if offers else None
     # Separating basic from premium needs the action itself randomised: three arms,
     # each offer against business as usual, alpha split over the two contrasts.
-    worst = max(baselines)
     offer_arms = {
         offer: {
             "breakeven_absolute_reduction": round(policy.ACTIONS[offer]["cost"] / config["retained_value"], 4),
@@ -452,6 +528,7 @@ def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
         for offer in OFFERS
     }
     return {
+        "name": "offer-policy pilot",
         "population": "Offer-eligible customers (no recent service/billing contact, not blocked) with risk at or above the basic-offer break-even.",
         "offer_breakeven_risk": threshold,
         "population_in_cohort": len(population),
@@ -459,18 +536,51 @@ def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
         "observed_30d_churn_in_population": observed,
         "horizon": "90-day",
         "horizon_bridge": (
-            "The model predicts 30-day churn. Read 30-day churn in both arms as a secondary outcome to check "
-            "the score's calibration on live data; 90-day churn is primary so offers that only delay churn "
-            "are not counted as saves."
+            "The model predicts 30-day churn. Read 30-day churn as a secondary outcome and check the score's "
+            "calibration in the control arm only, since the offer changes outcomes in the other arm; the "
+            "control arm covers only the offer-eligible part of the score range. 90-day churn is primary so "
+            "offers that only delay churn are not counted as saves."
         ),
+        "breakeven_definition": (
+            "Incremental cost per randomised customer in the policy arm (offers, contact and operating "
+            "costs, net of business-as-usual costs) divided by the retained value. Freeze the policy, its "
+            "budget and capacity per eligible customer, and compute this before launch."
+        ),
+        "premium_breakeven_absolute_reduction": breakeven,
+        "plan_offer_mix": None
+        if mix_cost is None
+        else {
+            "actions": {a: sum(i["action"] == a for i in offers) for a in OFFERS if any(i["action"] == a for i in offers)},
+            "average_offer_cost": round(mix_cost),
+            "breakeven_absolute_reduction": round(mix_cost / config["retained_value"], 4),
+        },
+        "planned_per_arm": planned,
+        "interval_at_breakeven_effect": {
+            "baseline_90d_churn": worst,
+            "observed_reduction": round(breakeven, 4),
+            "per_arm": planned,
+            "interval_95pct": difference_interval(worst, worst - breakeven, planned),
+            "note": (
+                "An observed reduction equal to break-even at the planned size is significantly above zero, "
+                "but its interval still includes unprofitable effects."
+            ),
+        },
+        "margin_rows": margin_rows,
+        "decision_rule": (
+            "Ship when the lower end of the 95% interval for incremental net value per randomised customer "
+            "(churn reduction x retained value - incremental cost) is above zero. Stop on no effect at the "
+            "full sample or a guardrail breach. Anything else follows the rule agreed before launch; no "
+            "unplanned extension and no segment picked after seeing results."
+        ),
+        "randomisation": "Randomise unique customers once, stratified by risk band and region; keep the assignment when pooling monthly scoring runs.",
         "what_two_arms_measure": (
-            "Policy versus business as usual measures the whole policy's effect, not the basic and premium "
+            "Policy versus business as usual measures the offer policy's effect, not the basic and premium "
             "success rates separately, because the policy chooses the offer. Measuring each rate needs the "
-            "offer randomised: a second stage, or three arms sized below."
+            "offer randomised: a second stage, or three arms sized below. Service reviews are outside this "
+            "pilot and need their own test."
         ),
         "offer_arms_at_baseline": worst,
         "offer_arms": offer_arms,
-        "premium_breakeven_absolute_reduction": breakeven,
         "rows": rows,
         "note": (
             "The 30-day rate is retrospective, measured on out-of-fold scores in an outcome-selected cohort, "
@@ -490,7 +600,7 @@ def targeting_diagnostic(customers, base=None):
         if not rows:
             return None
         expected = sum(policy.decision_risk(r) * config["premium_success"] for r in rows)
-        with_issue = sum(
+        with_contact = sum(
             1
             for r in rows
             if r["features"]["technical_30d"] or r["features"]["billing_30d"]
@@ -500,15 +610,16 @@ def targeting_diagnostic(customers, base=None):
             "mean_risk": round(float(np.mean([policy.decision_risk(r) for r in rows])), 4),
             "expected_saves": round(expected, 2),
             "cost_per_expected_save": round(len(rows) * premium_cost / expected) if expected else None,
-            "share_with_open_service_issue": round(with_issue / len(rows), 3),
+            "share_with_recent_service_contact": round(with_contact / len(rows), 3),
         }
 
     return {
         "top_capacity": segment(ordered[: config["max_customers"]]),
         "cohort": segment(ordered),
         "note": (
-            "Risk x assumed success is a targeting proxy, not measured uplift. The share with an open "
-            "service issue marks where a cheaper service fix may dominate a discount; only a randomised "
-            "holdout can confirm responsiveness."
+            "Risk x assumed success is a targeting proxy, not measured uplift. The share with a recent "
+            "technical or billing contact marks where a service check may come before a discount; "
+            "resolution status is unknown, so verify the current issue status, and no recorded contact "
+            "does not mean no service problem. Only a randomised holdout can confirm responsiveness."
         ),
     }

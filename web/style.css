@@ -676,6 +676,12 @@ input[type="checkbox"] {
   background: #fbf6f8;
   margin: 15px 0;
 }
+.claim-flags {
+  font-size: 12px;
+  color: #7a2e42;
+  margin: -6px 0 15px;
+  padding-left: 18px;
+}
 .review-box {
   padding: 16px;
   background: #fbf6f8;

@@ -120,3 +120,60 @@ test("scope filters by internet type", async () => {
   assert.equal(result.plan.candidates_evaluated, 1);
   assert.deepEqual(result.plan.items.map((i) => i.customer_id), ["TEST-1"]);
 });
+
+// Small evaluations of what the agent says against what the backend recorded.
+const replies = (...messages) => {
+  let round = 0;
+  return async () =>
+    new Response(
+      JSON.stringify({ choices: [{ message: messages[Math.min(round++, messages.length - 1)] }] }),
+    );
+};
+
+test("a false approval claim without a plan reports no plan and is flagged", async () => {
+  const result = await run(replies({ content: "Approved. Premium offers were sent to TEST-1." }));
+  assert.equal(result.plan, null);
+  assert.equal(result.outcome.status, "no_plan_submitted");
+  assert.ok(result.claim_flags.some((f) => f.includes("approval")));
+});
+
+test("the outcome shows the scope the backend planned, whatever the text claims", async () => {
+  const fetcher = scripted([
+    ["simulate_retention_plan", { focus: "all", region: "any", internet: "any" }],
+  ]);
+  let simulation;
+  const result = await runAgent({
+    prompt: "Plan Bandung only",
+    config: {},
+    customers: CUSTOMERS,
+    apiKey: "test",
+    fetcher: async (url, init) => {
+      const body = JSON.parse(init.body);
+      const tool = body.messages.filter((m) => m.role === "tool").at(-1);
+      if (!tool) return fetcher(url, init);
+      simulation = JSON.parse(tool.content);
+      const args = {
+        simulation_id: simulation.simulation_id,
+        rationale: "Approved for Bandung; this will reduce churn by half.",
+      };
+      return new Response(
+        JSON.stringify({
+          choices: [{ message: { tool_calls: [{ id: "s", type: "function", function: { name: "submit_retention_plan", arguments: JSON.stringify(args) } }] } }],
+        }),
+      );
+    },
+  });
+  assert.equal(result.outcome.status, "pending_review");
+  assert.deepEqual(result.outcome.scope, { focus: "all", region: "any", internet: "any" });
+  assert.equal(result.outcome.total_cost, result.plan.total_cost);
+  assert.equal(result.claim_flags.length, 2);
+});
+
+test("a provider failure raises with the trace so far", async () => {
+  let round = 0;
+  const fetcher = async (url, init) =>
+    round++ === 0
+      ? scripted([["get_priority_customers", { focus: "all", region: "any", internet: "any", limit: 1 }]])(url, init)
+      : new Response("boom", { status: 500 });
+  await assert.rejects(run(fetcher), (e) => /Provider request failed/.test(e.message) && e.trace.length === 1);
+});

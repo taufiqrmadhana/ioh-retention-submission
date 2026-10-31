@@ -118,7 +118,7 @@ def compare_actions(customer, overrides=None):
             reason = "Customer is ineligible or has denied contact consent."
         elif offer and (technical or billing):
             reason = (
-                "Verify the recent service/billing issue before offering an incentive."
+                "Recent service/billing contact: verify the current issue status before offering an incentive."
             )
         elif action.endswith("_review") and not worth_review and (technical or billing):
             reason = "Risk is below the offer break-even; observe instead of reviewing."

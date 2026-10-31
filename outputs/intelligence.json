@@ -4,6 +4,7 @@
   "calibrator_version": "smoothed-isotonic-v1",
   "policy_version": "retention-v2",
   "mode": "retrospective_demo",
+  "calibration_provenance": "calibrated_risk comes from one map fitted on these customers' out-of-fold scores and labels, so it is in-sample for this retrospective cohort and out-of-sample only for a later one.",
   "customers": [
     {
       "customer_id": "IOH-011",
@@ -55,7 +56,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -76,7 +77,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -107,7 +108,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -128,7 +129,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -159,7 +160,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -180,7 +181,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -211,7 +212,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -232,7 +233,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -263,7 +264,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -284,7 +285,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -315,7 +316,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -369,7 +370,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -390,7 +391,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -421,7 +422,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -473,7 +474,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -494,7 +495,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -525,7 +526,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -579,7 +580,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -600,7 +601,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -631,7 +632,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -652,7 +653,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -683,7 +684,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -735,7 +736,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -756,7 +757,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -787,7 +788,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -808,7 +809,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -839,7 +840,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -860,7 +861,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -891,7 +892,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -944,7 +945,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -965,7 +966,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -996,7 +997,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -1017,7 +1018,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1048,7 +1049,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -1100,7 +1101,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -1121,7 +1122,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1152,7 +1153,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -1173,7 +1174,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1204,7 +1205,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -1257,7 +1258,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -1278,7 +1279,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1309,7 +1310,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -1362,7 +1363,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -1383,7 +1384,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1414,7 +1415,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -1468,7 +1469,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -1489,7 +1490,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1520,7 +1521,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -1541,7 +1542,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1572,7 +1573,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -1593,7 +1594,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1624,7 +1625,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -1645,7 +1646,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1676,7 +1677,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -1730,7 +1731,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -1751,7 +1752,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1782,7 +1783,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -1834,7 +1835,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -1855,7 +1856,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1886,7 +1887,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -1907,7 +1908,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1938,7 +1939,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -1959,7 +1960,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -1990,7 +1991,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -2043,7 +2044,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -2064,7 +2065,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2095,7 +2096,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -2116,7 +2117,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2147,7 +2148,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -2168,7 +2169,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2199,7 +2200,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -2251,7 +2252,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -2272,7 +2273,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2303,7 +2304,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -2357,7 +2358,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -2378,7 +2379,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2409,7 +2410,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -2462,7 +2463,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -2483,7 +2484,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2514,7 +2515,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -2535,7 +2536,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2566,7 +2567,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -2587,7 +2588,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2618,7 +2619,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -2672,7 +2673,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -2693,7 +2694,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2724,7 +2725,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -2777,7 +2778,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -2798,7 +2799,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2829,7 +2830,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -2850,7 +2851,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2881,7 +2882,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -2902,7 +2903,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2933,7 +2934,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -2954,7 +2955,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -2985,7 +2986,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -3037,7 +3038,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -3058,7 +3059,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3089,7 +3090,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -3142,7 +3143,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -3163,7 +3164,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3194,7 +3195,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -3215,7 +3216,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3246,7 +3247,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -3299,7 +3300,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -3320,7 +3321,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3351,7 +3352,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -3372,7 +3373,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3403,7 +3404,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -3424,7 +3425,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3455,7 +3456,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -3476,7 +3477,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3507,7 +3508,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -3561,7 +3562,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -3613,7 +3614,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -3634,7 +3635,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3665,7 +3666,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -3719,7 +3720,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -3740,7 +3741,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3771,7 +3772,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -3792,7 +3793,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3823,7 +3824,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -3876,7 +3877,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -3897,7 +3898,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3928,7 +3929,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -3949,7 +3950,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -3980,7 +3981,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -4001,7 +4002,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4032,7 +4033,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -4085,7 +4086,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -4106,7 +4107,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4137,7 +4138,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -4191,7 +4192,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -4212,7 +4213,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4243,7 +4244,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -4264,7 +4265,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4295,7 +4296,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -4316,7 +4317,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4347,7 +4348,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -4400,7 +4401,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -4421,7 +4422,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4452,7 +4453,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -4473,7 +4474,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4504,7 +4505,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -4525,7 +4526,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4556,7 +4557,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -4577,7 +4578,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4608,7 +4609,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -4662,7 +4663,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -4683,7 +4684,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4714,7 +4715,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -4735,7 +4736,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4766,7 +4767,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -4820,7 +4821,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -4841,7 +4842,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4872,7 +4873,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -4893,7 +4894,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4924,7 +4925,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -4945,7 +4946,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -4976,7 +4977,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -5029,7 +5030,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -5050,7 +5051,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5081,7 +5082,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -5102,7 +5103,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5133,7 +5134,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -5154,7 +5155,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5185,7 +5186,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -5238,7 +5239,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -5259,7 +5260,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5290,7 +5291,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -5311,7 +5312,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5342,7 +5343,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -5395,7 +5396,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -5416,7 +5417,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5447,7 +5448,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -5500,7 +5501,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -5521,7 +5522,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5552,7 +5553,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -5605,7 +5606,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -5626,7 +5627,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5657,7 +5658,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -5678,7 +5679,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5709,7 +5710,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -5762,7 +5763,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -5783,7 +5784,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5814,7 +5815,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -5835,7 +5836,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5866,7 +5867,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -5887,7 +5888,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5918,7 +5919,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -5939,7 +5940,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -5970,7 +5971,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -6024,7 +6025,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -6045,7 +6046,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6076,7 +6077,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -6128,7 +6129,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -6149,7 +6150,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6180,7 +6181,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -6201,7 +6202,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6232,7 +6233,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -6253,7 +6254,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6284,7 +6285,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -6338,7 +6339,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -6359,7 +6360,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6390,7 +6391,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -6411,7 +6412,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6442,7 +6443,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -6463,7 +6464,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6494,7 +6495,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -6546,7 +6547,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -6567,7 +6568,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6598,7 +6599,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -6652,7 +6653,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -6673,7 +6674,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6704,7 +6705,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -6758,7 +6759,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -6779,7 +6780,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6810,7 +6811,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -6863,7 +6864,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -6884,7 +6885,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6915,7 +6916,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -6936,7 +6937,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -6967,7 +6968,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -7021,7 +7022,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -7042,7 +7043,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7073,7 +7074,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -7126,7 +7127,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -7147,7 +7148,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7178,7 +7179,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -7199,7 +7200,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7230,7 +7231,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -7251,7 +7252,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7282,7 +7283,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -7303,7 +7304,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7334,7 +7335,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -7386,7 +7387,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -7407,7 +7408,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7438,7 +7439,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -7490,7 +7491,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -7511,7 +7512,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7542,7 +7543,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -7563,7 +7564,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7594,7 +7595,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -7647,7 +7648,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -7668,7 +7669,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7699,7 +7700,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -7720,7 +7721,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7751,7 +7752,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -7772,7 +7773,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7803,7 +7804,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -7824,7 +7825,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -7855,7 +7856,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -7908,7 +7909,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -7960,7 +7961,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -7981,7 +7982,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8012,7 +8013,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -8066,7 +8067,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -8087,7 +8088,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8118,7 +8119,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -8139,7 +8140,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8170,7 +8171,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -8223,7 +8224,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -8244,7 +8245,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8275,7 +8276,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -8296,7 +8297,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8327,7 +8328,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -8348,7 +8349,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8379,7 +8380,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -8432,7 +8433,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -8453,7 +8454,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8484,7 +8485,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -8538,7 +8539,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -8559,7 +8560,7 @@
         "hasInternetService": "DSL"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8590,7 +8591,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -8611,7 +8612,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8642,7 +8643,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -8663,7 +8664,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8694,7 +8695,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -8746,7 +8747,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -8767,7 +8768,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8798,7 +8799,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -8819,7 +8820,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8850,7 +8851,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -8871,7 +8872,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8902,7 +8903,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -8923,7 +8924,7 @@
         "hasInternetService": "Fiber optic"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -8954,7 +8955,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -9007,7 +9008,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -9028,7 +9029,7 @@
         "hasInternetService": "No"
       },
       "evidence": [
-        "No recent support signal in the supplied extract."
+        "No support contact recorded in the 30 days before 1 Nov; that does not rule out a service problem."
       ],
       "model_signals": [
         {
@@ -9059,7 +9060,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -9112,7 +9113,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -9165,7 +9166,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -9218,7 +9219,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -9271,7 +9272,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -9324,7 +9325,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -9377,7 +9378,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -9430,7 +9431,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -9483,7 +9484,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -9536,7 +9537,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -9589,7 +9590,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -9643,7 +9644,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -9696,7 +9697,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -9749,7 +9750,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -9802,7 +9803,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -9855,7 +9856,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -9908,7 +9909,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -9961,7 +9962,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -10014,7 +10015,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -10067,7 +10068,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -10120,7 +10121,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -10173,7 +10174,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -10226,7 +10227,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -10279,7 +10280,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -10332,7 +10333,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -10386,7 +10387,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -10439,7 +10440,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     },
     {
@@ -10492,7 +10493,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -10545,7 +10546,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -10598,7 +10599,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -10651,7 +10652,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 2
     },
     {
@@ -10704,7 +10705,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -10757,7 +10758,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 3
     },
     {
@@ -10810,7 +10811,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 5
     },
     {
@@ -10863,7 +10864,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 4
     },
     {
@@ -10916,7 +10917,7 @@
       "resolution_status": "unknown_at_snapshot",
       "last_contact_at": null,
       "score_method": "out_of_fold_logistic",
-      "calibration_method": "smoothed_isotonic_out_of_fold",
+      "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
       "fold": 1
     }
   ]

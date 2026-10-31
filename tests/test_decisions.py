@@ -77,6 +77,12 @@ def test_algorithm_gap_holds_the_policy_reviews_fixed():
         gap["exact_offers_only_net_benefit"] - gap["exact_same_reviews_net_benefit"]
     )
     assert gap["exact_offers_only_customers"] <= BASE["max_customers"]
+    # The reviews must retain enough extra customers to repay the value they displace.
+    hurdle = gap["review_hurdle"]
+    assert hurdle["extra_retained_customers"] * 6_000_000 == pytest.approx(gap["review_reservation_cost"], abs=1)
+    assert hurdle["per_review_retention_points"] == pytest.approx(
+        hurdle["extra_retained_customers"] / gap["reviews_in_plan"] * 100, abs=0.01
+    )
 
 
 def test_strategies_share_budget_capacity_and_eligibility():
@@ -103,6 +109,18 @@ def test_plan_impact_prices_with_calibrated_risk():
     impact = decisions.plan_impact(calibrated, BASE)
     assert impact["above_breakeven_calibrated"] == 0
     assert impact["calibrated"]["customers"] == 0  # nobody is worth an offer or a review
+
+
+def test_plan_impact_reprices_with_cross_fitted_risks():
+    held = {c["customer_id"]: 0.05 for c in COHORT}
+    impact = decisions.plan_impact(COHORT, BASE, cross_fitted=held)
+    nested = impact["cross_fitted"]
+    assert nested["customers"] == 0  # nobody clears the break-even under the held-out risks
+    assert nested["same_customers_as_calibrated"] == 0
+    assert nested["gate_flips"] == len(COHORT)
+    same = decisions.plan_impact(COHORT, BASE, cross_fitted={c["customer_id"]: c["risk_score"] for c in COHORT})
+    assert same["cross_fitted"]["same_customer_actions_as_calibrated"] == same["calibrated"]["customers"]
+    assert same["cross_fitted"]["gate_flips"] == 0
 
 
 def test_premium_stress_crossings_are_real():
@@ -141,7 +159,7 @@ def test_targeting_diagnostic_segments_the_highest_risk():
     diagnostic = decisions.targeting_diagnostic(COHORT, BASE)
     assert diagnostic["top_capacity"]["n"] == BASE["max_customers"]
     assert diagnostic["top_capacity"]["mean_risk"] >= diagnostic["cohort"]["mean_risk"]
-    assert 0 <= diagnostic["cohort"]["share_with_open_service_issue"] <= 1
+    assert 0 <= diagnostic["cohort"]["share_with_recent_service_contact"] <= 1
 
 
 def test_offers_only_row_prices_the_review_reservation():
@@ -167,4 +185,22 @@ def test_pilot_sizes_each_offer_and_bridges_the_horizon():
     assert arms["basic_offer"]["per_arm"] > arms["premium_offer"]["per_arm"]
     two_arm = next(r for r in design["rows"] if r["baseline_90d_churn"] == 0.5 and r["effect"] == "premium_breakeven")
     assert arms["premium_offer"]["per_arm"] > two_arm["split_50_50"]["control"]  # stricter alpha
-    assert "30-day" in design["horizon_bridge"]
+    assert "30-day" in design["horizon_bridge"] and "control arm" in design["horizon_bridge"]
+
+
+def test_pilot_separates_detection_from_profitability():
+    # 50% vs 42.5% at about 700 per arm: positive, but the interval reaches below 7.5 points.
+    low, high = decisions.difference_interval(0.5, 0.425, 700)
+    assert low == pytest.approx(0.023, abs=0.001) and high == pytest.approx(0.127, abs=0.001)
+    # Clearing the 7.5-point margin with 80% power needs a true effect well above it.
+    assert decisions.pilot_margin_sample_size(0.5, 0.35, 0.075) == 667
+    with pytest.raises(ValueError):
+        decisions.pilot_margin_sample_size(0.5, 0.425, 0.075)
+    labels = {c["customer_id"]: 1 for c in COHORT}
+    design = decisions.pilot_design(COHORT, labels, BASE)
+    low, high = design["interval_at_breakeven_effect"]["interval_95pct"]
+    assert 0 < low < design["premium_breakeven_absolute_reduction"] < high
+    mix = design["plan_offer_mix"]
+    assert mix["breakeven_absolute_reduction"] <= design["premium_breakeven_absolute_reduction"]
+    assert mix["average_offer_cost"] == pytest.approx(mix["breakeven_absolute_reduction"] * 6_000_000, abs=300)
+    assert design["name"] == "offer-policy pilot"
