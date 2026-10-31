@@ -67,9 +67,9 @@ def test_breakeven_is_where_the_replanned_plan_actually_turns_positive():
 
 
 def test_algorithm_gap_holds_the_policy_reviews_fixed():
-    gap = decisions.optimisation_gap(COHORT, BASE)
+    gap = decisions.optimisation_gap(COHORT, {**BASE, "review_share": 0.3})
     assert gap["reviews_in_plan"] == 2
-    assert gap["exact_same_reviews_net_benefit"] >= gap["greedy_net_benefit"]
+    assert gap["exact_same_reviews_net_benefit"] >= gap["plan_net_benefit"]
     assert gap["algorithm_gap_pct"] >= 0
     # Dropping the reviews frees budget and slots, so offers-only is never worse.
     assert gap["exact_offers_only_net_benefit"] >= gap["exact_same_reviews_net_benefit"]
@@ -165,10 +165,10 @@ def test_targeting_diagnostic_segments_the_highest_risk():
 def test_offers_only_row_prices_the_review_reservation():
     labels = {c["customer_id"]: 1 for c in COHORT}
     rows = {r["strategy"]: r for r in decisions.strategy_comparison(COHORT, BASE, labels)["rows"]}
-    offers_only, shipped = rows["offers_only"], rows["policy_plan"]
+    offers_only, shipped = rows["offers_only"], rows["review_reservation"]
     assert set(offers_only["actions"]) <= {"basic_offer", "premium_offer"}
     assert {"technical_review", "billing_review"} & set(shipped["actions"])
-    gap = decisions.optimisation_gap(COHORT, BASE)
+    gap = decisions.optimisation_gap(COHORT, {**BASE, "review_share": 0.3})
     assert offers_only["scenario_net_benefit"] == pytest.approx(gap["exact_offers_only_net_benefit"])
     # The gap to the shipped plan splits into the reservation's price and the greedy shortfall.
     assert offers_only["scenario_net_benefit"] - shipped["scenario_net_benefit"] == pytest.approx(

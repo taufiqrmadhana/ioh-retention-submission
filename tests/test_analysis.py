@@ -4,12 +4,18 @@ import json
 import numpy as np
 import pandas as pd
 from retention.analysis import (
+    ARTIFACTS,
+    CODE,
     CUTOFF,
+    DEPENDENCIES,
     FEATURES,
+    INPUTS,
     ROOT,
     build_cohort,
     cohort_flow,
     load_data,
+    main,
+    manifest,
     metrics,
     rule_check,
     segment_rule,
@@ -111,11 +117,32 @@ def test_rule_check_counts_the_segment():
     assert check["within_segment"]["n"] == 53
 
 
-def test_committed_outputs_match_the_current_code():
+def test_committed_outputs_match_sources_and_each_other():
     report = json.loads((ROOT / "outputs" / "report.json").read_text())
-    manifest = report["manifest"]
-    assert manifest["calibrator_version"] == "smoothed-isotonic-v1"
-    for name, digest in manifest["code_sha256"].items():
-        assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest, (
-            f"{name} changed since outputs were generated; rerun `python -m retention analyze`"
+    intelligence = json.loads((ROOT / "outputs" / "intelligence.json").read_text())
+    provenance = json.loads((ROOT / "outputs" / "manifest.json").read_text())
+    cohort = pd.read_csv(ROOT / "outputs" / "cohort.csv")
+    current = manifest()
+    assert report["manifest"] == intelligence["manifest"] == current
+    assert report["run_id"] == intelligence["run_id"] == provenance["run_id"] == current["run_id"]
+    assert set(cohort.run_id) == {current["run_id"]}
+    assert set(current["code_sha256"]) == set(CODE)
+    assert set(current["input_sha256"]) == set(INPUTS)
+    assert set(current["dependency_sha256"]) == set(DEPENDENCIES)
+    assert set(provenance["artifact_sha256"]) == set(ARTIFACTS)
+    for name, digest in provenance["artifact_sha256"].items():
+        assert hashlib.sha256((ROOT / "outputs" / name).read_bytes()).hexdigest() == digest
+    by_id = cohort.set_index("customerId")
+    for customer in intelligence["customers"]:
+        row = by_id.loc[customer["customer_id"]]
+        assert customer["calibration_method"] == "nested_held_out_smoothed_isotonic"
+        assert customer["calibrated_risk"] == round(row.calibrated_risk, 6)
+        assert customer["fitted_calibrated_risk"] == round(row.fitted_calibrated_risk, 6)
+
+
+def test_isolated_regeneration_matches_committed_artifacts(tmp_path):
+    main(output_dir=tmp_path)
+    for name in (*ARTIFACTS, "manifest.json"):
+        assert (tmp_path / name).read_bytes() == (ROOT / "outputs" / name).read_bytes(), (
+            f"{name} differs on regeneration; rerun `python -m retention analyze`"
         )

@@ -49,6 +49,8 @@ SYNTHETIC = [customer(f"C{i:02}", round(0.9 - i * 0.03, 4)) for i in range(14)] 
 
 PLANS = [
     ("defaults", "synthetic", {}),
+    ("reserved_reviews", "synthetic", {"review_share": 0.3}),
+    ("exact_reallocation", "intelligence", {"budget": 600_000, "max_customers": 3, "review_share": 0.3}),
     ("tight_budget", "synthetic", {"budget": 149_999, "max_customers": 5}),
     ("one_slot", "synthetic", {"budget": 3_000_000, "max_customers": 1}),
     ("calibrated_ties", "synthetic", {"budget": 1_350_000, "max_customers": 3}),
@@ -93,7 +95,7 @@ MUTATIONS = [
     {"name": "item_executable", "path": ["items", 0, "executable"], "op": "set", "value": True},
     {"name": "item_review_flag", "path": ["items", 0, "review_required"], "op": "set", "value": False},
     {"name": "item_unknown_customer", "path": ["items", 0, "customer_id"], "op": "set", "value": "GHOST"},
-    # In the "defaults" plan items[0] is a service review and items[-1] an offer.
+    # In the reserved plan items[0] is a service review and items[-1] an offer.
     {"name": "review_prevented_missing", "path": ["items", 0, "scenario_prevented_churn"], "op": "delete"},
     {"name": "review_net_missing", "path": ["items", 0, "scenario_net_benefit"], "op": "delete"},
     {"name": "offer_prevented_nan", "path": ["items", -1, "scenario_prevented_churn"], "op": "nan"},
@@ -166,7 +168,7 @@ def generate():
             }
             for name, c, settings in COMPARE
         ],
-        "mutations": {"plan": "defaults", "cases": MUTATIONS},
+        "mutations": {"plan": "reserved_reviews", "cases": MUTATIONS},
     }
 
 

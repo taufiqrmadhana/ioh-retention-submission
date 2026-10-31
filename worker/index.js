@@ -2,7 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import intelligence from "../outputs/intelligence.json";
 import report from "../outputs/report.json";
 import { buildPlan, compareActions, settings, validatePlan } from "../web/policy.js";
-import { runAgent } from "./agent.js";
+import { runAgent, validateScope } from "./agent.js";
 import { cleanHistory, runAssistant } from "./assistant.js";
 
 const json = (data, status = 200) =>
@@ -176,6 +176,8 @@ async function runAgentRequest(request, env, session, body) {
   )
     throw new Error("Use a prompt of 5–1500 characters");
   const config = settings(body.settings);
+  if (!body.scope) throw new Error("Select contact, region and internet scope controls");
+  const scope = validateScope(body.scope, intelligence.customers);
   const ip = await sha256(request.headers.get("CF-Connecting-IP") ?? "local");
   if (
     !(await consume(env, `agent-ip:${ip}`, Math.floor(Date.now() / 600000), 5)) ||
@@ -193,6 +195,7 @@ async function runAgentRequest(request, env, session, body) {
     const result = await runAgent({
       prompt: body.prompt,
       config,
+      scope,
       customers: intelligence.customers,
       apiKey: env.DEEPSEEK_API_KEY,
       model: env.DEEPSEEK_MODEL ?? "deepseek-flash",

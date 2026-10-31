@@ -46,10 +46,11 @@ function scripted(...rounds) {
   };
 }
 
-const run = (fetcher, config = {}) =>
+const run = (fetcher, config = { reviewShare: 0.3 }, scope) =>
   runAgent({
     prompt: "Prepare a plan",
     config,
+    scope,
     customers: CUSTOMERS,
     apiKey: "test",
     fetcher,
@@ -76,6 +77,8 @@ test("scope filters by contact type and region", async () => {
       [["simulate_retention_plan", { focus: "no_contact", region: "Jakarta", internet: "any" }]],
       [["submit_retention_plan", {}]],
     ),
+    {},
+    { focus: "no_contact", region: "Jakarta", internet: "any" },
   );
   assert.deepEqual(result.plan.scope, { focus: "no_contact", region: "Jakarta", internet: "any" });
   assert.deepEqual(result.plan.items.map((i) => i.customer_id), ["TEST-1"]);
@@ -104,7 +107,7 @@ test("budget and capacity come from the user settings, not the model", async () 
       [["simulate_retention_plan", { focus: "all", region: "any", internet: "any" }]],
       [["submit_retention_plan", {}]],
     ),
-    { budget: 50000, maxCustomers: 1 },
+    { budget: 50000, maxCustomers: 1, reviewShare: 0.3 },
   );
   assert.equal(result.plan.total_cost, 50000);
   assert.deepEqual(result.plan.items.map((i) => i.action), ["technical_review"]);
@@ -116,6 +119,8 @@ test("scope filters by internet type", async () => {
       [["simulate_retention_plan", { focus: "all", region: "any", internet: "Fiber optic" }]],
       [["submit_retention_plan", {}]],
     ),
+    {},
+    { focus: "all", region: "any", internet: "Fiber optic" },
   );
   assert.equal(result.plan.candidates_evaluated, 1);
   assert.deepEqual(result.plan.items.map((i) => i.customer_id), ["TEST-1"]);
@@ -137,36 +142,41 @@ test("a false approval claim without a plan reports no plan and is flagged", asy
   assert.ok(result.claim_flags.some((f) => f.includes("approval")));
 });
 
-test("the outcome shows the scope the backend planned, whatever the text claims", async () => {
-  const fetcher = scripted([
-    ["simulate_retention_plan", { focus: "all", region: "any", internet: "any" }],
-  ]);
-  let simulation;
-  const result = await runAgent({
-    prompt: "Plan Bandung only",
-    config: {},
-    customers: CUSTOMERS,
-    apiKey: "test",
-    fetcher: async (url, init) => {
-      const body = JSON.parse(init.body);
-      const tool = body.messages.filter((m) => m.role === "tool").at(-1);
-      if (!tool) return fetcher(url, init);
-      simulation = JSON.parse(tool.content);
-      const args = {
-        simulation_id: simulation.simulation_id,
-        rationale: "Approved for Bandung; this will reduce churn by half.",
-      };
-      return new Response(
-        JSON.stringify({
-          choices: [{ message: { tool_calls: [{ id: "s", type: "function", function: { name: "submit_retention_plan", arguments: JSON.stringify(args) } }] } }],
-        }),
-      );
-    },
+for (const prompt of ["Plan Bandung only", "Bikin plan khusus Bandung"]) {
+  test(`selected Bandung scope rejects an all-region call: ${prompt}`, async () => {
+    const result = await runAgent({
+      prompt,
+      scope: { focus: "all", region: "Bandung", internet: "any" },
+      config: {},
+      customers: CUSTOMERS,
+      apiKey: "test",
+      fetcher: scripted([["simulate_retention_plan", { focus: "all", region: "any", internet: "any" }]]),
+    });
+    assert.equal(result.outcome.status, "no_plan_submitted");
+    assert.equal(result.plan, null);
+    assert.equal(result.trace[0].status, "rejected");
+    assert.match(result.trace[0].result.error, /user-selected scope/);
   });
-  assert.equal(result.outcome.status, "pending_review");
-  assert.deepEqual(result.outcome.scope, { focus: "all", region: "any", internet: "any" });
-  assert.equal(result.outcome.total_cost, result.plan.total_cost);
-  assert.equal(result.claim_flags.length, 2);
+}
+
+test("scope controls reject narrowing and out-of-scope reads", async () => {
+  const result = await run(
+    scripted([
+      ["get_priority_customers", { focus: "all", region: "Jakarta", internet: "any", limit: 10 }],
+      ["simulate_retention_plan", { focus: "technical", region: "any", internet: "any" }],
+      ["get_customer_context", { customer_id: "TEST-1" }],
+    ]),
+  );
+  assert.equal(result.plan, null);
+  assert.ok(result.trace.every((t) => t.status === "rejected"));
+});
+
+test("invalid structured scope fails before calling the provider", async () => {
+  await assert.rejects(runAgent({
+    prompt: "Prepare a plan", customers: CUSTOMERS, config: {}, apiKey: "test",
+    scope: { focus: "all", region: "Atlantis", internet: "any" },
+    fetcher: () => { throw Error("must not call provider"); },
+  }), /Invalid value for region/);
 });
 
 test("a provider failure raises with the trace so far", async () => {

@@ -2,7 +2,7 @@
 
 from math import floor, isfinite
 
-POLICY_VERSION = "retention-v2"
+POLICY_VERSION = "retention-v3"
 DEFAULTS = {
     "budget": 3_000_000,
     "max_customers": 10,
@@ -10,9 +10,7 @@ DEFAULTS = {
     "basic_success": 0.2,
     "premium_success": 0.5,
     "prioritize_technical": True,
-    # Business assumption, not a learned optimum: share of customer capacity reserved
-    # for service reviews, whose retention benefit is unmeasured. 0 gives offers only.
-    "review_share": 0.3,
+    "review_share": 0,
 }
 ACTIONS = {
     "basic_offer": {"label": "Basic offer", "cost": 150_000},
@@ -153,8 +151,46 @@ def compare_actions(customer, overrides=None):
     return results
 
 
+def exact_offers(customers, config, budget, capacity, exclude=()):
+    """Maximize rounded scenario value with one offer per customer; ties use raw rank."""
+    ordered = sorted(customers, key=lambda c: (-c["risk_score"], c["customer_id"]))
+    unit = ACTIONS["basic_offer"]["cost"]
+    limit = budget // unit
+    states = {(0, 0): (0, (), ())}
+    for rank, customer in enumerate(ordered):
+        if customer["customer_id"] in exclude:
+            continue
+        offers = [
+            action for action in compare_actions(customer, config)
+            if action["eligible_for_proposal"] and action["action"].endswith("_offer")
+            and action["scenario_net_benefit"] > 0
+        ]
+        previous = list(states.items())
+        for (count, cost), (value, signature, items) in previous:
+            if count >= capacity:
+                continue
+            for action in offers:
+                next_cost = cost + action["cost"] // unit
+                if next_cost > limit:
+                    continue
+                key = (count + 1, next_cost)
+                candidate_value = value + action["scenario_net_benefit"]
+                candidate_signature = signature + (rank * 2 + int(action["action"] == "basic_offer"),)
+                existing = states.get(key)
+                if existing and (existing[0] > candidate_value or (
+                    existing[0] == candidate_value and existing[1] <= candidate_signature
+                )):
+                    continue
+                item = {"customer_id": customer["customer_id"], "risk_score": customer["risk_score"], **action}
+                states[key] = (candidate_value, candidate_signature, items + (item,))
+    _, best = min(states.items(), key=lambda entry: (
+        -entry[1][0], entry[0][1], entry[0][0], entry[1][1]
+    ))
+    return list(best[2])
+
+
 def build_plan(customers, overrides=None):
-    """Reserve review capacity, then greedily allocate profitable offer increments."""
+    """Honor an explicit review quota, then exactly maximize assumed offer value."""
     config = settings(overrides)
     ordered = sorted(customers, key=lambda c: (-c["risk_score"], c["customer_id"]))
     selected, spent = {}, 0
@@ -194,44 +230,13 @@ def build_plan(customers, overrides=None):
             }
             spent += action["cost"]
 
-    # Greedy marginal benefit per rupiah, including upgrades; not a global optimum.
-    while True:
-        candidates = []
-        for customer in ordered:
-            old = selected.get(customer["customer_id"])
-            if old is None and len(selected) >= config["max_customers"]:
-                continue
-            if old and not old["action"].endswith("_offer"):
-                continue
-            for action in compare_actions(customer, config):
-                if not action["eligible_for_proposal"] or not action["action"].endswith(
-                    "_offer"
-                ):
-                    continue
-                extra = action["cost"] - (old["cost"] if old else 0)
-                gain = action["scenario_net_benefit"] - (
-                    old["scenario_net_benefit"] if old else 0
-                )
-                if extra > 0 and gain > 0 and spent + extra <= config["budget"]:
-                    candidates.append((gain / extra, gain, customer, action, extra))
-        if not candidates:
-            break
-        # Ties in calibrated value (one isotonic block) fall back to the raw ranking.
-        candidates.sort(
-            key=lambda item: (
-                -item[0],
-                -item[1],
-                -item[2]["risk_score"],
-                item[2]["customer_id"],
-            )
-        )
-        _, _, customer, action, extra = candidates[0]
-        spent += extra
-        selected[customer["customer_id"]] = {
-            "customer_id": customer["customer_id"],
-            "risk_score": customer["risk_score"],
-            **action,
-        }
+    offers = exact_offers(
+        ordered, config, config["budget"] - spent,
+        config["max_customers"] - len(selected), exclude=selected,
+    )
+    for item in offers:
+        selected[item["customer_id"]] = item
+        spent += item["cost"]
 
     items = list(selected.values())
     prevented = 0.0
@@ -254,8 +259,10 @@ def build_plan(customers, overrides=None):
         "methodology": (
             f"Reserve up to {round(config['review_share'] * 100):g}% of customer capacity (rounded down; "
             "minimum one unless zero) for service reviews of customers whose risk clears the offer "
-            "break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No "
-            "global-optimum claim. The reservation and the review gate are business assumptions: "
+            "break-even; exactly maximize rounded scenario offer value with dynamic programming under "
+            "the remaining budget and capacity. Ties favor lower spend, then fewer slots, then raw-score "
+            "rank and customer ID, with premium first. The reservation and "
+            "the review gate are business assumptions: "
             "review benefit is unmeasured, so neither is derived from the economics."
         ),
         "economic_note": "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",

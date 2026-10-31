@@ -266,9 +266,9 @@ def scripted(*rounds):
     return provider
 
 
-def run(provider, customers, config=None):
+def run(provider, customers, config=None, scope=None):
     with httpx.Client(transport=httpx.MockTransport(provider)) as client:
-        return run_agent("Prepare a plan", customers, config, api_key="test", client=client)
+        return run_agent("Prepare a plan", customers, {"review_share": 0.3} if config is None else config, api_key="test", client=client, scope=scope)
 
 
 def test_backend_plans_every_customer_in_scope_even_if_unread():
@@ -293,6 +293,7 @@ def test_scope_filters_by_region_and_contact():
             [("submit_retention_plan", {})],
         ),
         [CUSTOMER, TECHNICAL],
+        scope={"focus": "no_contact", "region": "Jakarta", "internet": "any"},
     )
     assert result["plan"]["scope"] == {"focus": "no_contact", "region": "Jakarta", "internet": "any"}
     assert [i["customer_id"] for i in result["plan"]["items"]] == ["TEST-1"]
@@ -332,6 +333,7 @@ def test_scope_filters_by_internet_type():
             [("submit_retention_plan", {})],
         ),
         [CUSTOMER, TECHNICAL],
+        scope={"focus": "all", "region": "any", "internet": "Fiber optic"},
     )
     assert result["plan"]["candidates_evaluated"] == 1
     assert [i["customer_id"] for i in result["plan"]["items"]] == ["TEST-1"]
@@ -343,3 +345,14 @@ def test_claim_flags_catch_state_and_causal_claims_only():
     assert claim_flags("Scenario proposal; verify consent before any outreach.") == []
     assert len(claim_flags("Offers were sent and will reduce churn.")) == 2
     assert len(claim_flags("Premium is proven to work.")) == 1
+
+
+@pytest.mark.parametrize("prompt", ["Plan Bandung only", "Bikin plan khusus Bandung"])
+def test_selected_scope_rejects_model_broadening(prompt):
+    provider = scripted([("simulate_retention_plan", {"focus": "all", "region": "any", "internet": "any"})])
+    with httpx.Client(transport=httpx.MockTransport(provider)) as client:
+        result = run_agent(prompt, [CUSTOMER, TECHNICAL], api_key="test", client=client,
+                           scope={"focus": "all", "region": "Bandung", "internet": "any"})
+    assert result["plan"] is None
+    assert result["trace"][0]["status"] == "rejected"
+    assert "user-selected scope" in result["trace"][0]["result"]["error"]

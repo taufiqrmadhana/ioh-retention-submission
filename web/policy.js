@@ -1,4 +1,4 @@
-export const POLICY_VERSION = "retention-v2";
+export const POLICY_VERSION = "retention-v3";
 export const DEFAULTS = Object.freeze({
   budget: 3000000,
   maxCustomers: 10,
@@ -6,9 +6,7 @@ export const DEFAULTS = Object.freeze({
   basicSuccess: 0.2,
   premiumSuccess: 0.5,
   prioritizeTechnical: true,
-  // Business assumption, not a learned optimum: share of customer capacity reserved
-  // for service reviews, whose retention benefit is unmeasured. 0 gives offers only.
-  reviewShare: 0.3,
+  reviewShare: 0,
 });
 export const ACTIONS = Object.freeze({
   basic_offer: { label: "Basic offer", cost: 150000 },
@@ -120,6 +118,36 @@ export function compareActions(customer, input = {}) {
   });
 }
 
+export function exactOffers(customers, s, budget, capacity, exclude = new Set()) {
+  const sorted = [...customers].sort((a, b) =>
+    b.risk_score - a.risk_score || a.customer_id.localeCompare(b.customer_id));
+  const unit = ACTIONS.basic_offer.cost, limit = Math.floor(budget / unit);
+  const states = new Map([["0,0", { count: 0, cost: 0, value: 0, signature: "", items: [] }]]);
+  for (const [rank, c] of sorted.entries()) {
+    if (exclude.has(c.customer_id)) continue;
+    const offers = compareActions(c, s).filter((a) =>
+      a.eligible_for_proposal && a.action.endsWith("_offer") && a.scenario_net_benefit > 0);
+    const previous = [...states.values()];
+    for (const old of previous) {
+      if (old.count >= capacity) continue;
+      for (const action of offers) {
+        const count = old.count + 1, cost = old.cost + action.cost / unit;
+        if (cost > limit) continue;
+        const key = `${count},${cost}`, value = old.value + action.scenario_net_benefit;
+        const signature = old.signature + String(rank * 2 + Number(action.action === "basic_offer")).padStart(8, "0");
+        const existing = states.get(key);
+        if (existing && (existing.value > value ||
+            (existing.value === value && existing.signature <= signature))) continue;
+        states.set(key, { count, cost, value, signature,
+          items: [...old.items, { customer_id: c.customer_id, risk_score: c.risk_score, ...action }] });
+      }
+    }
+  }
+  return [...states.values()].sort((a, b) =>
+    b.value - a.value || a.cost - b.cost || a.count - b.count ||
+    a.signature.localeCompare(b.signature))[0].items;
+}
+
 export function buildPlan(customers, input = {}) {
   const s = settings(input);
   const sorted = [...customers].sort(
@@ -155,39 +183,10 @@ export function buildPlan(customers, input = {}) {
       spent += a.cost;
     }
   }
-  // Greedy marginal benefit per rupiah, including upgrades. Budget feasible,
-  // not advertised as globally optimal. Each customer receives at most one action.
-  for (;;) {
-    const candidates = [];
-    for (const c of sorted) {
-      const old = selected.get(c.customer_id);
-      if (!old && selected.size >= s.maxCustomers) continue;
-      if (old && !old.action.endsWith("_offer")) continue;
-      for (const a of compareActions(c, s).filter(
-        (a) => a.eligible_for_proposal && a.action.endsWith("_offer"),
-      )) {
-        const extra = a.cost - (old?.cost ?? 0),
-          gain = a.scenario_net_benefit - (old?.scenario_net_benefit ?? 0);
-        if (extra > 0 && gain > 0 && spent + extra <= s.budget)
-          candidates.push({ c, a, extra, gain, ratio: gain / extra });
-      }
-    }
-    // Ties in calibrated value (one isotonic block) fall back to the raw ranking.
-    candidates.sort(
-      (a, b) =>
-        b.ratio - a.ratio ||
-        b.gain - a.gain ||
-        b.c.risk_score - a.c.risk_score ||
-        a.c.customer_id.localeCompare(b.c.customer_id),
-    );
-    if (!candidates.length) break;
-    const { c, a, extra } = candidates[0];
-    spent += extra;
-    selected.set(c.customer_id, {
-      customer_id: c.customer_id,
-      risk_score: c.risk_score,
-      ...a,
-    });
+  for (const item of exactOffers(sorted, s, s.budget - spent,
+    s.maxCustomers - selected.size, new Set(selected.keys()))) {
+    selected.set(item.customer_id, item);
+    spent += item.cost;
   }
   const items = [...selected.values()];
   const offerNet = items.reduce((n, a) => n + (a.scenario_net_benefit ?? 0), 0);
@@ -206,7 +205,7 @@ export function buildPlan(customers, input = {}) {
       (n, a) => n + (a.scenario_prevented_churn ?? 0),
       0,
     ),
-    methodology: `Reserve up to ${Math.round(s.reviewShare * 100)}% of customer capacity (rounded down; minimum one unless zero) for service reviews of customers whose risk clears the offer break-even; allocate the rest to offers by greedy marginal net benefit per rupiah. No global-optimum claim. The reservation and the review gate are business assumptions: review benefit is unmeasured, so neither is derived from the economics.`,
+    methodology: `Reserve up to ${Math.round(s.reviewShare * 100)}% of customer capacity (rounded down; minimum one unless zero) for service reviews of customers whose risk clears the offer break-even; exactly maximize rounded scenario offer value with dynamic programming under the remaining budget and capacity. Ties favor lower spend, then fewer slots, then raw-score rank and customer ID, with premium first. The reservation and the review gate are business assumptions: review benefit is unmeasured, so neither is derived from the economics.`,
     economic_note:
       "Scenario only. Success is assumed conditional prevention among would-be churners; service-review benefit is unmeasured and assigned zero in the net total. All costs charged upfront.",
     review_checklist: [

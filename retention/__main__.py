@@ -29,6 +29,9 @@ def main():
         sub.add_argument("--limit", type=int, default=10, help="Maximum customers")
         if command == "agent":
             sub.add_argument("prompt", help="Retention objective for the agent")
+            sub.add_argument("--region", default="any", help="Authoritative region scope")
+            sub.add_argument("--focus", choices=["all", "technical", "billing", "no_contact"], default="all")
+            sub.add_argument("--internet", default="any", help="Authoritative internet-type scope")
     args = parser.parse_args()
 
     if args.command == "analyze":
@@ -56,6 +59,7 @@ def main():
                 prompt=args.prompt,
                 customers=customers,
                 config=config,
+                scope={"focus": args.focus, "region": args.region, "internet": args.internet},
                 on_event=lambda event: print(
                     f"{event['step']}. {event['tool']}: {event['status']}"
                 ),

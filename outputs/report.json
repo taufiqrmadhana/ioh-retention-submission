@@ -237,7 +237,8 @@
         "observed_rate": 0.926829268292683
       }
     ],
-    "decision_risk": "One smoothed-isotonic map fitted on all out-of-fold scores and labels (deployment-style). Applied back to the same customers it is in-sample: each customer's label shaped the map that prices them. The raw scores are out-of-fold; the calibrated decision path is not. Method quality is measured nested above; plan_impact re-prices the plan with the nested risks.",
+    "decision_risk": "Primary historical replay uses nested held-out smoothed-isotonic risks: each customer's model and calibration map were fitted without that customer's outer fold. Five fitted maps are combined, so calibrated risk need not preserve the global raw-score order. This is internal evaluation in the selected cohort, not untouched future or causal validation.",
+    "fitted_map_provenance": "The decision_map below is fitted on all 208 out-of-fold scores and labels for future scoring. Applying it back to these customers is in-sample and exploratory; it is not used to price the primary historical replay. Freeze the score, calibrator and policy before later validation.",
     "decision_map": [
       {
         "score_from": 0.0012,
@@ -260,57 +261,80 @@
         "calibrated_risk": 0.9706
       }
     ],
-    "ordering": "raw out-of-fold score",
+    "ordering": "scenario value; raw out-of-fold score then customer ID break equal-value ties",
     "plan_impact": {
       "raw": {
         "customers": 10,
         "actions": {
-          "billing_review": 3,
-          "premium_offer": 6,
-          "basic_offer": 1
+          "premium_offer": 5,
+          "basic_offer": 5
         },
-        "cost": 2925000,
-        "expected_saves": 3.152,
-        "scenario_net_benefit": 15987689,
-        "churners_reached": 8,
+        "cost": 3000000,
+        "expected_saves": 3.443,
+        "scenario_net_benefit": 17655338,
+        "churners_reached": 10,
         "blocked_by_policy": 0
       },
       "calibrated": {
         "customers": 10,
         "actions": {
-          "billing_review": 3,
-          "premium_offer": 6,
-          "basic_offer": 1
+          "basic_offer": 5,
+          "premium_offer": 5
         },
-        "cost": 2925000,
-        "expected_saves": 3.106,
-        "scenario_net_benefit": 15710290,
-        "churners_reached": 8,
+        "cost": 3000000,
+        "expected_saves": 3.382,
+        "scenario_net_benefit": 17294291,
+        "churners_reached": 9,
         "blocked_by_policy": 0
       },
-      "same_customers": 10,
-      "same_customer_actions": 10,
+      "primary": {
+        "customers": 10,
+        "actions": {
+          "basic_offer": 5,
+          "premium_offer": 5
+        },
+        "cost": 3000000,
+        "expected_saves": 3.382,
+        "scenario_net_benefit": 17294291,
+        "churners_reached": 9,
+        "blocked_by_policy": 0
+      },
+      "same_customers": 4,
+      "same_customer_actions": 1,
       "offer_breakeven_risk": 0.125,
       "above_breakeven_raw": 69,
       "above_breakeven_calibrated": 53,
-      "note": "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, not only the totals.",
+      "note": "Primary retrospective pricing uses held-out calibration maps. Raw-score and fitted-map totals use different probabilities; compare selection as well as value. All results remain internal to the selected cohort.",
+      "fitted_exploratory": {
+        "customers": 10,
+        "actions": {
+          "premium_offer": 5,
+          "basic_offer": 5
+        },
+        "cost": 3000000,
+        "expected_saves": 3.397,
+        "scenario_net_benefit": 17382350,
+        "churners_reached": 10,
+        "blocked_by_policy": 0
+      },
       "cross_fitted": {
         "customers": 10,
         "actions": {
-          "billing_review": 3,
-          "premium_offer": 6,
-          "basic_offer": 1
+          "basic_offer": 5,
+          "premium_offer": 5
         },
-        "cost": 2925000,
-        "expected_saves": 3.093,
-        "scenario_net_benefit": 15635000,
-        "churners_reached": 7,
+        "cost": 3000000,
+        "expected_saves": 3.382,
+        "scenario_net_benefit": 17294291,
+        "churners_reached": 9,
         "blocked_by_policy": 0,
-        "same_customers_as_calibrated": 1,
+        "same_customers_as_fitted": 4,
+        "same_customer_actions_as_fitted": 1,
+        "same_customers_as_calibrated": 4,
         "same_customer_actions_as_calibrated": 1,
         "gate_flips": 12,
         "customers_at_top_calibrated_risk": 32,
-        "note": "Nested risks come from five per-fold maps, each fitted without the fold it prices. The action mix, spend and scenario value barely move, but the chosen customers change: the shipped map gives every top customer the same risk, so offers among them follow the raw order, while the per-fold maps differ slightly at the top. The economics cannot tell those customers apart; which of them receive offers is not a robust result."
+        "note": "Held-out maps exclude each priced customer's outer fold from model and calibrator fitting. The all-data fitted map is a future-scoring artifact whose same-cohort replay is exploratory. Similar aggregate value does not establish stable candidate identities: use the published raw-score/customer-ID tie-break as an administrative rule, not proof of uniquely optimal people."
       }
     }
   },
@@ -561,7 +585,7 @@
     "Support resolution status is excluded: no status-effective timestamp.",
     "Random customer holdout is internal validation in one selected historical cohort.",
     "5 holdout customers share exact model features with training customers; non-overlap sensitivity is reported separately.",
-    "Raw OOF scores rank well but overstate risk between 12% and 30%. Economics use one smoothed-isotonic map fitted on all 208 OOF scores and labels, so the retrospective plan is in-sample; nested calibration improves OOF Brier and log-loss but not the 52-customer holdout, and re-pricing with nested risks keeps the plan's mix and value but changes which customers are picked.",
+    "Raw OOF scores rank well but overstate risk between 12% and 30%. Primary historical economics use nested held-out calibration, combining five maps without each priced customer's fold. Calibration improves nested OOF Brier and log-loss but not the 52-customer holdout. The all-data map is a future-scoring artifact; its same-cohort historical replay is exploratory. Candidate identities vary substantially between maps despite similar aggregate scenario values.",
     "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
     "Gender, age, partner and dependents are excluded from scoring; proxies may remain."
   ],
@@ -628,7 +652,7 @@
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 566910,
+          "net_benefit": 551500,
           "cost": 3000000,
           "customers": 10
         },
@@ -637,8 +661,8 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 1929409,
-          "cost": 2875000,
+          "net_benefit": 2073572,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -646,8 +670,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 4331620,
-          "cost": 2875000,
+          "net_benefit": 4610358,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -655,8 +679,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 6733822,
-          "cost": 2875000,
+          "net_benefit": 7147149,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -664,8 +688,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 8722059,
-          "cost": 2925000,
+          "net_benefit": 9683935,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -673,8 +697,8 @@
           "success_multiplier": 1.5,
           "basic_success": 0.3,
           "premium_success": 0.75,
-          "net_benefit": 11051467,
-          "cost": 2925000,
+          "net_benefit": 12220719,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -682,8 +706,8 @@
           "success_multiplier": 1.75,
           "basic_success": 0.35,
           "premium_success": 0.875,
-          "net_benefit": 13380881,
-          "cost": 2925000,
+          "net_benefit": 14757505,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -718,7 +742,7 @@
           "success_multiplier": 0.2,
           "basic_success": 0.04,
           "premium_success": 0.1,
-          "net_benefit": 1076470,
+          "net_benefit": 1058858,
           "cost": 3000000,
           "customers": 10
         },
@@ -727,8 +751,8 @@
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 3851173,
-          "cost": 2875000,
+          "net_benefit": 4103000,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -736,8 +760,8 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 6733822,
-          "cost": 2875000,
+          "net_benefit": 7147149,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -745,8 +769,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 11051467,
-          "cost": 2925000,
+          "net_benefit": 12220719,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -754,8 +778,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 15710290,
-          "cost": 2925000,
+          "net_benefit": 17294291,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -763,8 +787,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 20369112,
-          "cost": 2925000,
+          "net_benefit": 22367866,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -772,8 +796,8 @@
           "success_multiplier": 1.5,
           "basic_success": 0.3,
           "premium_success": 0.75,
-          "net_benefit": 25027934,
-          "cost": 2925000,
+          "net_benefit": 27441443,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -781,8 +805,8 @@
           "success_multiplier": 1.75,
           "basic_success": 0.35,
           "premium_success": 0.875,
-          "net_benefit": 29686757,
-          "cost": 2925000,
+          "net_benefit": 32515015,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -808,7 +832,7 @@
           "success_multiplier": 0.1,
           "basic_success": 0.02,
           "premium_success": 0.05,
-          "net_benefit": 247060,
+          "net_benefit": 239142,
           "cost": 1500000,
           "customers": 10
         },
@@ -817,8 +841,8 @@
           "success_multiplier": 0.2,
           "basic_success": 0.04,
           "premium_success": 0.1,
-          "net_benefit": 2890293,
-          "cost": 2875000,
+          "net_benefit": 3088286,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -826,8 +850,8 @@
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 7214260,
-          "cost": 2875000,
+          "net_benefit": 7654505,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -835,8 +859,8 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 11051467,
-          "cost": 2925000,
+          "net_benefit": 12220719,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -844,8 +868,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 18039704,
-          "cost": 2925000,
+          "net_benefit": 19831077,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -853,8 +877,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 25027934,
-          "cost": 2925000,
+          "net_benefit": 27441443,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -862,8 +886,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 32016171,
-          "cost": 2925000,
+          "net_benefit": 35051801,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -871,8 +895,8 @@
           "success_multiplier": 1.5,
           "basic_success": 0.3,
           "premium_success": 0.75,
-          "net_benefit": 39004402,
-          "cost": 2925000,
+          "net_benefit": 42662157,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -880,8 +904,8 @@
           "success_multiplier": 1.75,
           "basic_success": 0.35,
           "premium_success": 0.875,
-          "net_benefit": 45992638,
-          "cost": 2925000,
+          "net_benefit": 50272520,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -907,7 +931,7 @@
           "success_multiplier": 0.1,
           "basic_success": 0.02,
           "premium_success": 0.05,
-          "net_benefit": 1076470,
+          "net_benefit": 1058858,
           "cost": 3000000,
           "customers": 10
         },
@@ -916,8 +940,8 @@
           "success_multiplier": 0.2,
           "basic_success": 0.04,
           "premium_success": 0.1,
-          "net_benefit": 4812058,
-          "cost": 2875000,
+          "net_benefit": 5117714,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -925,8 +949,8 @@
           "success_multiplier": 0.35,
           "basic_success": 0.07,
           "premium_success": 0.175,
-          "net_benefit": 10119704,
-          "cost": 2925000,
+          "net_benefit": 11206005,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -934,8 +958,8 @@
           "success_multiplier": 0.5,
           "basic_success": 0.1,
           "premium_success": 0.25,
-          "net_benefit": 15710290,
-          "cost": 2925000,
+          "net_benefit": 17294291,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -943,8 +967,8 @@
           "success_multiplier": 0.75,
           "basic_success": 0.15,
           "premium_success": 0.375,
-          "net_benefit": 25027934,
-          "cost": 2925000,
+          "net_benefit": 27441443,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -952,8 +976,8 @@
           "success_multiplier": 1.0,
           "basic_success": 0.2,
           "premium_success": 0.5,
-          "net_benefit": 34345579,
-          "cost": 2925000,
+          "net_benefit": 37588585,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -961,8 +985,8 @@
           "success_multiplier": 1.25,
           "basic_success": 0.25,
           "premium_success": 0.625,
-          "net_benefit": 43663224,
-          "cost": 2925000,
+          "net_benefit": 47735734,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -970,8 +994,8 @@
           "success_multiplier": 1.5,
           "basic_success": 0.3,
           "premium_success": 0.75,
-          "net_benefit": 52980869,
-          "cost": 2925000,
+          "net_benefit": 57882878,
+          "cost": 3000000,
           "customers": 10
         },
         {
@@ -979,8 +1003,8 @@
           "success_multiplier": 1.75,
           "basic_success": 0.35,
           "premium_success": 0.875,
-          "net_benefit": 62298514,
-          "cost": 2925000,
+          "net_benefit": 68030025,
+          "cost": 3000000,
           "customers": 10
         }
       ],
@@ -989,32 +1013,29 @@
         "success_multiplier": 1.0,
         "basic_success": 0.2,
         "premium_success": 0.5,
-        "net_benefit": 15710290,
-        "cost": 2925000,
+        "net_benefit": 17294291,
+        "cost": 3000000,
         "customers": 10
       },
-      "breakeven_multiplier": 0.1288,
+      "breakeven_multiplier": 0.1294,
       "breakeven_success": {
-        "basic": 0.0258,
-        "premium": 0.0644
+        "basic": 0.0259,
+        "premium": 0.0647
       },
       "note": "Each point re-plans under identical constraints. Break-even is the smallest multiplier at which the re-planned net benefit turns positive, found by bisection on the plan itself: plan composition changes between grid points, so a straight line between them would misplace it. Below it the same spend destroys assumed value."
     },
     "optimisation": {
-      "greedy_net_benefit": 15710290.0,
-      "reviews_in_plan": 3,
-      "review_cost": 75000,
-      "exact_same_reviews_net_benefit": 15710290.0,
+      "plan_net_benefit": 17294291.0,
+      "reviews_in_plan": 0,
+      "review_cost": 0,
+      "exact_same_reviews_net_benefit": 17294291.0,
       "algorithm_gap_absolute": 0.0,
       "algorithm_gap_pct": 0.0,
-      "exact_offers_only_net_benefit": 17382350.0,
+      "exact_offers_only_net_benefit": 17294291.0,
       "exact_offers_only_customers": 10,
-      "review_reservation_cost": 1672060.0,
-      "review_hurdle": {
-        "extra_retained_customers": 0.2787,
-        "per_review_retention_points": 9.29
-      },
-      "note": "Algorithm gap compares the greedy offer allocation with the exact optimum under the same budget, capacity and the same service reviews. Reservation cost is the scenario value an offers-only optimum would add by dropping those reviews; reviews have unmeasured benefit, so this is the price of a business rule, not a weakness of the allocator. The review hurdle is the extra retention the reviews would need, at the assumed retained value, to repay it: a target for a service test, not evidence that reviews work."
+      "review_reservation_cost": 0.0,
+      "review_hurdle": null,
+      "note": "Algorithm gap checks the dynamic-programming plan against an independent MILP under the same budget, capacity and the same service reviews. Reservation cost is the scenario value an offers-only optimum would add by dropping those reviews; reviews have unmeasured benefit, so this is the price of a business rule, not a weakness of the allocator. The review hurdle is the extra retention the reviews would need, at the assumed retained value, to repay it: a target for a service test, not evidence that reviews work."
     },
     "strategies": {
       "settings": {
@@ -1024,7 +1045,35 @@
       "rows": [
         {
           "strategy": "policy_plan",
-          "label": "Policy plan: reviews first, then offers",
+          "label": "Pilot candidate: exact mixed offers",
+          "customers": 10,
+          "actions": {
+            "basic_offer": 5,
+            "premium_offer": 5
+          },
+          "cost": 3000000,
+          "expected_saves": 3.382,
+          "scenario_net_benefit": 17294291,
+          "churners_reached": 9,
+          "blocked_by_policy": 0
+        },
+        {
+          "strategy": "offers_only",
+          "label": "Exact mixed offers, no review slots",
+          "customers": 10,
+          "actions": {
+            "basic_offer": 5,
+            "premium_offer": 5
+          },
+          "cost": 3000000,
+          "expected_saves": 3.382,
+          "scenario_net_benefit": 17294291,
+          "churners_reached": 9,
+          "blocked_by_policy": 0
+        },
+        {
+          "strategy": "review_reservation",
+          "label": "Optional constraint: 30% review slots",
           "customers": 10,
           "actions": {
             "billing_review": 3,
@@ -1032,23 +1081,9 @@
             "basic_offer": 1
           },
           "cost": 2925000,
-          "expected_saves": 3.106,
-          "scenario_net_benefit": 15710290,
-          "churners_reached": 8,
-          "blocked_by_policy": 0
-        },
-        {
-          "strategy": "offers_only",
-          "label": "Mixed offers, no review slots",
-          "customers": 10,
-          "actions": {
-            "premium_offer": 5,
-            "basic_offer": 5
-          },
-          "cost": 3000000,
-          "expected_saves": 3.397,
-          "scenario_net_benefit": 17382350,
-          "churners_reached": 10,
+          "expected_saves": 3.093,
+          "scenario_net_benefit": 15635006,
+          "churners_reached": 7,
           "blocked_by_policy": 0
         },
         {
@@ -1059,8 +1094,8 @@
             "premium_offer": 6
           },
           "cost": 2700000,
-          "expected_saves": 2.912,
-          "scenario_net_benefit": 14770584,
+          "expected_saves": 2.885,
+          "scenario_net_benefit": 14607858,
           "churners_reached": 6,
           "blocked_by_policy": 0
         },
@@ -1072,39 +1107,41 @@
             "basic_offer": 10
           },
           "cost": 1500000,
-          "expected_saves": 1.941,
-          "scenario_net_benefit": 10147060,
+          "expected_saves": 1.925,
+          "scenario_net_benefit": 10047429,
           "churners_reached": 10,
           "blocked_by_policy": 0
         }
       ],
       "uncapped_threshold_rule": {
         "with_policy_checks": {
-          "customers": 43,
+          "customers": 47,
           "actions": {
-            "premium_offer": 43
+            "basic_offer": 7,
+            "premium_offer": 40
           },
-          "cost": 19350000,
-          "expected_saves": 18.823,
-          "scenario_net_benefit": 93588360,
+          "cost": 19050000,
+          "expected_saves": 18.95,
+          "scenario_net_benefit": 94652691,
           "churners_reached": 38,
           "blocked_by_policy": 0
         },
         "without_policy_checks": {
           "customers": 53,
           "actions": {
-            "premium_offer": 53
+            "basic_offer": 11,
+            "premium_offer": 42
           },
-          "cost": 23850000,
-          "expected_saves": 20.037,
-          "scenario_net_benefit": 96374082,
-          "churners_reached": 41,
-          "blocked_by_policy": 10,
-          "blocked_churners": 3
+          "cost": 20550000,
+          "expected_saves": 19.356,
+          "scenario_net_benefit": 95586975,
+          "churners_reached": 39,
+          "blocked_by_policy": 6,
+          "blocked_churners": 1
         }
       },
-      "review_share": 0.3,
-      "note": "Rows share the budget, capacity and eligibility rules of the shipped plan; only the offers-only row drops the review reservation, so its gap to the policy plan is the scenario price of reserving slots for reviews whose benefit is unmeasured. The uncapped threshold rule gives every customer their best positive offer with no budget; without the policy checks it would send offers to customers whose recent service or billing contact must be reviewed first."
+      "review_share": 0,
+      "note": "Rows share budget, capacity and eligibility rules. The pilot candidate defaults to no review slots; the 30% review sensitivity shows the scenario price of reserving slots for reviews whose benefit is unmeasured. The uncapped threshold rule gives every customer their best positive offer with no budget; without the policy checks it would send offers to customers whose recent service or billing contact must be reviewed first."
     },
     "premium_stress": {
       "settings": {
@@ -1115,110 +1152,110 @@
       "rows": [
         {
           "premium_success": 0.2,
-          "policy_plan": 7027942,
-          "premium_by_risk": 4288236,
-          "basic_by_risk": 10147060
+          "policy_plan": 10094286,
+          "premium_by_risk": 4223143,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.225,
-          "policy_plan": 7027942,
-          "premium_by_risk": 5161764,
-          "basic_by_risk": 10147060
+          "policy_plan": 10094286,
+          "premium_by_risk": 5088536,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.25,
-          "policy_plan": 7027942,
-          "premium_by_risk": 6035292,
-          "basic_by_risk": 10147060
+          "policy_plan": 10094286,
+          "premium_by_risk": 5953930,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.275,
-          "policy_plan": 7848526,
-          "premium_by_risk": 6908820,
-          "basic_by_risk": 10147060
+          "policy_plan": 10769291,
+          "premium_by_risk": 6819322,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.3,
-          "policy_plan": 8722054,
-          "premium_by_risk": 7782348,
-          "basic_by_risk": 10147060
+          "policy_plan": 11494291,
+          "premium_by_risk": 7684715,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.325,
-          "policy_plan": 9595588,
-          "premium_by_risk": 8655882,
-          "basic_by_risk": 10147060
+          "policy_plan": 12219291,
+          "premium_by_risk": 8550108,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.35,
-          "policy_plan": 10469116,
-          "premium_by_risk": 9529410,
-          "basic_by_risk": 10147060
+          "policy_plan": 12944291,
+          "premium_by_risk": 9415501,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.375,
-          "policy_plan": 11342644,
-          "premium_by_risk": 10402938,
-          "basic_by_risk": 10147060
+          "policy_plan": 13669291,
+          "premium_by_risk": 10280894,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.4,
-          "policy_plan": 12216172,
-          "premium_by_risk": 11276466,
-          "basic_by_risk": 10147060
+          "policy_plan": 14394291,
+          "premium_by_risk": 11146286,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.425,
-          "policy_plan": 13089700,
-          "premium_by_risk": 12149994,
-          "basic_by_risk": 10147060
+          "policy_plan": 15119291,
+          "premium_by_risk": 12011679,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.45,
-          "policy_plan": 13963234,
-          "premium_by_risk": 13023528,
-          "basic_by_risk": 10147060
+          "policy_plan": 15844291,
+          "premium_by_risk": 12877072,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.475,
-          "policy_plan": 14836762,
-          "premium_by_risk": 13897056,
-          "basic_by_risk": 10147060
+          "policy_plan": 16569291,
+          "premium_by_risk": 13742465,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.5,
-          "policy_plan": 15710290,
-          "premium_by_risk": 14770584,
-          "basic_by_risk": 10147060
+          "policy_plan": 17294291,
+          "premium_by_risk": 14607858,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.525,
-          "policy_plan": 16583818,
-          "premium_by_risk": 15644112,
-          "basic_by_risk": 10147060
+          "policy_plan": 18019291,
+          "premium_by_risk": 15473251,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.55,
-          "policy_plan": 17457346,
-          "premium_by_risk": 16517640,
-          "basic_by_risk": 10147060
+          "policy_plan": 18744291,
+          "premium_by_risk": 16338644,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.575,
-          "policy_plan": 18330880,
-          "premium_by_risk": 17391174,
-          "basic_by_risk": 10147060
+          "policy_plan": 19469291,
+          "premium_by_risk": 17204037,
+          "basic_by_risk": 10047429
         },
         {
           "premium_success": 0.6,
-          "policy_plan": 19204408,
-          "premium_by_risk": 18264702,
-          "basic_by_risk": 10147060
+          "policy_plan": 20200006,
+          "premium_by_risk": 18069430,
+          "basic_by_risk": 10047429
         }
       ],
-      "policy_beats_basic_above": 0.3408,
-      "premium_beats_basic_above": 0.3677,
-      "note": "Below the first crossing, basic offers to the highest-risk customers beat the policy plan: the review slots displace basic offers while review benefit is counted as zero."
+      "policy_beats_basic_above": null,
+      "premium_beats_basic_above": 0.3683,
+      "note": "The exact mixed-offer plan can match the basic-only plan when premium prevention is too low. A required review quota can displace offers; review benefit is counted as zero."
     },
     "decision_curve": [
       {
@@ -1352,16 +1389,16 @@
   "targeting": {
     "top_capacity": {
       "n": 10,
-      "mean_risk": 0.9706,
-      "expected_saves": 4.85,
-      "cost_per_expected_save": 927273,
+      "mean_risk": 0.9623,
+      "expected_saves": 4.81,
+      "cost_per_expected_save": 935273,
       "share_with_recent_service_contact": 0.0
     },
     "cohort": {
       "n": 208,
-      "mean_risk": 0.1974,
-      "expected_saves": 20.53,
-      "cost_per_expected_save": 4558972,
+      "mean_risk": 0.2025,
+      "expected_saves": 21.06,
+      "cost_per_expected_save": 4444546,
       "share_with_recent_service_contact": 0.135
     },
     "note": "Risk x assumed success is a targeting proxy, not measured uplift. The share with a recent technical or billing contact marks where a service check may come before a discount; resolution status is unknown, so verify the current issue status, and no recorded contact does not mean no service problem. Only a randomised holdout can confirm responsiveness."
@@ -1370,20 +1407,33 @@
     "name": "offer-policy pilot",
     "population": "Offer-eligible customers (no recent service/billing contact, not blocked) with risk at or above the basic-offer break-even.",
     "offer_breakeven_risk": 0.125,
-    "population_in_cohort": 43,
-    "population_share_of_cohort": 0.2067,
-    "observed_30d_churn_in_population": 0.8837209302325582,
+    "population_in_cohort": 47,
+    "population_share_of_cohort": 0.226,
+    "observed_30d_churn_in_population": 0.8085106382978723,
     "horizon": "90-day",
+    "validation_sequence": "Develop the score, calibration and policy through month T; freeze the combined artifacts, then score an untouched complete T+1 cohort and assess mature outcomes. Subsequent refitting requires a new untouched validation cohort.",
+    "comparator": "Frozen current retention practice (BAU), including incumbent campaigns, offers, costs, service obligations and suppression rules; use the same comparator in the post-rollout holdout.",
+    "attribution": "Hold score source, eligibility, budget and capacity constant when comparing allocation policies. Define experimental additions separately from incumbent actions.",
+    "recruitment": {
+      "eligible_target": 1400,
+      "illustrative_scored_customers": {
+        "10pct_eligible": 14000,
+        "20pct_eligible": 7000,
+        "30pct_eligible": 4667
+      },
+      "note": "Arithmetic illustrations, not a forecast from the selected cohort. Measure unique-customer live eligibility and consent, then recompute power with frozen mix, treatment fraction, BAU costs and baseline."
+    },
+    "value_definition": "Rp6M is an assumed value per sustained save, with horizon and contribution meaning to be defined by finance. Ninety-day retention alone does not establish that value; report realized incremental margin separately.",
     "horizon_bridge": "The model predicts 30-day churn. Read 30-day churn as a secondary outcome and check the score's calibration in the control arm only, since the offer changes outcomes in the other arm; the control arm covers only the offer-eligible part of the score range. 90-day churn is primary so offers that only delay churn are not counted as saves.",
     "breakeven_definition": "Incremental cost per randomised customer in the policy arm (offers, contact and operating costs, net of business-as-usual costs) divided by the retained value. Freeze the policy, its budget and capacity per eligible customer, and compute this before launch.",
     "premium_breakeven_absolute_reduction": 0.075,
     "plan_offer_mix": {
       "actions": {
-        "basic_offer": 1,
-        "premium_offer": 6
+        "basic_offer": 5,
+        "premium_offer": 5
       },
-      "average_offer_cost": 407143,
-      "breakeven_absolute_reduction": 0.0679
+      "average_offer_cost": 300000,
+      "breakeven_absolute_reduction": 0.05
     },
     "planned_per_arm": 693,
     "interval_at_breakeven_effect": {
@@ -1487,7 +1537,10 @@
     "note": "The 30-day rate is retrospective, measured on out-of-fold scores in an outcome-selected cohort, so 90-day baselines are planning values to replace with the live population's rate. For a fixed absolute effect the required sample is largest near 50% churn, so sizing at 0.5 is conservative."
   },
   "manifest": {
+    "run_id": "0644977f6cd5dcf877b16d679d1f47a45391a57e73368c2db785d55f00cfd2c0",
+    "schema_version": "retention-artifacts-v2",
     "snapshot": "2025-11-01",
+    "horizon_end_exclusive": "2025-12-01",
     "seed": 42,
     "features": [
       "tenureMonths",
@@ -1502,12 +1555,66 @@
     ],
     "model_version": "lr-oof-v1-seed42",
     "calibrator_version": "smoothed-isotonic-v1",
-    "policy_version": "retention-v2",
+    "policy_version": "retention-v3",
     "code_sha256": {
-      "retention/analysis.py": "73b10d874317776f0b4d54b609beb9436dd090e54f7c8c148d59dbaa756e369c",
-      "retention/decisions.py": "0668cf8c0f986fb1a337b538dd8083f1aa12eab92aac3b210677842c87ce6499",
-      "retention/policy.py": "a89400b3e807cf7b67a044eb3b8816ff7591921eee7c5456e32b0f9c000a9da5",
-      "web/policy.js": "be278eb89089fb99e17289ef25bc581cc02b6c1f5691b34bec31b4ce841485f5"
+      "retention/analysis.py": "5e17dcd6ab5ef2c32ab18270cc1a418236d28c6e0ce22cce9e0445d0da507fdf",
+      "retention/decisions.py": "0e5acf21d85d8138780358bf737538f22192189d2f2ac910045b94a234e300fd",
+      "retention/policy.py": "eac7bf0d178ca573934fda2dec2ea849d41957f029c1af2ce4ad2284c653bef4",
+      "web/policy.js": "ce8c1b4d486d4c213ff7a79933e7eef6dc659fb2471fc67f40d9088f247820e3"
+    },
+    "input_sha256": {
+      "data/customer_base.csv": "b830844bae5ba610b60ff62dfcdc039241d2c4125983035ff75bdf08c95d7110",
+      "data/service_usage.csv": "edec410d761c6ba5a87d7bdedcfcb1fa5d8f96a27fab883cdf16fbd11346a045",
+      "data/support_interactions.csv": "fca0edd4eb90c10a422c78db8446f0a804128d4059032646b86b2355544a3b1d"
+    },
+    "dependency_sha256": {
+      "pyproject.toml": "41a9a3cb10e3978f0f1390ee6033fcfcec9a9c516a1dc52eb4b1819694ede48a",
+      "uv.lock": "864b2307e8e984856100774de4d3ca53441aa727fe7b3e10525f5b9580da1677",
+      "package.json": "7de604baa5d63eaf3c1ab2bae4525d4f133cf6cec2b0ebd66769e0303d58d3e8",
+      "package-lock.json": "a1bbe3e10f08bf349860e796a52c09068b7a95a566cf7994d043278ddfc251fd"
+    },
+    "input_schema": {
+      "data/customer_base.csv": [
+        "customerId",
+        "gender",
+        "age",
+        "partner",
+        "dependents",
+        "region",
+        "contractType",
+        "paperlessBilling",
+        "paymentMethod",
+        "churnDate"
+      ],
+      "data/service_usage.csv": [
+        "customerId",
+        "yearMonth",
+        "tenureMonths",
+        "monthlyCharges",
+        "totalCharges",
+        "hasPhoneService",
+        "hasInternetService",
+        "dataUsageGB"
+      ],
+      "data/support_interactions.csv": [
+        "customerId",
+        "interactionDate",
+        "interactionType",
+        "supportTopic",
+        "resolutionStatus"
+      ]
+    },
+    "extraction_timestamp": null,
+    "extraction_note": "Source extraction timestamp was not supplied; snapshot is an analytical assumption.",
+    "policy_settings": {
+      "budget": 3000000,
+      "max_customers": 10,
+      "retained_value": 6000000,
+      "basic_success": 0.2,
+      "premium_success": 0.5,
+      "prioritize_technical": true,
+      "review_share": 0
     }
-  }
+  },
+  "run_id": "0644977f6cd5dcf877b16d679d1f47a45391a57e73368c2db785d55f00cfd2c0"
 }

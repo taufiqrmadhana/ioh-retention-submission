@@ -120,7 +120,7 @@ function simulationCard(sim, index) {
     .map(([k, n]) => `${n} ${ACTION_LABELS[k] ?? k}`)
     .join(" · ");
   return `<div class="sim-card">
-    <div class="sim-head"><span>Simulation · retention-v2</span><small>not saved</small></div>
+    <div class="sim-head"><span>Simulation · retention-v3</span><small>not saved</small></div>
     <dl>
       <div><dt>Budget</dt><dd>${money(s.budget)}</dd></div>
       <div><dt>Customers</dt><dd>${sim.customers} / ${s.maxCustomers}</dd></div>

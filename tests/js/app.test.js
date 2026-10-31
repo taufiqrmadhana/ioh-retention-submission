@@ -116,3 +116,33 @@ test("an empty or out-of-range assumption keeps the last valid settings", { skip
   assert.deepEqual(errors, []);
   await page.close();
 });
+
+test("scope controls persist and accompany agent requests; evidence renders held-out pricing", { skip }, async () => {
+  const page = await browser.newPage();
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.route("**/api/bootstrap", (route) => route.fulfill({ json: { intelligence: { customers: INTELLIGENCE }, report, agent_available: true, model: "test" } }));
+  let requested;
+  await page.route("**/api/agent", async (route) => {
+    requested = route.request().postDataJSON();
+    await route.fulfill({ json: { plan: null, outcome: { status: "no_plan_submitted", summary: "Evaluation fixture" }, answer: "Fixture", claim_flags: [] } });
+  });
+  await page.goto(`${origin}/#agent`);
+  await page.waitForSelector("[data-agent-scope=region]");
+  const region = INTELLIGENCE[0].region;
+  await page.selectOption("[data-agent-scope=region]", region);
+  await page.selectOption("[data-agent-scope=focus]", "no_contact");
+  await visit(page, "evidence");
+  assert.match(await page.textContent("main"), /Historical replay uses nested held-out calibrated risk/);
+  assert.doesNotMatch(await page.textContent("main"), /undefined|NaN/);
+  await visit(page, "agent");
+  assert.equal(await page.inputValue("[data-agent-scope=region]"), region);
+  await page.fill("#agent-prompt", "Prepare a plan using the selected scope controls.");
+  await page.click("#run-agent");
+  await page.waitForFunction(() => !document.querySelector("#run-agent").disabled);
+  assert.deepEqual(requested.scope, { focus: "no_contact", region, internet: "any" });
+  await page.click(".suggestion[data-focus=billing]");
+  assert.equal(await page.inputValue("[data-agent-scope=focus]"), "billing");
+  assert.deepEqual(errors, []);
+  await page.close();
+});

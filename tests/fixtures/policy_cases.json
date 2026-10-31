@@ -304,6 +304,81 @@
    "expected": {
     "items": [
      [
+      "CAL-A",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-C",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "CAL-B",
+      "premium_offer",
+      450000,
+      2400000
+     ],
+     [
+      "C00",
+      "premium_offer",
+      450000,
+      2250000
+     ],
+     [
+      "C01",
+      "premium_offer",
+      450000,
+      2160000
+     ],
+     [
+      "C02",
+      "basic_offer",
+      150000,
+      858000
+     ],
+     [
+      "C03",
+      "basic_offer",
+      150000,
+      822000
+     ],
+     [
+      "C04",
+      "basic_offer",
+      150000,
+      786000
+     ],
+     [
+      "C05",
+      "basic_offer",
+      150000,
+      750000
+     ],
+     [
+      "C06",
+      "basic_offer",
+      150000,
+      714000
+     ]
+    ],
+    "total_cost": 3000000,
+    "remaining_budget": 0,
+    "scenario_net_benefit": 15540000,
+    "scenario_prevented_churn": 3.09
+   }
+  },
+  {
+   "name": "reserved_reviews",
+   "customers": "synthetic",
+   "settings": {
+    "review_share": 0.3
+   },
+   "expected": {
+    "items": [
+     [
       "T1",
       "technical_review",
       50000,
@@ -371,6 +446,35 @@
    }
   },
   {
+   "name": "exact_reallocation",
+   "customers": "intelligence",
+   "settings": {
+    "budget": 600000,
+    "max_customers": 3,
+    "review_share": 0.3
+   },
+   "expected": {
+    "items": [
+     [
+      "IOH-160",
+      "billing_review",
+      25000,
+      null
+     ],
+     [
+      "IOH-521",
+      "premium_offer",
+      450000,
+      2450001
+     ]
+    ],
+    "total_cost": 475000,
+    "remaining_budget": 125000,
+    "scenario_net_benefit": 2425001,
+    "scenario_prevented_churn": 0.4833335
+   }
+  },
+  {
    "name": "tight_budget",
    "customers": "synthetic",
    "settings": {
@@ -378,17 +482,10 @@
     "max_customers": 5
    },
    "expected": {
-    "items": [
-     [
-      "T1",
-      "technical_review",
-      50000,
-      null
-     ]
-    ],
-    "total_cost": 50000,
-    "remaining_budget": 99999,
-    "scenario_net_benefit": -50000,
+    "items": [],
+    "total_cost": 0,
+    "remaining_budget": 149999,
+    "scenario_net_benefit": 0,
     "scenario_prevented_churn": 0.0
    }
   },
@@ -402,16 +499,16 @@
    "expected": {
     "items": [
      [
-      "T1",
-      "technical_review",
-      50000,
-      null
+      "CAL-A",
+      "premium_offer",
+      450000,
+      2400000
      ]
     ],
-    "total_cost": 50000,
-    "remaining_budget": 2950000,
-    "scenario_net_benefit": -50000,
-    "scenario_prevented_churn": 0.0
+    "total_cost": 450000,
+    "remaining_budget": 2550000,
+    "scenario_net_benefit": 2400000,
+    "scenario_prevented_churn": 0.475
    }
   },
   {
@@ -424,12 +521,6 @@
    "expected": {
     "items": [
      [
-      "T1",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
       "CAL-A",
       "premium_offer",
       450000,
@@ -440,12 +531,18 @@
       "premium_offer",
       450000,
       2400000
+     ],
+     [
+      "CAL-B",
+      "premium_offer",
+      450000,
+      2400000
      ]
     ],
-    "total_cost": 950000,
-    "remaining_budget": 400000,
-    "scenario_net_benefit": 4750000,
-    "scenario_prevented_churn": 0.95
+    "total_cost": 1350000,
+    "remaining_budget": 0,
+    "scenario_net_benefit": 7200000,
+    "scenario_prevented_churn": 1.4249999999999998
    }
   },
   {
@@ -457,30 +554,6 @@
    },
    "expected": {
     "items": [
-     [
-      "T1",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "B1",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "B2",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "T2",
-      "technical_review",
-      50000,
-      null
-     ],
      [
       "CAL-A",
       "premium_offer",
@@ -546,12 +619,18 @@
       "basic_offer",
       150000,
       678000
+     ],
+     [
+      "C08",
+      "basic_offer",
+      150000,
+      642000
      ]
     ],
     "total_cost": 3000000,
     "remaining_budget": 0,
-    "scenario_net_benefit": 14802000,
-    "scenario_prevented_churn": 2.967
+    "scenario_net_benefit": 15594000,
+    "scenario_prevented_churn": 3.099
    }
   },
   {
@@ -563,30 +642,6 @@
    },
    "expected": {
     "items": [
-     [
-      "T1",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "T2",
-      "technical_review",
-      50000,
-      null
-     ],
-     [
-      "B1",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "B2",
-      "billing_review",
-      25000,
-      null
-     ],
      [
       "CAL-A",
       "premium_offer",
@@ -682,12 +737,30 @@
       "premium_offer",
       450000,
       1170000
+     ],
+     [
+      "C13",
+      "premium_offer",
+      450000,
+      1080000
+     ],
+     [
+      "TIE-A",
+      "premium_offer",
+      450000,
+      1050000
+     ],
+     [
+      "TIE-B",
+      "premium_offer",
+      450000,
+      1050000
      ]
     ],
-    "total_cost": 7350000,
-    "remaining_budget": 2650000,
-    "scenario_net_benefit": 29280000,
-    "scenario_prevented_churn": 6.105
+    "total_cost": 8550000,
+    "remaining_budget": 1450000,
+    "scenario_net_benefit": 32610000,
+    "scenario_prevented_churn": 6.86
    }
   },
   {
@@ -727,70 +800,70 @@
    "expected": {
     "items": [
      [
-      "IOH-565",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-198",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-067",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-430",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-581",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-630",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-701",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
       "IOH-561",
-      "premium_offer",
-      450000,
-      2461764
+      "basic_offer",
+      150000,
+      1007143
      ],
      [
       "IOH-521",
       "premium_offer",
       450000,
-      2461764
+      2450001
      ],
      [
       "IOH-541",
       "basic_offer",
       150000,
-      1014706
+      1007143
+     ],
+     [
+      "IOH-621",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-321",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-230",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-140",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-434",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-668",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-085",
+      "basic_offer",
+      150000,
+      1010000
      ]
     ],
-    "total_cost": 2925000,
-    "remaining_budget": 75000,
-    "scenario_net_benefit": 15710290,
-    "scenario_prevented_churn": 3.1058816
+    "total_cost": 3000000,
+    "remaining_budget": 0,
+    "scenario_net_benefit": 17294291,
+    "scenario_prevented_churn": 3.382382100000001
    }
   },
   {
@@ -803,130 +876,130 @@
    "expected": {
     "items": [
      [
-      "IOH-565",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-198",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-067",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-167",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-195",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-365",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-430",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-581",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-630",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-701",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
       "IOH-561",
       "premium_offer",
       450000,
-      2461764
+      2442858
      ],
      [
       "IOH-521",
       "premium_offer",
       450000,
-      2461764
+      2450001
      ],
      [
       "IOH-541",
       "premium_offer",
       450000,
-      2461764
-     ],
-     [
-      "IOH-501",
-      "premium_offer",
-      450000,
-      2461764
+      2442858
      ],
      [
       "IOH-621",
       "premium_offer",
       450000,
-      2461764
+      2450001
      ],
      [
       "IOH-421",
       "premium_offer",
       450000,
-      2461764
+      2442858
      ],
      [
       "IOH-681",
       "premium_offer",
       450000,
-      2461764
-     ],
-     [
-      "IOH-481",
-      "premium_offer",
-      450000,
-      2461764
+      2442858
      ],
      [
       "IOH-401",
       "premium_offer",
       450000,
-      2461764
+      2442858
      ],
      [
       "IOH-601",
       "premium_offer",
       450000,
-      2461764
+      2442858
+     ],
+     [
+      "IOH-321",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-361",
+      "premium_offer",
+      450000,
+      2434614
+     ],
+     [
+      "IOH-301",
+      "premium_offer",
+      450000,
+      2434614
+     ],
+     [
+      "IOH-230",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-101",
+      "premium_offer",
+      450000,
+      2434614
+     ],
+     [
+      "IOH-140",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-605",
+      "premium_offer",
+      450000,
+      2434614
+     ],
+     [
+      "IOH-634",
+      "premium_offer",
+      450000,
+      2442858
+     ],
+     [
+      "IOH-434",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-668",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-085",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-647",
+      "premium_offer",
+      450000,
+      2434614
      ]
     ],
-    "total_cost": 6450000,
-    "remaining_budget": 3550000,
-    "scenario_net_benefit": 34314696,
-    "scenario_prevented_churn": 6.794115999999999
+    "total_cost": 9000000,
+    "remaining_budget": 1000000,
+    "scenario_net_benefit": 48873084,
+    "scenario_prevented_churn": 9.645513999999999
    }
   },
   {
@@ -939,70 +1012,70 @@
    "expected": {
     "items": [
      [
-      "IOH-430",
-      "basic_offer",
-      150000,
-      18882
-     ],
-     [
-      "IOH-581",
-      "basic_offer",
-      150000,
-      18882
-     ],
-     [
-      "IOH-630",
-      "basic_offer",
-      150000,
-      18882
-     ],
-     [
-      "IOH-701",
-      "basic_offer",
-      150000,
-      18882
-     ],
-     [
       "IOH-561",
       "basic_offer",
       150000,
-      18882
+      17786
      ],
      [
       "IOH-521",
       "basic_offer",
       150000,
-      18882
+      18200
      ],
      [
       "IOH-541",
       "basic_offer",
       150000,
-      18882
-     ],
-     [
-      "IOH-501",
-      "basic_offer",
-      150000,
-      18882
+      17786
      ],
      [
       "IOH-621",
       "basic_offer",
       150000,
-      18882
+      18200
      ],
      [
-      "IOH-421",
+      "IOH-321",
       "basic_offer",
       150000,
-      18882
+      18200
+     ],
+     [
+      "IOH-230",
+      "basic_offer",
+      150000,
+      18200
+     ],
+     [
+      "IOH-140",
+      "basic_offer",
+      150000,
+      18200
+     ],
+     [
+      "IOH-434",
+      "basic_offer",
+      150000,
+      18200
+     ],
+     [
+      "IOH-668",
+      "basic_offer",
+      150000,
+      18200
+     ],
+     [
+      "IOH-085",
+      "basic_offer",
+      150000,
+      18200
      ]
     ],
     "total_cost": 1500000,
     "remaining_budget": 1500000,
-    "scenario_net_benefit": 188820,
-    "scenario_prevented_churn": 0.28147052
+    "scenario_net_benefit": 181172,
+    "scenario_prevented_churn": 0.28019533199999996
    }
   },
   {
@@ -1015,70 +1088,70 @@
    "expected": {
     "items": [
      [
-      "IOH-565",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-198",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-067",
-      "billing_review",
-      25000,
-      null
-     ],
-     [
-      "IOH-430",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-581",
-      "basic_offer",
-      150000,
-      1014706
-     ],
-     [
-      "IOH-630",
-      "basic_offer",
-      150000,
-      1014706
-     ],
-     [
-      "IOH-701",
-      "basic_offer",
-      150000,
-      1014706
-     ],
-     [
       "IOH-561",
       "basic_offer",
       150000,
-      1014706
+      1007143
      ],
      [
       "IOH-521",
       "basic_offer",
       150000,
-      1014706
+      1010000
      ],
      [
       "IOH-541",
       "basic_offer",
       150000,
-      1014706
+      1007143
+     ],
+     [
+      "IOH-621",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-321",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-230",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-140",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-434",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-668",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-085",
+      "basic_offer",
+      150000,
+      1010000
      ]
     ],
-    "total_cost": 1425000,
-    "remaining_budget": 75000,
-    "scenario_net_benefit": 8475000,
-    "scenario_prevented_churn": 1.6499996
+    "total_cost": 1500000,
+    "remaining_budget": 0,
+    "scenario_net_benefit": 10094286,
+    "scenario_prevented_churn": 1.9323816
    }
   },
   {
@@ -1090,70 +1163,70 @@
    "expected": {
     "items": [
      [
-      "IOH-430",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-581",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-630",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-701",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
       "IOH-561",
-      "premium_offer",
-      450000,
-      2461764
+      "basic_offer",
+      150000,
+      1007143
      ],
      [
       "IOH-521",
-      "basic_offer",
-      150000,
-      1014706
+      "premium_offer",
+      450000,
+      2450001
      ],
      [
       "IOH-541",
       "basic_offer",
       150000,
-      1014706
-     ],
-     [
-      "IOH-501",
-      "basic_offer",
-      150000,
-      1014706
+      1007143
      ],
      [
       "IOH-621",
-      "basic_offer",
-      150000,
-      1014706
+      "premium_offer",
+      450000,
+      2450001
      ],
      [
-      "IOH-421",
+      "IOH-321",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-230",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-140",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-434",
       "basic_offer",
       150000,
-      1014706
+      1010000
+     ],
+     [
+      "IOH-668",
+      "basic_offer",
+      150000,
+      1010000
+     ],
+     [
+      "IOH-085",
+      "basic_offer",
+      150000,
+      1010000
      ]
     ],
     "total_cost": 3000000,
     "remaining_budget": 0,
-    "scenario_net_benefit": 17382350,
-    "scenario_prevented_churn": 3.3970580000000012
+    "scenario_net_benefit": 17294291,
+    "scenario_prevented_churn": 3.382382100000001
    }
   },
   {
@@ -1166,82 +1239,82 @@
    "expected": {
     "items": [
      [
-      "IOH-565",
+      "IOH-160",
       "billing_review",
       25000,
       null
      ],
      [
-      "IOH-198",
+      "IOH-095",
       "billing_review",
       25000,
       null
      ],
      [
-      "IOH-067",
+      "IOH-046",
       "billing_review",
       25000,
       null
      ],
      [
-      "IOH-167",
+      "IOH-025",
       "billing_review",
       25000,
       null
      ],
      [
-      "IOH-195",
+      "IOH-146",
       "billing_review",
       25000,
       null
      ],
      [
-      "IOH-365",
+      "IOH-021",
       "billing_review",
       25000,
       null
-     ],
-     [
-      "IOH-430",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-581",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-630",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-701",
-      "premium_offer",
-      450000,
-      2461764
-     ],
-     [
-      "IOH-561",
-      "premium_offer",
-      450000,
-      2461764
      ],
      [
       "IOH-521",
       "premium_offer",
       450000,
-      2461764
+      2450001
+     ],
+     [
+      "IOH-621",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-321",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-230",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-140",
+      "premium_offer",
+      450000,
+      2450001
+     ],
+     [
+      "IOH-434",
+      "premium_offer",
+      450000,
+      2450001
      ]
     ],
     "total_cost": 2850000,
     "remaining_budget": 150000,
-    "scenario_net_benefit": 14620584,
-    "scenario_prevented_churn": 2.9117640000000002
+    "scenario_net_benefit": 14550006,
+    "scenario_prevented_churn": 2.900001
    }
   },
   {
@@ -1690,7 +1763,7 @@
   }
  ],
  "mutations": {
-  "plan": "defaults",
+  "plan": "reserved_reviews",
   "cases": [
    {
     "name": "prevented_missing",

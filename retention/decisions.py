@@ -171,16 +171,11 @@ def _best_offers(customers, config, budget, capacity, exclude=()):
 
 
 def optimisation_gap(customers, base=None):
-    """Split what the greedy plan leaves behind into an algorithm gap and a policy choice.
-
-    Algorithm gap: exact optimum with the policy's own service reviews held fixed, so
-    only the offer allocation can differ. Reservation cost: an offers-only optimum
-    versus that, i.e. the scenario value the review reservation gives up by design.
-    """
+    """Check the exact planner against an independent MILP, with reviews held fixed."""
     config = policy.settings(base)
-    greedy = policy.build_plan(customers, config)
-    greedy_net = float(greedy["scenario_net_benefit"])
-    reviews = [i for i in greedy["items"] if i["action"] not in OFFERS]
+    plan = policy.build_plan(customers, config)
+    plan_net = float(plan["scenario_net_benefit"])
+    reviews = [i for i in plan["items"] if i["action"] not in OFFERS]
     review_cost = sum(i["cost"] for i in reviews)
     same = _best_offers(
         customers,
@@ -192,21 +187,21 @@ def optimisation_gap(customers, base=None):
     free = _best_offers(customers, config, config["budget"], config["max_customers"])
     if not (same["solved"] and free["solved"]):
         return {
-            "greedy_net_benefit": greedy_net,
+            "plan_net_benefit": plan_net,
             "note": f"Exact allocation not solved: {same['message'] or free['message']}",
         }
     exact_same = same["value"] - review_cost
-    gap = exact_same - greedy_net
+    gap = exact_same - plan_net
     reservation = free["value"] - exact_same
     # Retained customers the reviews must add between them to repay what they displace.
     hurdle = reservation / config["retained_value"] if config["retained_value"] else None
     return {
-        "greedy_net_benefit": round(greedy_net, 2),
+        "plan_net_benefit": round(plan_net, 2),
         "reviews_in_plan": len(reviews),
         "review_cost": review_cost,
         "exact_same_reviews_net_benefit": round(exact_same, 2),
         "algorithm_gap_absolute": round(gap, 2),
-        "algorithm_gap_pct": round(gap / abs(greedy_net) * 100, 2) if greedy_net else None,
+        "algorithm_gap_pct": round(gap / abs(plan_net) * 100, 2) if plan_net else None,
         "exact_offers_only_net_benefit": round(free["value"], 2),
         "exact_offers_only_customers": free["customers"],
         "review_reservation_cost": round(reservation, 2),
@@ -217,7 +212,7 @@ def optimisation_gap(customers, base=None):
             "per_review_retention_points": round(hurdle / len(reviews) * 100, 2),
         },
         "note": (
-            "Algorithm gap compares the greedy offer allocation with the exact optimum under the same "
+            "Algorithm gap checks the dynamic-programming plan against an independent MILP under the same "
             "budget, capacity and the same service reviews. Reservation cost is the scenario value an "
             "offers-only optimum would add by dropping those reviews; reviews have unmeasured benefit, "
             "so this is the price of a business rule, not a weakness of the allocator. The review hurdle "
@@ -302,8 +297,9 @@ def strategy_comparison(customers, base=None, labels=None):
     return {
         "settings": {"budget": config["budget"], "max_customers": config["max_customers"]},
         "rows": [
-            {"strategy": "policy_plan", "label": "Policy plan: reviews first, then offers", **_summary(plan["items"], labels)},
-            {"strategy": "offers_only", "label": "Mixed offers, no review slots", **_summary(policy.build_plan(customers, {**config, "review_share": 0})["items"], labels)},
+            {"strategy": "policy_plan", "label": "Pilot candidate: exact mixed offers", **_summary(plan["items"], labels)},
+            {"strategy": "offers_only", "label": "Exact mixed offers, no review slots", **_summary(policy.build_plan(customers, {**config, "review_share": 0})["items"], labels)},
+            {"strategy": "review_reservation", "label": "Optional constraint: 30% review slots", **_summary(policy.build_plan(customers, {**config, "review_share": 0.3})["items"], labels)},
             {"strategy": "premium_by_risk", "label": "Premium offer to the highest risk", **_summary(_offer_by_risk(customers, config, "premium_offer"), labels)},
             {"strategy": "basic_by_risk", "label": "Basic offer to the highest risk", **_summary(_offer_by_risk(customers, config, "basic_offer"), labels)},
         ],
@@ -318,8 +314,8 @@ def strategy_comparison(customers, base=None, labels=None):
         },
         "review_share": config["review_share"],
         "note": (
-            "Rows share the budget, capacity and eligibility rules of the shipped plan; only the offers-only row "
-            "drops the review reservation, so its gap to the policy plan is the scenario price of reserving "
+            "Rows share budget, capacity and eligibility rules. The pilot candidate defaults to no review slots; "
+            "the 30% review sensitivity shows the scenario price of reserving "
             "slots for reviews whose benefit is unmeasured. The uncapped threshold "
             "rule gives every customer their best positive offer with no budget; without the policy checks it "
             "would send offers to customers whose recent service or billing contact must be reviewed first."
@@ -334,11 +330,10 @@ def _offer_breakeven(config):
 
 
 def plan_impact(customers, base=None, labels=None, cross_fitted=None):
-    """The same policy priced with raw scores, the shipped calibrated risks and, if given,
-    cross-fitted calibrated risks (each customer priced by a map that never saw their label)."""
+    """Compare primary held-out pricing with raw scores and an exploratory fitted replay."""
     config = policy.settings(base)
     raw_only = [{k: v for k, v in c.items() if k != "calibrated_risk"} for c in customers]
-    raw, cal = policy.build_plan(raw_only, config), policy.build_plan(customers, config)
+    raw, primary = policy.build_plan(raw_only, config), policy.build_plan(customers, config)
     threshold = _offer_breakeven(config)
 
     def picked(plan):
@@ -349,35 +344,42 @@ def plan_impact(customers, base=None, labels=None, cross_fitted=None):
 
     result = {
         "raw": _summary(raw["items"], labels),
-        "calibrated": _summary(cal["items"], labels),
-        "same_customers": len(ids(raw) & ids(cal)),
-        "same_customer_actions": len(picked(raw) & picked(cal)),
+        "calibrated": _summary(primary["items"], labels),
+        "primary": _summary(primary["items"], labels),
+        "same_customers": len(ids(raw) & ids(primary)),
+        "same_customer_actions": len(picked(raw) & picked(primary)),
         "offer_breakeven_risk": threshold,
         "above_breakeven_raw": None if threshold is None else sum(c["risk_score"] >= threshold for c in customers),
         "above_breakeven_calibrated": None if threshold is None else sum(policy.decision_risk(c) >= threshold for c in customers),
-        "note": "Each plan's net benefit is valued with its own probabilities; compare actions and churners reached, not only the totals.",
+        "note": "Primary retrospective pricing uses held-out calibration maps. Raw-score and fitted-map totals use different probabilities; compare selection as well as value. All results remain internal to the selected cohort.",
     }
-    if cross_fitted:
-        held = [{**c, "calibrated_risk": float(cross_fitted[c["customer_id"]])} for c in customers]
-        nested = policy.build_plan(held, config)
-        top = max(policy.decision_risk(c) for c in customers)
+    fitted_available = all("fitted_calibrated_risk" in c for c in customers)
+    if cross_fitted or fitted_available:
+        reference = customers if cross_fitted else [
+            {**c, "calibrated_risk": c["fitted_calibrated_risk"]} for c in customers
+        ]
+        held = [
+            {**c, "calibrated_risk": float(cross_fitted[c["customer_id"]])} for c in customers
+        ] if cross_fitted else customers
+        reference_plan, held_plan = policy.build_plan(reference, config), policy.build_plan(held, config)
+        top = max(policy.decision_risk(c) for c in reference)
+        result["fitted_exploratory"] = _summary(reference_plan["items"], labels)
         result["cross_fitted"] = {
-            **_summary(nested["items"], labels),
-            "same_customers_as_calibrated": len(ids(cal) & ids(nested)),
-            "same_customer_actions_as_calibrated": len(picked(cal) & picked(nested)),
-            "gate_flips": None
-            if threshold is None
-            else sum(
-                (policy.decision_risk(c) >= threshold) != (h["calibrated_risk"] >= threshold)
-                for c, h in zip(customers, held)
+            **_summary(held_plan["items"], labels),
+            "same_customers_as_fitted": len(ids(reference_plan) & ids(held_plan)),
+            "same_customer_actions_as_fitted": len(picked(reference_plan) & picked(held_plan)),
+            "same_customers_as_calibrated": len(ids(reference_plan) & ids(held_plan)),
+            "same_customer_actions_as_calibrated": len(picked(reference_plan) & picked(held_plan)),
+            "gate_flips": None if threshold is None else sum(
+                (policy.decision_risk(c) >= threshold) != (policy.decision_risk(h) >= threshold)
+                for c, h in zip(reference, held)
             ),
-            "customers_at_top_calibrated_risk": sum(policy.decision_risk(c) == top for c in customers),
+            "customers_at_top_calibrated_risk": sum(policy.decision_risk(c) == top for c in reference),
             "note": (
-                "Nested risks come from five per-fold maps, each fitted without the fold it prices. The "
-                "action mix, spend and scenario value barely move, but the chosen customers change: the "
-                "shipped map gives every top customer the same risk, so offers among them follow the raw "
-                "order, while the per-fold maps differ slightly at the top. The economics cannot tell those "
-                "customers apart; which of them receive offers is not a robust result."
+                "Held-out maps exclude each priced customer's outer fold from model and calibrator fitting. "
+                "The all-data fitted map is a future-scoring artifact whose same-cohort replay is exploratory. "
+                "Similar aggregate value does not establish stable candidate identities: use the published "
+                "raw-score/customer-ID tie-break as an administrative rule, not proof of uniquely optimal people."
             ),
         }
     return result
@@ -423,8 +425,8 @@ def premium_stress(customers, base=None):
         "policy_beats_basic_above": crossing("policy_plan", "basic_by_risk"),
         "premium_beats_basic_above": crossing("premium_by_risk", "basic_by_risk"),
         "note": (
-            "Below the first crossing, basic offers to the highest-risk customers beat the policy plan: the "
-            "review slots displace basic offers while review benefit is counted as zero."
+            "The exact mixed-offer plan can match the basic-only plan when premium prevention is too low. "
+            "A required review quota can displace offers; review benefit is counted as zero."
         ),
     }
 
@@ -535,6 +537,15 @@ def pilot_design(customers, labels, base=None, baselines=(0.3, 0.5)):
         "population_share_of_cohort": round(len(population) / len(customers), 4),
         "observed_30d_churn_in_population": observed,
         "horizon": "90-day",
+        "validation_sequence": "Develop the score, calibration and policy through month T; freeze the combined artifacts, then score an untouched complete T+1 cohort and assess mature outcomes. Subsequent refitting requires a new untouched validation cohort.",
+        "comparator": "Frozen current retention practice (BAU), including incumbent campaigns, offers, costs, service obligations and suppression rules; use the same comparator in the post-rollout holdout.",
+        "attribution": "Hold score source, eligibility, budget and capacity constant when comparing allocation policies. Define experimental additions separately from incumbent actions.",
+        "recruitment": {
+            "eligible_target": 1400,
+            "illustrative_scored_customers": {"10pct_eligible": 14000, "20pct_eligible": 7000, "30pct_eligible": 4667},
+            "note": "Arithmetic illustrations, not a forecast from the selected cohort. Measure unique-customer live eligibility and consent, then recompute power with frozen mix, treatment fraction, BAU costs and baseline.",
+        },
+        "value_definition": "Rp6M is an assumed value per sustained save, with horizon and contribution meaning to be defined by finance. Ninety-day retention alone does not establish that value; report realized incremental margin separately.",
         "horizon_bridge": (
             "The model predicts 30-day churn. Read 30-day churn as a secondary outcome and check the score's "
             "calibration in the control arm only, since the offer changes outcomes in the other arm; the "

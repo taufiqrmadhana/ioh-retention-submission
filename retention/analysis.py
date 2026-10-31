@@ -497,12 +497,9 @@ def calibration_check(X, y, train, test, holdout_raw, oof_raw, folds):
     Holdout: calibrators are fitted on out-of-fold scores of the 75% training rows.
     Out-of-fold: inside each of the five outer folds used for the shipped scores,
     on inner out-of-fold scores, then applied to that fold's own scores. These
-    nested numbers measure the method. Decisions use one smoothed-isotonic map
-    fitted on all out-of-fold scores, as it would be fitted at deployment: a single
-    monotone map keeps the raw ranking, which five per-fold maps would scramble.
-    That map has seen every label it is applied to, so the retrospective plan is
-    in-sample; the nested risks are returned so the plan can be re-priced with
-    held-out calibration, and the refitted map is only out-of-sample for a later cohort.
+    nested risks price the primary historical replay. A single map fitted on all
+    out-of-fold scores is retained as a future-scoring artifact; its application
+    to the same historical customers is exploratory and in-sample.
     """
     X_train, y_train = X.iloc[train], y.iloc[train]
     inner_train = inner_scores(X_train, y_train)
@@ -541,16 +538,21 @@ def calibration_check(X, y, train, test, holdout_raw, oof_raw, folds):
         ),
         "calibration_smoothed_oof": calibration_table(y, oof["smoothed_isotonic"]),
         "decision_risk": (
-            "One smoothed-isotonic map fitted on all out-of-fold scores and labels (deployment-style). "
-            "Applied back to the same customers it is in-sample: each customer's label shaped the map that "
-            "prices them. The raw scores are out-of-fold; the calibrated decision path is not. Method "
-            "quality is measured nested above; plan_impact re-prices the plan with the nested risks."
+            "Primary historical replay uses nested held-out smoothed-isotonic risks: each customer's "
+            "model and calibration map were fitted without that customer's outer fold. Five fitted maps "
+            "are combined, so calibrated risk need not preserve the global raw-score order. This is "
+            "internal evaluation in the selected cohort, not untouched future or causal validation."
+        ),
+        "fitted_map_provenance": (
+            "The decision_map below is fitted on all 208 out-of-fold scores and labels for future scoring. "
+            "Applying it back to these customers is in-sample and exploratory; it is not used to price "
+            "the primary historical replay. Freeze the score, calibrator and policy before later validation."
         ),
         "decision_map": [
             {"score_from": float(lo), "calibrated_risk": float(v)}
             for lo, v in _map_steps(oof_raw, decision)
         ],
-        "ordering": "raw out-of-fold score",
+        "ordering": "scenario value; raw out-of-fold score then customer ID break equal-value ties",
     }, decision, oof["smoothed_isotonic"]
 
 
@@ -617,7 +619,7 @@ def evidence(row):
     ]
 
 
-def customer_records(frame, usage, scores, folds, signals, calibrated):
+def customer_records(frame, usage, scores, folds, signals, calibrated, fitted_calibrated=None):
     """Decision records without outcome columns; consent and eligibility stay unknown."""
     history = usage[usage.available_at <= CUTOFF].groupby("customerId").size()
     records = []
@@ -636,6 +638,8 @@ def customer_records(frame, usage, scores, folds, signals, calibrated):
                 "region": row.region,
                 "risk_score": round(float(scores[i]), 6),
                 "calibrated_risk": round(float(calibrated[i]), 6),
+                "fitted_calibrated_risk": round(float(fitted_calibrated[i]), 6)
+                if fitted_calibrated is not None else None,
                 "risk_band": risk_band(scores[i]),
                 "features": features,
                 "evidence": evidence(row),
@@ -647,7 +651,7 @@ def customer_records(frame, usage, scores, folds, signals, calibrated):
                 "resolution_status": "unknown_at_snapshot",
                 "last_contact_at": None,
                 "score_method": "out_of_fold_logistic",
-                "calibration_method": "smoothed_isotonic_refit_on_all_oof_in_sample",
+                "calibration_method": "nested_held_out_smoothed_isotonic",
                 "fold": int(folds[i]),
             }
         )
@@ -663,7 +667,7 @@ def limitations(overlap_rows, flow):
         "Support resolution status is excluded: no status-effective timestamp.",
         "Random customer holdout is internal validation in one selected historical cohort.",
         f"{overlap_rows} holdout customers share exact model features with training customers; non-overlap sensitivity is reported separately.",
-        "Raw OOF scores rank well but overstate risk between 12% and 30%. Economics use one smoothed-isotonic map fitted on all 208 OOF scores and labels, so the retrospective plan is in-sample; nested calibration improves OOF Brier and log-loss but not the 52-customer holdout, and re-pricing with nested risks keeps the plan's mix and value but changes which customers are picked.",
+        "Raw OOF scores rank well but overstate risk between 12% and 30%. Primary historical economics use nested held-out calibration, combining five maps without each priced customer's fold. Calibration improves nested OOF Brier and log-loss but not the 52-customer holdout. The all-data map is a future-scoring artifact; its same-cohort historical replay is exploratory. Candidate identities vary substantially between maps despite similar aggregate scenario values.",
         "No treatment/control data: benefits are scenario assumptions, not measured uplift.",
         "Gender, age, partner and dependents are excluded from scoring; proxies may remain.",
     ]
@@ -672,26 +676,42 @@ def limitations(overlap_rows, flow):
 MODEL_VERSION = "lr-oof-v1-seed42"
 CALIBRATOR_VERSION = "smoothed-isotonic-v1"
 CODE = ("retention/analysis.py", "retention/decisions.py", "retention/policy.py", "web/policy.js")
+INPUTS = ("data/customer_base.csv", "data/service_usage.csv", "data/support_interactions.csv")
+DEPENDENCIES = ("pyproject.toml", "uv.lock", "package.json", "package-lock.json")
+ARTIFACTS = ("report.json", "intelligence.json", "cohort.csv")
 
 
 def manifest():
-    """Versions and hashes that tie the committed outputs to the code that made them."""
-    return {
+    """Content-addressed provenance shared by every artifact in a regeneration run."""
+    def hashes(names):
+        return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in names}
+
+    source = {
+        "schema_version": "retention-artifacts-v2",
         "snapshot": str(CUTOFF.date()),
+        "horizon_end_exclusive": str(END.date()),
         "seed": SEED,
         "features": FEATURES,
         "model_version": MODEL_VERSION,
         "calibrator_version": CALIBRATOR_VERSION,
         "policy_version": policy.POLICY_VERSION,
-        "code_sha256": {
-            name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in CODE
+        "code_sha256": hashes(CODE),
+        "input_sha256": hashes(INPUTS),
+        "dependency_sha256": hashes(DEPENDENCIES),
+        "input_schema": {
+            name: list(pd.read_csv(ROOT / name, nrows=0).columns) for name in INPUTS
         },
+        "extraction_timestamp": None,
+        "extraction_note": "Source extraction timestamp was not supplied; snapshot is an analytical assumption.",
+        "policy_settings": policy.settings({"budget": 3_000_000, "max_customers": 10}),
     }
+    run_id = hashlib.sha256(json.dumps(source, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return {"run_id": run_id, **source}
 
 
-def main():
-    out = ROOT / "outputs"
-    out.mkdir(exist_ok=True)
+def main(output_dir=None):
+    out = Path(output_dir) if output_dir is not None else ROOT / "outputs"
+    out.mkdir(parents=True, exist_ok=True)
     base, usage, support = load_data()
     frame = build_cohort(base, usage, support)
     X, y = frame[FEATURES], frame.label
@@ -725,7 +745,7 @@ def main():
         "audit": audit(base, usage, support),
         "limitations": limitations(sensitivity["exact_feature_overlap_test_rows"], flow),
     }
-    customers = customer_records(frame, usage, oof, folds, signals, calibrated)
+    customers = customer_records(frame, usage, oof, folds, signals, nested, calibrated)
     # Retrospective labels for reporting only; they never enter intelligence.json.
     labels = dict(zip(frame.customerId, y.astype(int)))
     policy_base = {"budget": 3_000_000, "max_customers": 10}
@@ -736,21 +756,24 @@ def main():
         "premium_stress": decisions.premium_stress(customers, policy_base),
         "decision_curve": decisions.decision_curve(y.iloc[test].to_numpy(), predictions),
     }
-    report["calibration_check"]["plan_impact"] = decisions.plan_impact(
-        customers, policy_base, labels, cross_fitted=dict(zip(frame.customerId, nested))
-    )
+    report["calibration_check"]["plan_impact"] = decisions.plan_impact(customers, policy_base, labels)
     report["targeting"] = decisions.targeting_diagnostic(customers, policy_base)
     report["pilot"] = decisions.pilot_design(customers, labels, policy_base)
     report["manifest"] = manifest()
+    report["run_id"] = report["manifest"]["run_id"]
     intelligence = {
         "snapshot": report["snapshot"],
         "model_version": MODEL_VERSION,
         "calibrator_version": CALIBRATOR_VERSION,
         "policy_version": policy.POLICY_VERSION,
         "mode": "retrospective_demo",
+        "run_id": report["run_id"],
+        "manifest": report["manifest"],
         "calibration_provenance": (
-            "calibrated_risk comes from one map fitted on these customers' out-of-fold scores and labels, "
-            "so it is in-sample for this retrospective cohort and out-of-sample only for a later one."
+            "calibrated_risk is nested held-out: each customer's outer fold is excluded from both "
+            "score-model and calibration fitting. This combines five maps within one selected cohort. "
+            "fitted_calibrated_risk applies the all-data future-scoring map back to its fitting cohort "
+            "and is exploratory. Neither risk estimates treatment effect or validates future transport."
         ),
         "customers": customers,
     }
@@ -758,7 +781,17 @@ def main():
     (out / "intelligence.json").write_text(
         json.dumps(intelligence, indent=2, allow_nan=False)
     )
-    frame.assign(oof_score=oof, fold=folds).to_csv(out / "cohort.csv", index=False)
+    frame.assign(
+        oof_score=oof, calibrated_risk=nested, fitted_calibrated_risk=calibrated,
+        fold=folds, run_id=report["run_id"],
+    ).to_csv(out / "cohort.csv", index=False)
+    output_manifest = {
+        **report["manifest"],
+        "artifact_sha256": {
+            name: hashlib.sha256((out / name).read_bytes()).hexdigest() for name in ARTIFACTS
+        },
+    }
+    (out / "manifest.json").write_text(json.dumps(output_manifest, indent=2, allow_nan=False))
     print(
         f"Cohort: {len(frame)} customers | Holdout: {len(test)} | Average precision: {comparison['logistic_regression']['pr_auc']:.3f}\nResults saved to {out}"
     )

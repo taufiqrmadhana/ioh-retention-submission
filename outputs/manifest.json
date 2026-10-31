@@ -1,0 +1,85 @@
+{
+  "run_id": "0644977f6cd5dcf877b16d679d1f47a45391a57e73368c2db785d55f00cfd2c0",
+  "schema_version": "retention-artifacts-v2",
+  "snapshot": "2025-11-01",
+  "horizon_end_exclusive": "2025-12-01",
+  "seed": 42,
+  "features": [
+    "tenureMonths",
+    "monthlyCharges",
+    "dataUsageGB",
+    "support_30d",
+    "technical_30d",
+    "billing_30d",
+    "contractType",
+    "paymentMethod",
+    "hasInternetService"
+  ],
+  "model_version": "lr-oof-v1-seed42",
+  "calibrator_version": "smoothed-isotonic-v1",
+  "policy_version": "retention-v3",
+  "code_sha256": {
+    "retention/analysis.py": "5e17dcd6ab5ef2c32ab18270cc1a418236d28c6e0ce22cce9e0445d0da507fdf",
+    "retention/decisions.py": "0e5acf21d85d8138780358bf737538f22192189d2f2ac910045b94a234e300fd",
+    "retention/policy.py": "eac7bf0d178ca573934fda2dec2ea849d41957f029c1af2ce4ad2284c653bef4",
+    "web/policy.js": "ce8c1b4d486d4c213ff7a79933e7eef6dc659fb2471fc67f40d9088f247820e3"
+  },
+  "input_sha256": {
+    "data/customer_base.csv": "b830844bae5ba610b60ff62dfcdc039241d2c4125983035ff75bdf08c95d7110",
+    "data/service_usage.csv": "edec410d761c6ba5a87d7bdedcfcb1fa5d8f96a27fab883cdf16fbd11346a045",
+    "data/support_interactions.csv": "fca0edd4eb90c10a422c78db8446f0a804128d4059032646b86b2355544a3b1d"
+  },
+  "dependency_sha256": {
+    "pyproject.toml": "41a9a3cb10e3978f0f1390ee6033fcfcec9a9c516a1dc52eb4b1819694ede48a",
+    "uv.lock": "864b2307e8e984856100774de4d3ca53441aa727fe7b3e10525f5b9580da1677",
+    "package.json": "7de604baa5d63eaf3c1ab2bae4525d4f133cf6cec2b0ebd66769e0303d58d3e8",
+    "package-lock.json": "a1bbe3e10f08bf349860e796a52c09068b7a95a566cf7994d043278ddfc251fd"
+  },
+  "input_schema": {
+    "data/customer_base.csv": [
+      "customerId",
+      "gender",
+      "age",
+      "partner",
+      "dependents",
+      "region",
+      "contractType",
+      "paperlessBilling",
+      "paymentMethod",
+      "churnDate"
+    ],
+    "data/service_usage.csv": [
+      "customerId",
+      "yearMonth",
+      "tenureMonths",
+      "monthlyCharges",
+      "totalCharges",
+      "hasPhoneService",
+      "hasInternetService",
+      "dataUsageGB"
+    ],
+    "data/support_interactions.csv": [
+      "customerId",
+      "interactionDate",
+      "interactionType",
+      "supportTopic",
+      "resolutionStatus"
+    ]
+  },
+  "extraction_timestamp": null,
+  "extraction_note": "Source extraction timestamp was not supplied; snapshot is an analytical assumption.",
+  "policy_settings": {
+    "budget": 3000000,
+    "max_customers": 10,
+    "retained_value": 6000000,
+    "basic_success": 0.2,
+    "premium_success": 0.5,
+    "prioritize_technical": true,
+    "review_share": 0
+  },
+  "artifact_sha256": {
+    "report.json": "d200b77fbb6eec85db489ae66216447e62145a63e17a02c7899e07e88a6a42a2",
+    "intelligence.json": "c9f5ef9a5242a913767919d9037a541bb1c5be2311c7359a2e1c52dd4db8bdc2",
+    "cohort.csv": "4f5f8630670eeda45d31bf9786ea3beeb4f88de61e4ae3926a136999a9d5f1e4"
+  }
+}

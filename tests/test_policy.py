@@ -49,7 +49,7 @@ def test_budget_capacity_and_unique_customers(budget, capacity):
 
 
 def test_service_review_precedes_incentives_and_respects_reserve():
-    plan = build_plan(CUSTOMERS)
+    plan = build_plan(CUSTOMERS, {"review_share": 0.3})
     reviews = [i for i in plan["items"] if i["action"].endswith("_review")]
     assert len(reviews) == 3
     assert all(
@@ -154,7 +154,7 @@ def test_forged_economics_flags_and_duplicates_rejected():
 
 @pytest.mark.parametrize("share,expected", [(0, 0), (0.1, 1), (0.3, 3), (0.5, 3)])
 def test_review_share_sets_the_reservation(share, expected):
-    assert DEFAULTS["review_share"] == 0.3
+    assert DEFAULTS["review_share"] == 0
     plan = build_plan(CUSTOMERS, {"review_share": share})
     reviews = [i for i in plan["items"] if not i["action"].endswith("_offer")]
     assert len(reviews) == expected  # only three customers have a recent contact
@@ -163,7 +163,7 @@ def test_review_share_sets_the_reservation(share, expected):
 
 
 def test_one_slot_still_reserves_a_review_unless_share_is_zero():
-    one = build_plan(CUSTOMERS, {"max_customers": 1})
+    one = build_plan(CUSTOMERS, {"max_customers": 1, "review_share": 0.3})
     assert one["items"][0]["action"].endswith("_review")
     none = build_plan(CUSTOMERS, {"max_customers": 1, "review_share": 0})
     assert none["items"][0]["action"].endswith("_offer")
@@ -174,3 +174,35 @@ def test_plan_with_more_reviews_than_its_reservation_is_rejected():
     forged = {**deepcopy(wide), "settings": settings({"review_share": 0.1})}
     with pytest.raises(ValueError, match="reservation"):
         validate_plan(forged, CUSTOMERS)
+
+
+def test_default_prioritizes_profitable_offers_without_a_review_quota():
+    plan = build_plan(CUSTOMERS)
+    assert all(i["action"].endswith("_offer") for i in plan["items"])
+    assert plan["policy_version"] == "retention-v3"
+
+
+def test_exact_allocator_can_leave_capacity_unused_to_fund_premium():
+    population = [customer("A", risk=0.95), customer("B", risk=0.95), customer("R", risk=0.95, billing=1)]
+    plan = build_plan(population, {"budget": 600_000, "max_customers": 3, "review_share": 0.3})
+    assert [(i["customer_id"], i["action"]) for i in plan["items"]] == [
+        ("R", "billing_review"), ("A", "premium_offer")
+    ]
+    assert plan["total_cost"] == 475_000
+    assert plan["scenario_net_benefit"] == 2_375_000
+
+
+@pytest.mark.parametrize("budget", [149_999, 150_000, 450_000, 600_000, 900_000])
+@pytest.mark.parametrize("capacity", [1, 2, 3])
+def test_exact_allocator_matches_exhaustive_small_portfolios(budget, capacity):
+    from itertools import product
+
+    population = [customer("A", risk=0.98), customer("B", risk=0.57), customer("C", risk=0.2)]
+    options = [[None] + [a for a in compare_actions(c) if a["action"].endswith("_offer")]
+               for c in population]
+    optimum = max(sum(a["scenario_net_benefit"] for a in portfolio if a)
+        for portfolio in product(*options)
+        if sum(a["cost"] for a in portfolio if a) <= budget
+        and sum(a is not None for a in portfolio) <= capacity)
+    plan = build_plan(population, {"budget": budget, "max_customers": capacity})
+    assert plan["scenario_net_benefit"] == optimum
