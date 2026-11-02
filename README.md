@@ -14,7 +14,7 @@ IOH already has a churn model. The contribution here is the decision layer that 
 | How well does the baseline model rank? | Average precision 0.967 on a 52-customer holdout (95% CI 0.86–1.00; baseline 0.19); 9 of 10 holdout churners in the top 11 scores. |
 | When is an offer worth it? | Basic breaks even at 12.5% risk, premium at 15%; premium beats basic above 16.7%. |
 | Best use of Rp3M for up to 10 customers? | 5 premium + 5 basic offers: Rp17.29M scenario net value, Rp2.68M more than premium-only. |
-| Is Rp3M enough? | No. Up to Rp18M, each extra Rp1 returns over Rp3 of scenario net value in this cohort (raw scores; calibrated scores give more). |
+| Is Rp3M enough? | Not if the brief's offer effects hold. With more budget and no 10-customer cap, scenario net value rises to Rp94.4M at Rp18M (all 40 customers above 50% risk), over Rp4 per extra Rp1 along the way. |
 | What next? | Validate frozen scores on a complete later cohort, then run a randomised pilot against current practice. |
 
 All values are scenario economics on the supplied extract, using the brief's offer effects; see Known limits.
