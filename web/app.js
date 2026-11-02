@@ -28,7 +28,7 @@ let data,
   filter = "all",
   busy = false;
 let prompt =
-  "Susun rencana retention sesuai budget dan kapasitas di panel kiri. Prioritaskan pemeriksaan masalah teknis sebelum menawarkan insentif.";
+  "Susun rencana retention sesuai budget dan kapasitas di panel kiri. Jelaskan siapa yang layak menerima penawaran dan siapa yang tidak perlu insentif.";
 
 async function api(path, body) {
   const res = await fetch(
