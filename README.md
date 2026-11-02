@@ -4,7 +4,20 @@ Churn analysis and budget-aware retention planning for the supplied telco extrac
 
 IOH already has a churn model. The contribution here is the decision layer that could take its scores: who is eligible for which action, what fits the budget, and how to measure whether the action creates incremental margin. The recommendation is to validate frozen incumbent scores on a complete later cohort, then test a budget-constrained mixed-offer policy against current retention practice with the same scores, eligibility, budget and capacity. Discretionary service reviews are a separate test or an explicit business constraint; ordinary service obligations continue independently. The logistic model is a transparent baseline for the demo; nothing here shows it beats IOH's model or current retention practice, neither of which was supplied.
 
-**Demo:** [indosat.madgun.us](https://indosat.madgun.us)
+**Demo:** [indosat.madgun.us](https://indosat.madgun.us) · **Deck:** [Google Slides](https://docs.google.com/presentation/d/1eGLUSDmLjETtmt_sE6MJpaW33C4vC16mimx6GCnUugU/edit?usp=sharing)
+
+## Results at a glance
+
+| Question | Answer |
+|---|---|
+| Who is in scope? | 208 customers with October usage at the 1 Nov 2025 cutoff; 41 churned in November (19.7%). |
+| How well does the baseline model rank? | Average precision 0.967 on a 52-customer holdout (95% CI 0.86–1.00; baseline 0.19); 9 of 10 holdout churners in the top 11 scores. |
+| When is an offer worth it? | Basic breaks even at 12.5% risk, premium at 15%; premium beats basic above 16.7%. |
+| Best use of Rp3M for up to 10 customers? | 5 premium + 5 basic offers: Rp17.29M scenario net value, Rp2.68M more than premium-only. |
+| Is Rp3M enough? | No. Up to Rp18M, each extra Rp1 returns over Rp3 of scenario net value in this cohort (raw scores; calibrated scores give more). |
+| What next? | Validate frozen scores on a complete later cohort, then run a randomised pilot against current practice. |
+
+All values are scenario economics on the supplied extract, using the brief's offer effects; see Known limits.
 
 ## Layout
 
@@ -89,18 +102,17 @@ The prototype's proposed record links the score and evidence to eligibility, act
 
 Tool-contract tests establish allowed arguments, arithmetic and state validation. Natural-language task success is a separate evaluation: use English and Indonesian prompts for region/contact scopes, unsupported constraints, conflicting goals and misleading instructions, then report scope correctness, unsupported claims, completion, latency and cost. No measured live-model task-accuracy result is claimed by the mocked tests. The workbench requires user-selectable structured scope and enforces the same contact/region/internet scope on scoped tools in both runtimes. A prompt asking to change scope should direct the user to update those controls without submitting a plan. The backend does not independently parse natural-language intent; a user must correct a mismatch in the visible scope before requesting a plan. Bilingual scripted mismatch tests verify this enforcement, not live-model interpretation accuracy.
 
-With `DEEPSEEK_API_KEY` already configured in the shell, run the seven real-prompt
-cases with:
+With `DEEPSEEK_API_KEY` set in the shell, run the seven real-prompt cases with:
 
 ```bash
 node scripts/evaluate-agent.mjs
 ```
 
 The cases cover English/Indonesian requests, region/contact scopes, unsupported
-filters, conflicting goals and misleading instructions. The current environment
-has no configured key, so the saved `outputs/agent-evaluation.json` has status
-`not_run`; no live-model task-accuracy result is available. The harness records
-scope enforcement, expected submission, latency and token counts. Manually review
+filters, conflicting goals and misleading instructions. Results are written to
+`outputs/agent-evaluation.json`; no live-model task-accuracy result is reported
+yet. The harness records scope enforcement, expected submission, latency and
+token counts. Manually review
 task completion and unsupported claims before reporting accuracy; claim flags are
 heuristics. Cost remains `null` unless reconciled with provider billing, since
 tokens alone do not establish billed cost. Scripted guardrail tests remain

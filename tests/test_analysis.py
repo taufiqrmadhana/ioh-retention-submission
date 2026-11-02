@@ -1,5 +1,6 @@
 import hashlib
 import json
+import math
 
 import numpy as np
 import pandas as pd
@@ -140,9 +141,40 @@ def test_committed_outputs_match_sources_and_each_other():
         assert customer["fitted_calibrated_risk"] == round(row.fitted_calibrated_risk, 6)
 
 
+def assert_close(fresh, committed, path=""):
+    """Exact match, except floats may differ in the last digits across machines."""
+    if isinstance(fresh, float) or isinstance(committed, float):
+        assert math.isclose(fresh, committed, rel_tol=1e-6, abs_tol=1e-9), path
+    elif isinstance(fresh, dict):
+        assert fresh.keys() == committed.keys(), path
+        for key in fresh:
+            assert_close(fresh[key], committed[key], f"{path}/{key}")
+    elif isinstance(fresh, list):
+        assert len(fresh) == len(committed), path
+        for i, (a, b) in enumerate(zip(fresh, committed)):
+            assert_close(a, b, f"{path}[{i}]")
+    else:
+        assert fresh == committed, path
+
+
 def test_isolated_regeneration_matches_committed_artifacts(tmp_path):
     main(output_dir=tmp_path)
-    for name in (*ARTIFACTS, "manifest.json"):
-        assert (tmp_path / name).read_bytes() == (ROOT / "outputs" / name).read_bytes(), (
-            f"{name} differs on regeneration; rerun `python -m retention analyze`"
-        )
+    hint = "differs on regeneration; rerun `python -m retention analyze`"
+    for name in ("report.json", "intelligence.json"):
+        fresh = json.loads((tmp_path / name).read_text())
+        committed = json.loads((ROOT / "outputs" / name).read_text())
+        assert_close(fresh, committed, f"{name} {hint}")
+    pd.testing.assert_frame_equal(
+        pd.read_csv(tmp_path / "cohort.csv"),
+        pd.read_csv(ROOT / "outputs" / "cohort.csv"),
+        check_exact=False,
+        rtol=1e-6,
+        atol=1e-9,
+    )
+    # Artifact hashes depend on float bytes, so they are checked against the
+    # committed files in test_committed_outputs_match_sources_and_each_other.
+    fresh = json.loads((tmp_path / "manifest.json").read_text())
+    committed = json.loads((ROOT / "outputs" / "manifest.json").read_text())
+    fresh.pop("artifact_sha256")
+    committed.pop("artifact_sha256")
+    assert fresh == committed, f"manifest.json {hint}"
